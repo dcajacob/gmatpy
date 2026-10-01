@@ -46,8 +46,11 @@ foreach(TARGET IN ITEMS GmatUtil GmatBase ${HPOP_API_TARGET})
   set_target_properties(${TARGET} PROPERTIES INSTALL_RPATH "$ORIGIN")
 endforeach()
 add_custom_target(gmat_hpop_wheel DEPENDS ${HPOP_API_TARGET})
+# Wheels copy symlink targets as separate files. Keep the versioned runtime
+# libraries and omit the unversioned linker aliases. Unversioned modules are
+# still installed normally by NAMELINK_SKIP.
 install(TARGETS GmatUtil GmatBase ${HPOP_API_TARGET}
-        LIBRARY DESTINATION gmat_hpop/_native COMPONENT HPOP)
+        LIBRARY DESTINATION gmat_hpop/_native COMPONENT HPOP NAMELINK_SKIP)
 get_target_property(HPOP_SWIG_DIR ${HPOP_API_TARGET} SWIG_SUPPORT_FILES_DIRECTORY)
 install(FILES "${HPOP_SWIG_DIR}/gmat_py.py"
         DESTINATION gmat_hpop/_native COMPONENT HPOP)
