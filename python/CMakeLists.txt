@@ -13,6 +13,7 @@ set(GMAT_PYTHON3_VERSIONS "${HPOP_PYTHON_VERSION}" CACHE STRING "" FORCE)
 # Preserve the build frontend's selected interpreter when GMAT rediscovers Python.
 set(GMAT_PYTHON3${Python3_VERSION_MINOR}_ROOT_DIR "${Python3_ROOT_DIR}" CACHE PATH "" FORCE)
 set(GMAT_INCLUDE_GUI OFF CACHE BOOL "" FORCE)
+set(GMAT_INCLUDE_DATA_UPDATER OFF CACHE BOOL "" FORCE)
 set(GMAT_INCLUDE_QT_GUI OFF CACHE BOOL "" FORCE)
 set(GMAT_INCLUDE_CSALT OFF CACHE BOOL "" FORCE)
 set(GMAT_INCLUDE_API ON CACHE BOOL "" FORCE)
@@ -66,10 +67,3 @@ install(FILES "${HPOP_DATA}/planetary_ephem/spk/DE405AllPlanets.bsp"
         DESTINATION gmat_hpop/data/planetary_ephem/spk COMPONENT HPOP)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../application/License.txt"
         DESTINATION gmat_hpop/licenses RENAME GMAT.txt COMPONENT HPOP)
-set(HPOP_XERCES_SOURCE_DIR "" CACHE PATH "Xerces source tree for dependency notices")
-if(HPOP_XERCES_SOURCE_DIR)
-  install(FILES "${HPOP_XERCES_SOURCE_DIR}/LICENSE"
-          DESTINATION gmat_hpop/licenses RENAME Xerces-LICENSE.txt COMPONENT HPOP)
-  install(FILES "${HPOP_XERCES_SOURCE_DIR}/NOTICE"
-          DESTINATION gmat_hpop/licenses RENAME Xerces-NOTICE.txt COMPONENT HPOP)
-endif()

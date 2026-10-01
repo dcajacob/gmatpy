@@ -117,6 +117,10 @@ ENDIF()
 INCLUDE(CMakeDependentOption)
 
 OPTION(GMAT_INCLUDE_GUI "Build the GMAT GUI" ON)
+OPTION(GMAT_INCLUDE_DATA_UPDATER "Build the legacy SVN data updater (requires Xerces)" ON)
+if(GMAT_INCLUDE_GUI AND NOT GMAT_INCLUDE_DATA_UPDATER)
+  message(FATAL_ERROR "The wxWidgets GUI requires GMAT_INCLUDE_DATA_UPDATER")
+endif()
 OPTION(GMAT_INCLUDE_CSALT "Build CSALT with GMAT" OFF)
 CMAKE_DEPENDENT_OPTION(GMAT_INCLUDE_CSALT_TESTPROGRAM "Build CSALT test program" OFF "GMAT_INCLUDE_CSALT" OFF)
 CMAKE_DEPENDENT_OPTION(GMAT_INCLUDE_CSALT_INSTALL_SNOPT "Install SNOPT libraries with CSALT" ON "GMAT_INCLUDE_CSALT" OFF)
@@ -351,17 +355,19 @@ ENDMACRO()
 # ====================================================================
 # Find Xerces
 
-# Initialize default GMAT dependency path for Xerces
-if(WIN32)
-  SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/depends/xerces/windows-install/include")
-  SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/depends/xerces/windows-install/lib")
-elseif(APPLE)
-  SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/depends/xerces/cocoa-install")
-else()
-  SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/depends/xerces/linux-install")
-endif()
+if(GMAT_INCLUDE_DATA_UPDATER)
+  # Initialize default GMAT dependency path for Xerces
+  if(WIN32)
+    SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "${PROJECT_SOURCE_DIR}/depends/xerces/windows-install/include")
+    SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/depends/xerces/windows-install/lib")
+  elseif(APPLE)
+    SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/depends/xerces/cocoa-install")
+  else()
+    SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${PROJECT_SOURCE_DIR}/depends/xerces/linux-install")
+  endif()
 
-FIND_PACKAGE(XercesC REQUIRED)
+  FIND_PACKAGE(XercesC REQUIRED)
+endif()
 
 # Additional libraries needed to use Xerces on Mac/Linux
 if(UNIX)

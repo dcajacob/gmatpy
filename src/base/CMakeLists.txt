@@ -255,7 +255,6 @@ SET(BASE_SRCS
     foundation/Covariance.cpp
     foundation/ElementWrapper.cpp
     foundation/EquationInitializer.cpp
-    foundation/FileUpdaterSVN.cpp
     foundation/GmatBaseException.cpp
     foundation/GmatBase.cpp
     foundation/GmatState.cpp
@@ -533,6 +532,10 @@ FILE(GLOB_RECURSE BASE_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
 # ====================================================================
 # add the install targets
 
+if(GMAT_INCLUDE_DATA_UPDATER)
+  list(APPEND BASE_SRCS foundation/FileUpdaterSVN.cpp)
+endif()
+
 # Create GmatBase as a shared library
 ADD_LIBRARY(${TargetName} SHARED ${BASE_SRCS} ${BASE_HEADERS})
 SET_TARGET_PROPERTIES(${TargetName} PROPERTIES DEFINE_SYMBOL "GMAT_EXPORTS")
@@ -543,7 +546,11 @@ TARGET_INCLUDE_DIRECTORIES(${TargetName} PUBLIC ${CSPICE_INCLUDE_DIR})
 
 # Link needed libraries
 TARGET_LINK_LIBRARIES(${TargetName} PUBLIC optimized ${CSPICE_LIB} debug ${CSPICE_LIB_DEBUG})
-TARGET_LINK_LIBRARIES(${TargetName} PRIVATE XercesC::XercesC)
+if(GMAT_INCLUDE_DATA_UPDATER)
+  TARGET_LINK_LIBRARIES(${TargetName} PRIVATE XercesC::XercesC)
+else()
+  TARGET_COMPILE_DEFINITIONS(${TargetName} PRIVATE GMAT_DISABLE_DATA_UPDATER)
+endif()
 TARGET_LINK_LIBRARIES(${TargetName} PRIVATE ${CMAKE_DL_LIBS})
 TARGET_LINK_LIBRARIES(${TargetName} PRIVATE GmatUtil)
 
@@ -553,7 +560,7 @@ if(UNIX)
   else()
     TARGET_LINK_LIBRARIES(${TargetName} PRIVATE Threads::Threads)
   endif()
-else()
+elseif(GMAT_INCLUDE_DATA_UPDATER)
   # XERCES_STATIC_LIBRARY required on Windows
   TARGET_COMPILE_DEFINITIONS(${TargetName} PUBLIC -DXERCES_STATIC_LIBRARY)
 endif()

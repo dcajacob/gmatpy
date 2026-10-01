@@ -254,9 +254,11 @@ bool Moderator::Initialize(const std::string &startupFile, bool fromGui,
          MessageInterface::ShowMessage("Logging to %s\n", theFileManager->GetAbsPathname("LOG_FILE").c_str());
       }
 
+      #ifndef GMAT_DISABLE_DATA_UPDATER
       MessageInterface::ShowMessage("Moderator is updating data files...\n");
       // update data files from repository
       UpdateDataFiles();
+      #endif
       
       MessageInterface::ShowMessage("Moderator is creating core engine...\n");
       
@@ -6801,6 +6803,9 @@ void Moderator::SetCommandsUnchanged(Integer whichList)
 //------------------------------------------------------------------------------
 bool Moderator::UpdateDataFiles()
 {
+   #ifdef GMAT_DISABLE_DATA_UPDATER
+   return false;
+   #else
    std::string file = theFileManager->GetStartupFileDir()+IFileUpdater::ShellFile;
 
    // no update file, continue with running GMAT
@@ -6832,6 +6837,7 @@ bool Moderator::UpdateDataFiles()
       remove((file + ".bak").c_str());
    theFileManager->RenameFile(file, file + ".bak", retCode, true);
    return retValue;
+   #endif
 }
 
 

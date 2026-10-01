@@ -71,17 +71,16 @@ Run from the repository root::
     python -m pip install build 'scikit-build-core>=1.0' 'swig>=4.2,<5' auditwheel patchelf ninja
     CSPICE_DIR=/path/to/cspice bash python/tools/build_wheel.sh
 
-The helper downloads a hash-checked Xerces-C 3.2.5 source archive and builds
-the XML dependency without network access or ICU, then builds and repairs the
-wheel. For an offline build, prepopulate ``build/hpop-dependencies`` with that
-archive. Dependency licenses and notices are included in the helper's wheel.
-Direct ``python -m build --wheel`` builds can use a system Xerces-C development
-installation instead, with ``-Ccmake.define.CSPICE_DIR=/path/to/cspice``.
+The helper builds and repairs the wheel. The legacy SVN data updater and its
+Xerces XML dependency are excluded from this package; scientific data updates
+are not implemented yet. Ordinary GMAT builds retain the updater by default.
+Direct ``python -m build --wheel`` builds need
+``-Ccmake.define.CSPICE_DIR=/path/to/cspice``.
 
 The first wheel uses the build host's platform and system libraries. Distribute
-the repaired wheel: auditwheel bundles Xerces-C and its non-platform dependencies
-and assigns the compatible manylinux tag. Building on an older manylinux image
-is needed for wider Linux compatibility; repair cannot lower a compiler's glibc
+the repaired wheel: auditwheel assigns the compatible manylinux tag and bundles
+any non-platform dependencies. Building on an older manylinux image is needed
+for wider Linux compatibility; repair cannot lower a compiler's glibc
 requirements. The public package is not published to PyPI yet.
 
 Install the repaired wheel in a fresh virtual environment and run::

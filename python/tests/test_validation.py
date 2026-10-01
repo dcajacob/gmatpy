@@ -51,3 +51,24 @@ def test_native_exception_is_a_python_exception_and_engine_recovers():
         finally:
             gmat.Clear()
     assert len(propagate(STATE, EPOCH, [60])) == 1
+
+
+def test_legacy_data_updater_is_disabled():
+    from pathlib import Path
+    from gmat_hpop import _runtime
+    with _runtime.lock:
+        gmat = _runtime.engine()
+        directory = Path(gmat.FileManager.Instance().GetStartupFileDir())
+        script = directory / "updateGmat.bat"
+        marker = directory / "legacy-updater-ran"
+        import shlex
+        script.write_text(f"#!/bin/sh\ntouch {shlex.quote(str(marker))}\n", encoding="utf-8")
+        script.chmod(0o755)
+        try:
+            assert gmat.Moderator.Instance().UpdateDataFiles() is False
+            assert script.exists()
+            assert not (directory / "updateGmat.bat.bak").exists()
+            assert not marker.exists()
+        finally:
+            script.unlink(missing_ok=True)
+            marker.unlink(missing_ok=True)
