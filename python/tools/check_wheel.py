@@ -11,14 +11,14 @@ import zipfile
 def check(path):
     with zipfile.ZipFile(path) as wheel, tempfile.TemporaryDirectory() as directory:
         names = wheel.namelist()
-        assert "gmat_hpop/_native/gmat_py.py" in names
-        assert any(name.startswith("gmat_hpop/_native/_gmat_py") for name in names)
+        assert "gmatpy/_native/gmat_py.py" in names
+        assert any(name.startswith("gmatpy/_native/_gmat_py") for name in names)
         for library in ("GmatBase", "GmatUtil"):
-            prefix = f"gmat_hpop/_native/lib{library}.so"
+            prefix = f"gmatpy/_native/lib{library}.so"
             assert prefix not in names, "Unversioned linker alias duplicates the runtime library"
             assert any(name.startswith(prefix + ".") for name in names), "Runtime library missing"
-        assert "gmat_hpop/data/gravity/earth/EGM96.cof" in names
-        assert "gmat_hpop/data/planetary_ephem/de/leDE1941.405" in names
+        assert "gmatpy/data/gravity/earth/EGM96.cof" in names
+        assert "gmatpy/data/planetary_ephem/de/leDE1941.405" in names
         assert not any("graphics/" in name or "GmatConsole" in name or "GmatQt" in name for name in names)
         assert not any("xerces" in name.lower() for name in names), "Xerces is excluded"
         wheel.extractall(directory)

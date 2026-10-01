@@ -3,9 +3,9 @@ requires = ["scikit-build-core>=1.0", "swig>=4.2,<5"]
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "gmat-hpop"
-version = "0.1.0"
-description = "Headless Earth orbit propagation using the GMAT C++ engine"
+name = "gmatpy"
+version = "0.2.0"
+description = "Standalone Python access to the GMAT astrodynamics engine"
 readme = "python/README.rst"
 requires-python = ">=3.10"
 license = "Apache-2.0"
@@ -14,10 +14,10 @@ license-files = ["application/License.txt"]
 [tool.scikit-build]
 minimum-version = "build-system.requires"
 cmake.source-dir = "python"
-wheel.packages = ["python/gmat_hpop"]
-build.targets = ["gmat_hpop_wheel"]
-install.components = ["HPOP"]
-build-dir = "build/hpop/{wheel_tag}"
+wheel.packages = ["python/gmatpy"]
+build.targets = ["gmatpy_wheel"]
+install.components = ["GMAT_PY"]
+build-dir = "build/gmatpy/{wheel_tag}"
 sdist.inclusion-mode = "explicit"
 sdist.include = ["CMakeLists.txt", "pyproject.toml", "python/**", "swig/**",
                  "src/CMakeLists.txt", "src/base/**", "src/gmatutil/**", "src/console/**",

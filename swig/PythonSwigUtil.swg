@@ -21,8 +21,8 @@ typedef bool boolp;
 %runtime %{
 #define STRING(x) #x
 #define TOSTRING(x) STRING(x)
-#ifdef GMAT_HPOP_PACKAGE
-#define MODULE_NAME "gmat_hpop._native.gmat_py"
+#ifdef GMAT_PY_PACKAGE
+#define MODULE_NAME "gmatpy._native.gmat_py"
 #else
 #define MODULE_NAME "gmatpy._py" TOSTRING(PY_MAJOR_VERSION) TOSTRING(PY_MINOR_VERSION) ".gmat_py"
 #endif

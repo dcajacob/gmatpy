@@ -11,7 +11,7 @@ import sys
 
 import pytest
 
-from gmat_hpop import ForceModel, Spacecraft, propagate
+from gmatpy import ForceModel, Spacecraft, propagate
 
 EPOCH = "2020-07-20T12:00:00Z"
 MU = 398600.4415  # GMAT's default Earth gravitational parameter, km^3/s^2.
@@ -47,7 +47,7 @@ def test_matches_gmat_published_jgm3_example():
     # Independent native setup from application/api/Ex_R2020a_BasicFM.py and
     # Ex_R2020a_PropagationStep.py. Use Keplerian input to catch Cartesian facade
     # setup errors; compare states before/after its published 60-second step.
-    from gmat_hpop import _runtime
+    from gmatpy import _runtime
     with _runtime.lock:
         gmat = _runtime.engine()
         gmat.Clear()
@@ -136,7 +136,7 @@ def test_full_egm96_field():
 def test_runs_without_display_and_preserves_cwd(tmp_path):
     code = """
 from pathlib import Path
-from gmat_hpop import propagate
+from gmatpy import propagate
 cwd = Path.cwd()
 result = propagate([7000,0,0,0,7.5,1], '2020-07-20T12:00:00Z', [0,60])
 assert len(result) == 2
@@ -155,7 +155,7 @@ print('HEADLESS_OK')
 def test_fork_is_rejected_before_acquiring_inherited_lock():
     if not hasattr(os, "fork"):
         pytest.skip("fork unavailable")
-    from gmat_hpop import _runtime
+    from gmatpy import _runtime
     with _runtime.lock:
         child = os.fork()
         if child == 0:

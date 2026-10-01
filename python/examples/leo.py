@@ -1,6 +1,6 @@
 """Run after installing the wheel: python python/examples/leo.py."""
 
-from gmat_hpop import ForceModel, Spacecraft, propagate
+from gmatpy import ForceModel, Spacecraft, propagate
 
 samples = propagate(
     [7000, 0, 0, 0, 7.5, 1.0],

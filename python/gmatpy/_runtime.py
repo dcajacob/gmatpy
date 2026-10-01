@@ -1,11 +1,13 @@
 """Locate bundled scientific inputs and initialize GMAT without changing cwd."""
 
+from contextlib import contextmanager
 import os
 from pathlib import Path
 import tempfile
 import threading
 
 lock = threading.Lock()
+_thread = threading.local()
 _pid = os.getpid()
 _directory = None
 _engine = None
@@ -26,7 +28,7 @@ def engine():
 
     root = Path(__file__).resolve().parent
     data = root / "data"
-    _directory = tempfile.TemporaryDirectory(prefix="gmat-hpop-")
+    _directory = tempfile.TemporaryDirectory(prefix="gmatpy-")
     output = Path(_directory.name)
     # FileManager validates even paths unused by headless propagation. Route those
     # to the private runtime directory rather than require a GMAT install layout.
@@ -84,3 +86,24 @@ def engine():
         raise RuntimeError(f"GMAT initialization failed; inspect {output / 'engine.log'}")
     _engine = gmat
     return gmat
+
+
+@contextmanager
+def operation(*, clear=False):
+    """Serialize engine access, reject nesting, and optionally reset owned objects."""
+    check_process()
+    if getattr(_thread, "active", False):
+        raise RuntimeError("GMAT calls cannot be nested; exit the native session first")
+    with lock:
+        _thread.active = True
+        try:
+            gmat = engine()
+            if clear:
+                gmat.Clear()
+            try:
+                yield gmat
+            finally:
+                if clear:
+                    gmat.Clear()
+        finally:
+            _thread.active = False

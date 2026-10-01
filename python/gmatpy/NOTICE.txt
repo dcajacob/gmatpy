@@ -1,4 +1,4 @@
-gmat-hpop embeds General Mission Analysis Tool (GMAT) R2026a.
+gmatpy embeds General Mission Analysis Tool (GMAT) R2026a.
 Copyright (c) 2002-2026 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
 GMAT is licensed under Apache License 2.0; see licenses/GMAT.txt.

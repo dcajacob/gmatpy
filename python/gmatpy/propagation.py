@@ -1,24 +1,12 @@
 """A small value-based facade over GMAT's propagation setup API."""
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from decimal import Decimal
+from datetime import datetime
 import math
 from typing import Iterable
 
 from . import _runtime
-
-
-def _finite(value, name, *, positive=False, nonnegative=False):
-    if isinstance(value, bool):
-        raise ValueError(f"{name} must be a finite number")
-    try:
-        value = float(value)
-    except (TypeError, ValueError, OverflowError) as exc:
-        raise ValueError(f"{name} must be a finite number") from exc
-    if not math.isfinite(value) or (positive and value <= 0) or (nonnegative and value < 0):
-        raise ValueError(f"{name} is outside its valid range")
-    return value
+from ._validation import finite as _finite, epoch_as_gmat_mjd as _epoch_string, six_vector
 
 
 @dataclass(frozen=True)
@@ -96,23 +84,6 @@ class Sample:
         return self.position_km + self.velocity_km_s
 
 
-def _epoch_string(epoch):
-    if isinstance(epoch, str):
-        try:
-            epoch = datetime.fromisoformat(epoch.replace("Z", "+00:00"))
-        except ValueError as exc:
-            raise ValueError("epoch must be an ISO 8601 timestamp with a timezone") from exc
-    if not isinstance(epoch, datetime) or epoch.tzinfo is None or epoch.utcoffset() is None:
-        raise ValueError("epoch must be a timezone-aware datetime or ISO 8601 timestamp")
-    epoch = epoch.astimezone(timezone.utc)
-    # GMAT's Gregorian parser accepts exactly three fractional digits. UTC
-    # ModJulian avoids truncating Python's microseconds. GMAT's MJD origin is
-    # JD 2430000.0 (1941-01-05 noon), rather than the conventional JD 2400000.5.
-    delta = epoch - datetime(1941, 1, 5, 12, tzinfo=timezone.utc)
-    return str(Decimal(delta.days) + Decimal(delta.seconds) / Decimal(86400)
-               + Decimal(delta.microseconds) / Decimal(86400000000))
-
-
 def propagate(
     state: Iterable[float],
     epoch: datetime | str,
@@ -131,7 +102,7 @@ def propagate(
     engine has process-global state; use spawned processes for parallel jobs.
     """
     _runtime.check_process()
-    state = tuple(_finite(value, "state") for value in state)
+    state = six_vector(state)
     if len(state) != 6 or math.hypot(*state[:3]) == 0:
         raise ValueError("state must have six components and a nonzero position")
     epoch = _epoch_string(epoch)
@@ -146,20 +117,14 @@ def propagate(
     max_step_s = _finite(max_step_s, "max_step_s", positive=True)
     if not times:
         return []
-    with _runtime.lock:
-        gmat = _runtime.engine()
-        gmat.Clear()
-        try:
-            return _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step_s)
-        finally:
-            # Return Python values, never proxies to objects cleared by the next call.
-            gmat.Clear()
+    with _runtime.operation(clear=True) as gmat:
+        return _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step_s)
 
 
 def _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step_s):
     from pathlib import Path
 
-    sat = gmat.Construct("Spacecraft", "HpopSat")
+    sat = gmat.Construct("Spacecraft", "GmatPySat")
     sat.SetField("DateFormat", "UTCModJulian")
     sat.SetField("Epoch", epoch)
     sat.SetField("CoordinateSystem", "EarthMJ2000Eq")
@@ -170,14 +135,14 @@ def _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step
                        ("Cr", spacecraft.cr), ("DragArea", spacecraft.drag_area_m2),
                        ("SRPArea", spacecraft.srp_area_m2)):
         sat.SetField(key, value)
-    fm = gmat.Construct("ForceModel", "HpopForces")
+    fm = gmat.Construct("ForceModel", "GmatPyForces")
     fm.SetField("CentralBody", "Earth")
     if forces.degree == 0 and not forces.drag:
-        gravity = gmat.Construct("PointMassForce", "HpopEarth")
+        gravity = gmat.Construct("PointMassForce", "GmatPyEarth")
     else:
         # GMAT requires a primary GravityField body for drag. A degree/order
         # zero field supplies the same monopole when only drag is requested.
-        gravity = gmat.Construct("GravityField", "HpopEarth")
+        gravity = gmat.Construct("GravityField", "GmatPyEarth")
         gravity.SetField("PotentialFile", str(Path(__file__).resolve().parent /
                          "data/gravity/earth" / f"{forces.gravity_model}.cof"))
         gravity.SetField("Degree", forces.degree)
@@ -186,18 +151,18 @@ def _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step
     fm.AddForce(gravity)
     for enabled, body in ((forces.sun, "Sun"), (forces.moon, "Luna")):
         if enabled:
-            point_mass = gmat.Construct("PointMassForce", f"Hpop{body}")
+            point_mass = gmat.Construct("PointMassForce", f"GmatPy{body}")
             point_mass.SetField("BodyName", body)
             fm.AddForce(point_mass)
     if forces.srp:
-        fm.AddForce(gmat.Construct("SolarRadiationPressure", "HpopSrp"))
+        fm.AddForce(gmat.Construct("SolarRadiationPressure", "GmatPySrp"))
     if forces.drag:
-        drag = gmat.Construct("DragForce", "HpopDrag")
+        drag = gmat.Construct("DragForce", "GmatPyDrag")
         drag.SetField("AtmosphereModel", "JacchiaRoberts")
         # DragForce takes ownership of its atmosphere. Construct() would also
         # register it with ConfigManager, causing both owners to delete it on
         # Clear(). Create an unregistered atmosphere and transfer ownership.
-        atmosphere = gmat.JacchiaRobertsAtmosphere("HpopAtmosphere")
+        atmosphere = gmat.JacchiaRobertsAtmosphere("GmatPyAtmosphere")
         if not drag.SetReference(atmosphere):
             raise RuntimeError("GMAT could not attach the Jacchia-Roberts atmosphere")
         atmosphere.thisown = False
@@ -207,8 +172,8 @@ def _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step
         drag.SetField("F107A", forces.f107a)
         drag.SetField("MagneticIndex", forces.kp)
         fm.AddForce(drag)
-    prop = gmat.Construct("Propagator", "HpopProp")
-    prop.SetReference(gmat.Construct("PrinceDormand78", "HpopIntegrator"))
+    prop = gmat.Construct("Propagator", "GmatPyProp")
+    prop.SetReference(gmat.Construct("PrinceDormand78", "GmatPyIntegrator"))
     prop.SetReference(fm)
     prop.SetField("InitialStepSize", max_step_s)
     prop.SetField("MaxStep", max_step_s)

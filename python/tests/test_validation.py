@@ -1,6 +1,6 @@
 import pytest
 
-from gmat_hpop import ForceModel, Spacecraft, propagate
+from gmatpy import ForceModel, Spacecraft, propagate
 
 STATE = [7000, 0, 0, 0, 7.5, 1]
 EPOCH = "2020-07-20T12:00:00Z"
@@ -40,7 +40,7 @@ def test_empty_output_times():
 
 
 def test_native_exception_is_a_python_exception_and_engine_recovers():
-    from gmat_hpop import _runtime
+    from gmatpy import _runtime
     with _runtime.lock:
         gmat = _runtime.engine()
         gmat.Clear()
@@ -55,7 +55,7 @@ def test_native_exception_is_a_python_exception_and_engine_recovers():
 
 def test_legacy_data_updater_is_disabled():
     from pathlib import Path
-    from gmat_hpop import _runtime
+    from gmatpy import _runtime
     with _runtime.lock:
         gmat = _runtime.engine()
         directory = Path(gmat.FileManager.Instance().GetStartupFileDir())
