@@ -21,13 +21,21 @@ typedef bool boolp;
 %runtime %{
 #define STRING(x) #x
 #define TOSTRING(x) STRING(x)
+#ifdef GMAT_HPOP_PACKAGE
+#define MODULE_NAME "gmat_hpop._native.gmat_py"
+#else
 #define MODULE_NAME "gmatpy._py" TOSTRING(PY_MAJOR_VERSION) TOSTRING(PY_MINOR_VERSION) ".gmat_py"
+#endif
 SWIGINTERN void GMAT_PyException(const char *exception, const char *msg) {
   PyObject* pmodule = PyImport_ImportModule(MODULE_NAME);
+  if (!pmodule) return;
   PyObject* pclass = PyObject_GetAttrString(pmodule, "APIException");
   Py_DECREF(pmodule);
+  if (!pclass) return;
   PyObject* arglist = Py_BuildValue("(s)", msg);
+  if (!arglist) { Py_DECREF(pclass); return; }
   PyObject* excep = PyObject_CallObject(pclass, arglist);
+  if (!excep) { Py_DECREF(pclass); Py_DECREF(arglist); return; }
   PyErr_SetString((PyObject*)(excep->ob_type), msg);
   Py_DECREF(pclass);
   Py_DECREF(arglist);

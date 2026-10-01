@@ -48,7 +48,14 @@ endif()
 # Find specified Python3 version, using the specified Python3 root directory
 if(_GMATAPI_GENERATE_PYTHON)
   _SETPYTHONROOTDIR(${GMATAPI_Python3_Version})
-  FIND_PACKAGE(Python3 ${GMATAPI_Python3_Version} EXACT COMPONENTS Development)
+  if(GMAT_PYTHON_EXTENSION_ONLY)
+    # Wheel builders such as manylinux provide extension headers but no
+    # embedding libpython. These bindings link Python3::Module only.
+    FIND_PACKAGE(Python3 ${GMATAPI_Python3_Version} EXACT COMPONENTS Development.Module)
+    SET(Python3_Development_FOUND ${Python3_Development.Module_FOUND})
+  else()
+    FIND_PACKAGE(Python3 ${GMATAPI_Python3_Version} EXACT COMPONENTS Development)
+  endif()
   if(NOT Python3_Development_FOUND)
     MESSAGE(NOTICE "Skipping Python API: Python ${GMATAPI_Python3_Version} not found")
     _REPORTPYTHONURL(${GMATAPI_Python3_Version})

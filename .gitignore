@@ -70,3 +70,5 @@ __pycache__
 /application/data/navdata/thrusthistory/PredDv_Large.thrust
 /.clang-format
 /.clangd
+/dist/
+/wheelhouse/

@@ -1,0 +1,13 @@
+gmat-hpop embeds General Mission Analysis Tool (GMAT) R2026a.
+Copyright (c) 2002-2026 United States Government as represented by the
+Administrator of the National Aeronautics and Space Administration.
+GMAT is licensed under Apache License 2.0; see licenses/GMAT.txt.
+
+GMAT source: https://github.com/nasa/GMAT
+GMAT incorporates NASA/JPL NAIF CSPICE; its code is statically linked into
+the engine. Scientific data are the files distributed with this GMAT source
+snapshot (EGM96, JGM3, DE405, Earth orientation, time and atmosphere inputs).
+
+The wheel build helper uses Xerces-C 3.2.5 with network access and ICU disabled;
+its Apache License and NOTICE are included in licenses/. Native platform
+libraries (glibc and the C++ runtime) are supplied by the host operating system.

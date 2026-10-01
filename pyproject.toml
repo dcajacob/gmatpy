@@ -1,0 +1,36 @@
+[build-system]
+requires = ["scikit-build-core>=1.0", "swig>=4.2,<5"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "gmat-hpop"
+version = "0.1.0"
+description = "Headless Earth orbit propagation using the GMAT C++ engine"
+readme = "python/README.rst"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["application/License.txt"]
+
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+cmake.source-dir = "python"
+wheel.packages = ["python/gmat_hpop"]
+build.targets = ["gmat_hpop_wheel"]
+install.components = ["HPOP"]
+build-dir = "build/hpop/{wheel_tag}"
+sdist.inclusion-mode = "explicit"
+sdist.include = ["CMakeLists.txt", "pyproject.toml", "python/**", "swig/**",
+                 "src/CMakeLists.txt", "src/base/**", "src/gmatutil/**", "src/console/**",
+                 "plugins/CMakeLists.txt", "depends/CMakeLists.txt", "depends/CMakeModules/**",
+                 "build/cmake_modules/**", "build/install/**",
+                 "application/License.txt", "application/README.txt",
+                 "application/data/planetary_coeff/**", "application/data/time/**",
+                 "application/data/icrf/**", "application/data/atmosphere/earth/**",
+                 "application/data/gravity/earth/EGM96.cof", "application/data/gravity/earth/JGM3.cof",
+                 "application/data/gravity/earth/JGM2.cof",
+                 "application/data/planetary_ephem/de/leDE1941.405",
+                 "application/data/planetary_ephem/spk/DE405AllPlanets.bsp"]
+sdist.exclude = ["**/__pycache__/**", "**/*.pyc"]
+
+[tool.pytest.ini_options]
+testpaths = ["python/tests"]
