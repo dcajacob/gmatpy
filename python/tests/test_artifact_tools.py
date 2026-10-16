@@ -251,6 +251,22 @@ def test_build_helper_rejects_obsolete_profile_before_build(tmp_path, profile):
     assert not (tmp_path / "uncreated").exists()
 
 
+@pytest.mark.parametrize("profile", [None, "extended"])
+def test_build_helper_accepts_unset_or_full_profile_before_dependency_check(tmp_path, profile):
+    environment = dict(os.environ, GMAT_PY_PYTHON="must-not-run-a-build",
+                       GMAT_PY_WHEEL_DIR=str(tmp_path / "uncreated"))
+    environment.pop("GMAT_PY_PROFILE", None)
+    environment.pop("CSPICE_DIR", None)
+    if profile is not None:
+        environment["GMAT_PY_PROFILE"] = profile
+    result = subprocess.run(["bash", str(TOOLS / "build_wheel.sh")],
+                            env=environment, capture_output=True, text=True, timeout=10)
+    assert result.returncode == 1
+    assert "Set CSPICE_DIR" in result.stderr
+    assert "is obsolete" not in result.stderr
+    assert not (tmp_path / "uncreated").exists()
+
+
 def test_qualification_rejects_obsolete_profile_before_build(monkeypatch):
     spec = importlib.util.spec_from_file_location(
         "qualification", TOOLS.parent / "ci" / "qualify.py")

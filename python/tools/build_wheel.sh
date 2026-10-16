@@ -6,7 +6,7 @@ task_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 python_bin="${GMAT_PY_PYTHON:-python3}"
 output_root="${GMAT_PY_WHEEL_DIR:-${task_root}/wheelhouse}"
 parallelism="${CMAKE_BUILD_PARALLEL_LEVEL:-2}"
-if [[ -v GMAT_PY_PROFILE && "${GMAT_PY_PROFILE}" != extended ]]; then
+if [[ ${GMAT_PY_PROFILE+x} && "${GMAT_PY_PROFILE:-}" != extended ]]; then
   echo "GMAT_PY_PROFILE=${GMAT_PY_PROFILE} is obsolete; GMAT Py builds one full headless package (SPICE included)" >&2
   exit 2
 fi
