@@ -1,10 +1,9 @@
 {
   "schema_version": 1,
-  "review_date": "2026-10-01",
+  "review_date": "2026-10-16",
   "project": "GMAT Py",
   "package_version": "0.2.0",
-  "inspected_source_commit": "3c35d1bd3425ea1b9e53accc296ca5fbea593a6c",
-  "scope": "Exact selected wheel/sdist input inventory after targeted provenance remediation; terms and U.S. numerical-data assessments are component-specific, not a blanket license or legal certification.",
+  "scope": "Exact selected wheel/sdist data inventory after restoring NASA baseline ICRF bytes/grid, March Earth PCK and implemented nutation record order; terms and U.S. numerical-data assessments are component-specific, not a blanket license or legal certification. Final built-source identity is recorded separately in BUILD_PROVENANCE.json.",
   "status_definitions": {
     "excluded": "Omitted from wheel and sdist; caller-provided optional inputs follow provider terms.",
     "verified_unmodified_naif": "Bytes match authoritative NAIF kernel; unchanged-kernel redistribution rules apply.",
@@ -25,6 +24,7 @@
   "packaging_notes": [
     "Explicit 17-file data allowlist; no recursive data installation.",
     "No automatic data refresh or download; preserve coverage/version limits and scientific change notes.",
+    "Default ICRF table and Earth PCK are exact copies of the pinned NASA baseline, not regenerated or refreshed. Implemented nutation records retain NASA summation order. Historical ERFA-alternative validation is preserved as historical only.",
     "Excluded optional weather/troposphere inputs require caller paths only when selected.",
     "Release preflight checks bytes/notices and the recorded owner decision; it does not make a legal determination."
   ],
@@ -61,7 +61,7 @@
       "redistribution_basis": "Apache source-constant lineage and functional scientific model coefficients; preserve GMAT and SCIENTIFIC-DATA notices",
       "numeric_change": false,
       "generator": "python/tools/generate_coordinate_data.py",
-      "license_file_sha256": "2e7e4bdd484e714c7805f2a161aee7271c94949237ca00f24ce9575877f2c2a9"
+      "license_file_sha256": "0b78b40d00ea770e10555a1c39a43b688d46103b27593e664fc6e450ba1fbeaa"
     },
     {
       "path": "atmosphere/earth/SchattenPredict.txt",
@@ -273,24 +273,50 @@
       "path": "icrf/ICRF_Table.txt",
       "sha256": "e6b3969a7961c56cacd37a3daa2a98d1d7d765e8605699d5151db2a5bde44547",
       "size_bytes": 4114186,
-      "status": "excluded",
-      "license_file": null,
+      "status": "documented_reuse_basis",
+      "license_file": "SCIENTIFIC-DATA.txt",
       "provider": "Legacy NASA/GMAT ICRF numerical rotation-vector output",
-      "role": "Replaced legacy table omitted from artifacts",
-      "notes": "Legacy table remains in the working Git tree for review and is excluded from packaged artifacts. The reproducible ICRF_ERFA_Table.txt replaces it. No claim is made here about an unidentified historical generator.",
-      "source_urls": [],
-      "evidence": [],
-      "source_hash_verified": false
+      "role": "Required native MJ2000Eq/FK5 to ICRF rotation vectors; exact NASA baseline default",
+      "notes": "Exact numeric-only NASA baseline bytes and original unequal sampling grid restored. The historical generator and provider-specific grant are unidentified. Bounded U.S. scientific-numerical-data reuse assessment, not a verified provider license, blanket public-domain designation or worldwide/contractual-rights determination. The copy utility verifies bytes; it does not regenerate or independently validate the original model.",
+      "source_urls": [
+        "https://raw.githubusercontent.com/nasa/GMAT/9363e129be366520c6edb0b4079204ed60666007/application/data/icrf/ICRF_Table.txt",
+        "https://www.copyright.gov/help/faq/faq-protect.html",
+        "https://www.copyright.gov/title17/92chap1.html"
+      ],
+      "evidence": [
+        {
+          "source_commit": "9363e129be366520c6edb0b4079204ed60666007",
+          "source_path": "application/data/icrf/ICRF_Table.txt",
+          "source_sha256": "e6b3969a7961c56cacd37a3daa2a98d1d7d765e8605699d5151db2a5bde44547",
+          "verification_scope": "Exact NASA Git-blob byte identity, not original-generator or provider-license verification"
+        }
+      ],
+      "source_hash_verified": true,
+      "historical_generator_verified": false,
+      "provider_license_verified": false,
+      "numeric_change_from_nasa_baseline": false,
+      "generator": "python/tools/generate_coordinate_data.py (hash-checked copy only)",
+      "coverage": {
+        "rows": 49063,
+        "range_a1_mjd": [
+          6935.000000397937,
+          58070.00000039794
+        ],
+        "maximum_grid_gap_days": 16,
+        "inserted_rows_from_nasa_baseline": 0
+      },
+      "redistribution_basis": "Documented U.S. scientific-numerical-data assessment with NASA/GMAT attribution and unknown-generator limitation; see SCIENTIFIC-DATA.txt",
+      "license_file_sha256": "0b78b40d00ea770e10555a1c39a43b688d46103b27593e664fc6e450ba1fbeaa"
     },
     {
       "path": "planetary_coeff/NUTATION.DAT",
-      "sha256": "b7166e8ce08ae0a2f540c746dbef6569aa25ddf190cd44cb40090d9e8d27e4c9",
-      "size_bytes": 9650,
+      "sha256": "1c36568b6997159206ff301f03d3978b70e911c466dde978806861d47251b978",
+      "size_bytes": 9675,
       "status": "documented_reuse_basis",
       "license_file": "SCIENTIFIC-DATA.txt",
       "provider": "ERFA 2.0.1 (BSD-3-Clause) IAU 1980 and IERS Conventions (1996) KSV_1996_3 coefficients",
       "role": "Implemented GMAT 1980 and 1996 nutation models",
-      "notes": "Regenerated the two implemented models: IAU1980 (106 terms) and IAU1996 (263 terms), retaining every argument/coefficient value with deterministic order/independent headings. ERFA BSD notice applies to 1980 source-derived values. 1996 numerical model coefficients only, no Fortran algorithm/prose, with U.S. mathematical-data reuse assessment. Unused 1950/unsupported 2000 sections omitted; actual native readers verified 106/263 terms.",
+      "notes": "Independently formatted implemented IAU1980 (106 terms) and IAU1996 (263 terms), retaining every argument/coefficient value AND NASA baseline record order, including ties. ERFA BSD notice applies to 1980 source-derived values. 1996 numerical model coefficients only, no Fortran algorithm/prose, with U.S. mathematical-data reuse assessment. Unused 1950/unsupported 2000 sections remain omitted. Native-reader verification is recorded in restoration evidence; prior coefficient-source verification is retained separately below.",
       "source_urls": [
         "https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/nut80.c",
         "https://iers-conventions.obspm.fr/archive/1996/1996IERSConventionsArchive.tar.gz",
@@ -303,7 +329,8 @@
           "argument_sets": 106,
           "amplitude_drift_coefficients": 424,
           "exact_values_unchanged": true,
-          "license_file": "ERFA.txt"
+          "license_file": "ERFA.txt",
+          "verification_date_scope": "Retained prior hash-pinned coefficient-source evidence; not a fresh external-source download in the 2026-10-16 restoration"
         },
         {
           "archive_url": "https://iers-conventions.obspm.fr/archive/1996/1996IERSConventionsArchive.tar.gz",
@@ -313,21 +340,33 @@
           "argument_sets": 263,
           "coefficients": 1578,
           "exact_values_unchanged": true,
-          "scope": "Numerical coefficients only; no implementation code or explanatory prose"
+          "scope": "Numerical coefficients only; no implementation code or explanatory prose",
+          "verification_date_scope": "Retained prior hash-pinned coefficient-source evidence; not a fresh external-source download in the 2026-10-16 restoration"
+        },
+        {
+          "source_commit": "9363e129be366520c6edb0b4079204ed60666007",
+          "source_path": "application/data/planetary_coeff/NUTATION.DAT",
+          "source_sha256": "a3e3af2db37547085cd56d96ec9c7039c1b3bb0b0b39e2a7c9ed111ce292928c",
+          "implemented_rows": [
+            106,
+            263
+          ],
+          "verification_scope": "All implemented coefficient values and record order equal NASA; legacy prose and unused/unsupported sections are not copied"
         }
       ],
       "source_hash_verified": true,
       "redistribution_basis": "BSD-3-Clause for ERFA-derived 1980 values and documented scientific coefficient reuse for 1996",
       "numeric_change": false,
-      "presentation_and_summation_order_changed": true,
       "additional_notice_files": [
         "ERFA.txt"
       ],
       "generator": "python/tools/generate_coordinate_data.py",
-      "license_file_sha256": "2e7e4bdd484e714c7805f2a161aee7271c94949237ca00f24ce9575877f2c2a9",
+      "license_file_sha256": "0b78b40d00ea770e10555a1c39a43b688d46103b27593e664fc6e450ba1fbeaa",
       "additional_notice_sha256": {
         "ERFA.txt": "b1858f9a263f22c438a455a32945da51a31a0ae25a21055da13bb7ed57cc3b51"
-      }
+      },
+      "presentation_changed": true,
+      "summation_order_matches_nasa_baseline": true
     },
     {
       "path": "planetary_coeff/SPICEEarthCurrentKernel.bpc",
@@ -461,24 +500,49 @@
     },
     {
       "path": "planetary_coeff/earth_latest_high_prec.bpc",
-      "sha256": "e359d1a6c02a412f22377f4598c0139adb8f2ae4d03f299d4bbe1a0de471ffd1",
-      "status": "verified_unmodified_naif",
+      "sha256": "94b3cedf59698eedf429ed50e25a2c9cec3e916cbc1bc5ce405671ce11b3a527",
+      "status": "documented_reuse_basis",
       "source_urls": [
-        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/earth_000101_261227_260930.bpc",
+        "https://raw.githubusercontent.com/nasa/GMAT/9363e129be366520c6edb0b4079204ed60666007/application/data/planetary_coeff/earth_latest_high_prec.bpc",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/earth_000101_260612_260316.bpc",
         "https://naif.jpl.nasa.gov/naif/rules.html"
       ],
       "license_file": "NAIF-CSPICE.txt",
-      "notes": "Unchanged official 2026-09-30 dated Earth kernel under local runtime alias. Replaces prior March snapshot; coverage extends through 2026-12-27. 302 common-coverage ITRF93 rotations differ up to 2.3618222974917546e-6 rad in sampled former prediction interval. Preserve embedded NAIF producer metadata.",
-      "size_bytes": 5140480,
+      "notes": "Exact NASA baseline bytes, including embedded NAIF producer metadata, restored. NAIF-created 2026-03-16 dated Earth kernel under the inherited runtime alias; coverage ends 2026-06-12, with last input datum 2026-03-16 and subsequent predictions. Exact NASA Git-blob identity is verified; no fresh direct NAIF-download byte comparison for this restored snapshot. Documented reuse basis combines embedded NAIF lineage, unchanged-kernel rules and bounded numeric-data assessment; not a newly verified provider-license claim or current-data refresh.",
+      "size_bytes": 5037056,
       "provider": "NASA/JPL NAIF identified by embedded DAF comments",
-      "role": "Earth orientation kernel",
+      "role": "Earth orientation kernel; pinned NASA March 2026 snapshot",
       "source_hash_verified": true,
       "evidence": [
         {
-          "summary": "Source SHA matches all output bytes; replacement extends coverage, validated across 302 epochs."
+          "source_commit": "9363e129be366520c6edb0b4079204ed60666007",
+          "source_path": "application/data/planetary_coeff/earth_latest_high_prec.bpc",
+          "source_sha256": "94b3cedf59698eedf429ed50e25a2c9cec3e916cbc1bc5ce405671ce11b3a527",
+          "verification_scope": "Exact NASA Git-blob bytes; embedded comments identify NAIF producer and dated filename; no fresh direct NAIF download comparison"
         }
       ],
-      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7"
+      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7",
+      "direct_naif_download_hash_verified": false,
+      "provider_license_verified": false,
+      "numeric_change_from_nasa_baseline": false,
+      "coverage": {
+        "range_et_seconds": [
+          -43135.816087188054,
+          834494469.184639
+        ],
+        "start_date": "2000-01-01",
+        "end_date": "2026-06-12",
+        "last_input_datum_date": "2026-03-16",
+        "created_date": "2026-03-16",
+        "naif_dated_filename": "earth_000101_260612_260316.bpc"
+      },
+      "additional_notice_files": [
+        "SCIENTIFIC-DATA.txt"
+      ],
+      "generator": "python/tools/generate_coordinate_data.py (hash-checked copy only)",
+      "additional_notice_sha256": {
+        "SCIENTIFIC-DATA.txt": "0b78b40d00ea770e10555a1c39a43b688d46103b27593e664fc6e450ba1fbeaa"
+      }
     },
     {
       "path": "planetary_coeff/eopc04_08.62-now",
@@ -659,17 +723,17 @@
       "source_hash_verified": true,
       "redistribution_basis": "Official Government scientific time-standard facts; 17 USC 102(b) and 105 as applicable",
       "numeric_change": false,
-      "license_file_sha256": "2e7e4bdd484e714c7805f2a161aee7271c94949237ca00f24ce9575877f2c2a9"
+      "license_file_sha256": "0b78b40d00ea770e10555a1c39a43b688d46103b27593e664fc6e450ba1fbeaa"
     },
     {
       "path": "icrf/ICRF_ERFA_Table.txt",
       "sha256": "23571b81ce50ba714013185f87b6fbeac22b4492f05902b8904e8a43588626bb",
       "size_bytes": 4556308,
-      "status": "licensing_verified",
+      "status": "excluded",
       "license_file": "ERFA.txt",
       "provider": "GMAT Py generated numerical output from BSD-3-Clause ERFA 2.0.1",
-      "role": "Required native MJ2000Eq/FK5 to ICRF rotation vectors",
-      "notes": "Independently generated from ERFA 2.0.1, with no legacy vector/EOP input. 51,136 daily rows preserve original endpoints and fill 2,073 missing days. A1MJD=JD-2430000; TT=A1+(32.184-0.0343817) seconds; reference common Earth-rotation phase UT1=TAI; radian passive FK5-to-ICRF vectors. Node changes <=0.349 mas. At 4,098 sampled dates new interpolation differs from direct ERFA calculation <=0.000852 mas; old-vs-new difference reaches 11.99 mas. 327 actual native conversion comparisons/roundtrips verified. Generated data are not official SOFA releases.",
+      "role": "Historical ERFA-generated alternative omitted from wheel/sdist and default runtime",
+      "notes": "Historical independently ERFA-generated alternative, formerly installed. It changes the original NASA values and inserts 2,073 daily rows. The default has been restored to exact ICRF_Table.txt; this ERFA table must remain absent from artifacts. The offline generator requires explicit --erfa-icrf-output for an alternative and does not choose it implicitly. Saved validation below is historical, not a new test or qualification of the restored default. ERFA-derived output is not an official ERFA/SOFA release.",
       "source_urls": [
         "https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/c2i06a.c",
         "https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/pnm80.c",
@@ -689,86 +753,89 @@
       ],
       "source_hash_verified": true,
       "numeric_change": true,
-      "generator": "python/tools/generate_coordinate_data.py",
+      "generator": "python/tools/generate_coordinate_data.py --erfa-icrf-output (explicit optional alternative only)",
       "additional_notice_files": [
         "SCIENTIFIC-DATA.txt"
       ],
-      "scientific_validation": {
-        "old_rows": 49063,
-        "new_rows": 51136,
-        "old_range_a1_mjd": [
-          6935.000000397937,
-          58070.00000039794
-        ],
-        "new_range_a1_mjd": [
-          6935.000000397937,
-          58070.00000039794
-        ],
-        "all_old_days_retained": true,
-        "new_min_rotation_vector_norm_radian": 2.014063115347371e-09,
-        "max_node_rotation_vector_delta_radian": 1.6920540901392836e-09,
-        "max_node_rotation_vector_delta_milliarcsecond": 0.34901120906218625,
-        "max_node_matrix_element_delta": 1.690974105278962e-09,
-        "interpolation_comparison_epochs": 4098,
-        "max_interpolated_rotation_vector_delta_radian": 5.812749727587518e-08,
-        "max_interpolated_rotation_vector_delta_milliarcsecond": 11.989656963237016,
-        "conservative_position_difference_bounds_meters": {
-          "7000": 0.4068924809311262,
-          "42164": 2.4508877951400008,
-          "149597870.7": 8695.749821590976
-        },
-        "conservative_velocity_difference_bounds_mm_per_second": {
-          "7.5": 0.4359562295690638,
-          "29.78": 1.7310368688755629
-        }
-      },
-      "native_validation": {
-        "cases": 327,
-        "maximum_case": {
-          "epoch": "1989-01-06T10:29:07Z",
-          "input": [
-            149597870.7,
-            0.0,
-            0.0,
-            0.0,
-            29.78,
-            0.0
-          ],
-          "position_difference_m": 6319.769470677092,
-          "velocity_difference_mm_s": 1.2593043336077236
-        },
-        "by_state_radius": [
-          {
-            "radius_km": 7000,
-            "cases": 109,
-            "max_position_difference_m": 0.2961274892029728,
-            "max_velocity_difference_mm_s": 0.31765106914551106
-          },
-          {
-            "radius_km": 42164,
-            "cases": 109,
-            "max_position_difference_m": 1.7812202721521018,
-            "max_velocity_difference_mm_s": 0.13001534936569195
-          },
-          {
-            "radius_km": 149597870.7,
-            "cases": 109,
-            "max_position_difference_m": 6319.769470677092,
-            "max_velocity_difference_mm_s": 1.2593043336077236
-          }
-        ],
-        "max_round_trip_component_error_km": 5.960464477539063e-08
-      },
       "license_file_sha256": "b1858f9a263f22c438a455a32945da51a31a0ae25a21055da13bb7ed57cc3b51",
       "additional_notice_sha256": {
-        "SCIENTIFIC-DATA.txt": "2e7e4bdd484e714c7805f2a161aee7271c94949237ca00f24ce9575877f2c2a9"
+        "SCIENTIFIC-DATA.txt": "0b78b40d00ea770e10555a1c39a43b688d46103b27593e664fc6e450ba1fbeaa"
+      },
+      "historical_validation": {
+        "scope": "Retained pre-restoration ERFA-alternative measurements; not newly executed and not reference expectations for the restored NASA default. These historical samples are not exhaustive extrema.",
+        "scientific_validation": {
+          "old_rows": 49063,
+          "new_rows": 51136,
+          "old_range_a1_mjd": [
+            6935.000000397937,
+            58070.00000039794
+          ],
+          "new_range_a1_mjd": [
+            6935.000000397937,
+            58070.00000039794
+          ],
+          "all_old_days_retained": true,
+          "new_min_rotation_vector_norm_radian": 2.014063115347371e-09,
+          "max_node_rotation_vector_delta_radian": 1.6920540901392836e-09,
+          "max_node_rotation_vector_delta_milliarcsecond": 0.34901120906218625,
+          "max_node_matrix_element_delta": 1.690974105278962e-09,
+          "interpolation_comparison_epochs": 4098,
+          "max_interpolated_rotation_vector_delta_radian": 5.812749727587518e-08,
+          "max_interpolated_rotation_vector_delta_milliarcsecond": 11.989656963237016,
+          "conservative_position_difference_bounds_meters": {
+            "7000": 0.4068924809311262,
+            "42164": 2.4508877951400008,
+            "149597870.7": 8695.749821590976
+          },
+          "conservative_velocity_difference_bounds_mm_per_second": {
+            "7.5": 0.4359562295690638,
+            "29.78": 1.7310368688755629
+          }
+        },
+        "native_validation": {
+          "cases": 327,
+          "maximum_case": {
+            "epoch": "1989-01-06T10:29:07Z",
+            "input": [
+              149597870.7,
+              0.0,
+              0.0,
+              0.0,
+              29.78,
+              0.0
+            ],
+            "position_difference_m": 6319.769470677092,
+            "velocity_difference_mm_s": 1.2593043336077236
+          },
+          "by_state_radius": [
+            {
+              "radius_km": 7000,
+              "cases": 109,
+              "max_position_difference_m": 0.2961274892029728,
+              "max_velocity_difference_mm_s": 0.31765106914551106
+            },
+            {
+              "radius_km": 42164,
+              "cases": 109,
+              "max_position_difference_m": 1.7812202721521018,
+              "max_velocity_difference_mm_s": 0.13001534936569195
+            },
+            {
+              "radius_km": 149597870.7,
+              "cases": 109,
+              "max_position_difference_m": 6319.769470677092,
+              "max_velocity_difference_mm_s": 1.2593043336077236
+            }
+          ],
+          "max_round_trip_component_error_km": 5.960464477539063e-08
+        }
       }
     }
   ],
   "generators": [
     {
       "path": "python/tools/generate_coordinate_data.py",
-      "sha256": "ad8fa8d94e08d6c4e2923847829460a9088349727634d56c3c5822b3c8f406fe"
+      "sha256": "d569ebf31371bdd514c7812102a530b58b4f33a06eaf75da9f47ff2799314284"
     },
     {
       "path": "python/tools/rebuild_native_de405.py",
@@ -786,5 +853,8 @@
       "path": "python/tools/verify_gravity_provenance.py",
       "sha256": "848952ae024fa385a6144b3ba7b5f2d31db0b95fb8c12922571aaad6a39c629a"
     }
-  ]
+  ],
+  "historical_initial_inspected_source_commit": "3c35d1bd3425ea1b9e53accc296ca5fbea593a6c",
+  "restoration_base_commit": "50f61a05a1dd68ba2682d74a8631eba1b514630e",
+  "nasa_baseline_commit": "9363e129be366520c6edb0b4079204ed60666007"
 }

@@ -11,7 +11,13 @@ extern "C" int evaluate_spline(int kind, const double *x, const double *y,
         else spline.reset(new NotAKnotInterpolator("candidate", 1));
         spline->SetExtrapolation(true);
         if (refill) {
-            for (int i=0; i<5; ++i) { double v=y[i]+5; spline->AddPoint(x[i], &v); }
+            for (int i=0; i<5; ++i) {
+                // Mode 1 preserves the historical SciPy fixture. Mode 2 changes
+                // curvature so the Clear/refill regression cannot pass by
+                // reusing second derivatives from an earlier shape.
+                double v=refill==2 ? 2*y[i]+7 : y[i]+5;
+                spline->AddPoint(x[i], &v);
+            }
             double prior;
             if (!spline->Interpolate(queries[0], &prior)) return 2;
             spline->Clear();

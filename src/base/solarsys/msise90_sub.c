@@ -4,6 +4,10 @@
    inherited routines identified themselves as Numerical Recipes adaptations;
    their implementation is no longer used. The atmospheric model is unchanged.
 */
+/* GMAT Py modification, 2026-10-16: evaluate the same spline in normalized
+   interval coordinates, preserving exact knots. This avoids endpoint
+   cancellation without changing the coefficient equations, inherited
+   integration helper, or atmospheric data. */
 
 /* msise90_sub.f -- translated by f2c (version 20100827).
    You must link the resulting object file with libf2c:
@@ -2637,13 +2641,14 @@ L50:
 	x, real *y)
 {
     integer interval;
-    double width, offset, linear, quadratic, cubic;
+    double width, left, right, difference, linear, curvature;
 
-    /* Independently derive each segment as a polynomial about its left
-       knot: p(t) = y[left] + linear*t + quadratic*t^2 + cubic*t^3.
-       The endpoint values and second derivatives uniquely determine the
-       coefficients. Horner evaluation also preserves extrapolation using
-       the first or last interval. This is new Apache-2.0 project code.
+    /* Let right=(x-x0)/h and left=(x1-x)/h. The line joining the values
+       has zero curvature. The correction below vanishes at both endpoints
+       and has the prescribed second derivatives there, uniquely defining
+       the same cubic. Direct normalized endpoint weights avoid subtracting
+       a large constant from the left-origin polynomial at its right knot.
+       Continue the first/last polynomial for extrapolation.
     */
     if (*n < 2) {
         return 1;
@@ -2656,13 +2661,25 @@ L50:
     if (width <= 0.) {
         return 1;
     }
-    offset = (double)*x - xa[interval];
-    linear = ((double)ya[interval + 1] - ya[interval]) / width
-        - width * (2. * y2a[interval] + y2a[interval + 1]) / 6.;
-    quadratic = y2a[interval] / 2.;
-    cubic = ((double)y2a[interval + 1] - y2a[interval]) / (6. * width);
-    *y = (real)(ya[interval] + offset *
-        (linear + offset * (quadratic + offset * cubic)));
+    if (*x == xa[interval]) {
+        *y = ya[interval];
+        return 0;
+    }
+    if (*x == xa[interval + 1]) {
+        *y = ya[interval + 1];
+        return 0;
+    }
+    left = ((double)xa[interval + 1] - *x) / width;
+    right = ((double)*x - xa[interval]) / width;
+    /* Anchor the line at the nearer endpoint. Far outside a tiny interval,
+       left/right can be enormous opposites whose weighted sum loses even a
+       constant ordinate. Their endpoint difference is exactly zero instead. */
+    difference = (double)ya[interval + 1] - ya[interval];
+    linear = right <= .5 ? ya[interval] + right * difference
+                        : ya[interval + 1] - left * difference;
+    curvature = -left * right * width * width / 6. *
+        ((1. + left) * y2a[interval] + (1. + right) * y2a[interval + 1]);
+    *y = (real)(linear + curvature);
     return 0;
 } /* splint_ */
 

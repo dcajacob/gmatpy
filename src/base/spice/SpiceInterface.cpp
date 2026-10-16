@@ -477,21 +477,6 @@ bool SpiceInterface::UnloadKernel(const std::string &fileName)
       reset_c();
 //      throw UtilityException(errmsg);
       MessageInterface::ShowMessage("%s", errmsg.c_str());
-      // A failed text-kernel unload may already have cleared/rebuilt part of
-      // CSPICE's pool. Reconstruct the remaining available kernels and rebuild
-      // our cache, so restored files will not be mistaken for loaded kernels.
-      const auto previous = loadedKernels;
-      UnloadAllKernels();
-      for (const auto &kernel : previous)
-      {
-         if (kernel.first == fileName) continue;
-         try { LoadKernel(kernel.first); }
-         catch (BaseException &error)
-         {
-            MessageInterface::ShowMessage("*** WARNING *** %s", error.GetFullMessage().c_str());
-         }
-      }
-
    }
 
    #ifdef DEBUG_SPK_LOADING

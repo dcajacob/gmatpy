@@ -13,7 +13,7 @@ identities preserved: `5cf0724054cb8d991f10eadc3d77c357c71acdef`,
 `3c35d1bd3425ea1b9e53accc296ca5fbea593a6c`.
 Their previous mixed Qt parent is not an ancestor of this main branch.
 
-The derivative retains independently replaced numerical routines, curated data
+The derivative retains selected numerical replacements, curated data
 and notices, and headless packaging/profiles. The current shared-core disposition
 inventory is `python/ci/MIGRATION_CORE_REVIEW.json`. Qt UI/debugger/plot routing
 and startup snapshot APIs remain excluded. Original copyright and modification
@@ -43,12 +43,20 @@ selection and console fallback from patch 07 are no longer supplied.
 
 These branch links identify work on an independent fork, not NASA acceptance or
 merge records. Revisit temporary patches when the corresponding NASA changes
-are reviewed and integrated. Whole-pool SPICE unload/cache recovery, numerical
-replacements, scientific-data changes, minimal-profile guards, headless support
-and packaging are outside this follow-up and remain unchanged. Restoring the
+are reviewed and integrated. Restoring the
 four NASA behaviors does not establish scientific equivalence for the entire
 derivative. Each changed source revision requires new build provenance and
 qualification; earlier results remain historical evidence.
+
+A further 2026-10-16 cleanup is recorded component by component in
+`python/ci/CORE_BASELINE.md`. It restores NASA's ICRF values/grid, Earth PCK
+snapshot, implemented nutation ordering and individual SPICE unload behavior;
+it retains explicit full-pool reset, scoped spline replacements with regression
+repairs, and focused safeguards around NASA's Brent solver. The original
+MSISE/CubicSpline attributions remain a bounded provenance question; no blanket
+legal necessity or audited clean-room claim is made. Numerical data repackaging
+whose payload already equals NASA remains. Optional improvements and intentional
+deviations are distinguished from build/headless requirements in that record.
 
 A separate required portability patch preserves the stream EOF sentinel in
 `ScriptInterpreter::ReadFirstPass` using `std::istream::int_type`. Linux AArch64

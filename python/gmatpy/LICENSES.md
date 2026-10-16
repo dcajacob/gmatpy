@@ -35,32 +35,45 @@ correspondence. Recheck the dependency artifacts and linked objects for every
 release. GUI, optimal-control, MATLAB and legacy Xerces components are outside
 this headless configuration; enabling them requires a new inventory.
 
-The explicit Numerical Recipes spline adaptations in `msise90_sub.c` and
-`CubicSplineInterpolator.cpp` have been replaced with independently authored
-natural cubic spline implementations derived from the endpoint and continuity
-equations. The untouched historical `msise90_sub.for` reference is excluded
-from the source archive; it remains in the Git checkout/history. This targeted
-replacement does not establish the provenance of every inherited numerical
-routine. The complete `BrentDekkerZero` implementation was subsequently replaced
-independently from Brent's published mathematics. Its public API/layout are
-retained; exact-zero, initialization, copy and subnormal-width defects were
-fixed. Independent review and 966 numerical cases validate this replacement.
+The project records the retained MSISE/CubicSpline replacements as derived from
+endpoint and continuity equations. NASA's MSISE routines explicitly identify
+Numerical Recipes adaptations; CubicSpline has specific procedural references.
+The publisher's restrictive terms are documented, but their applicability and
+separate permissions for NASA's exact implementations were not determined.
+Retaining these replacements is a scoped provenance choice, not a demonstrated
+legal requirement or a Python dependency. Their endpoint/scale regressions are
+repaired separately from that choice. Tests validate selected behavior; they do
+not authenticate independent authorship, source exposure or a clean-room process.
+The historical `msise90_sub.for` remains in Git history and is excluded from
+curated source archives.
+
+Brent-Dekker returns to NASA's solver structure with focused state, exact-root,
+input and headless safeguards. Its inherited citation to spline pages alone
+does not establish a licensing need for a wholesale root-finder rewrite.
+NotAKnot's retained changes are comments only. Jacchia-Roberts polynomial
+deflation remains unchanged from NASA with its original credits and reference;
+that citation alone does not establish copying or applicable publisher terms.
+See `python/ci/CORE_BASELINE.md` in source and the code manifest for exact
+component dispositions and the limits of this review.
 
 Scientific data carry component-specific records. NGA EGM96 uses the agency's
 public-information copying policy. JGM legacy variants and the rebuilt native
 DE405 numerical records have a documented U.S. factual-data assessment, rather
 than an invented provider license; see [GRAVITY-DATA.txt](licenses/GRAVITY-DATA.txt)
 and [JPL-EPHEMERIS-NUMERIC.txt](licenses/JPL-EPHEMERIS-NUMERIC.txt). NAIF kernels
-follow unchanged/modified-kernel rules. ERFA-derived coordinate data include its
-BSD notice; exact source versions and scientific differences are in the data
-manifest. Optional weather/troposphere inputs remain excluded.
+follow unchanged/modified-kernel rules. NASA's original ICRF values/grid and
+March Earth PCK snapshot are the defaults. ERFA-derived 1980 nutation
+coefficients retain its BSD notice; optional ERFA ICRF generation is separate.
+Exact inputs, reuse bases and coverage are in the data manifest. Optional
+weather/troposphere inputs remain excluded.
 
-The remaining recorded release action is the responsible owner's product-specific
+The separately recorded release action is the responsible owner's product-specific
 export determination under NAIF's derived-product provision. The toolkit's TSPA
 designation cannot simply be inherited. The published rules do not prescribe a
 universal government filing or lawyer approval. Owner facts and applicable
 jurisdiction must support the adopted decision; no designation is assigned here.
 
+Component observations remain bounded as described above and in the manifest.
 These are targeted engineering/provenance records, not a worldwide legal
 guarantee or an exhaustive review of every inherited routine. Future dependencies
 and build configurations can change the applicable terms.

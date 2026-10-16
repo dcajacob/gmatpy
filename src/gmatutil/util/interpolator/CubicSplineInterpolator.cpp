@@ -34,11 +34,15 @@
 // descending-knot, natural-endpoint, and extrapolation behavior is retained.
 // Rebuild after every buffer load so Clear/refill cannot reuse stale curvature;
 // coincident knots now fail validation before any division by zero.
+// GMAT Py modification, 2026-10-16: evaluate in normalized interval coordinates
+// and return stored values at exact knots, avoiding endpoint cancellation and
+// overflow from forming an unscaled cubic coefficient on very short intervals.
 //------------------------------------------------------------------------------
 
 
 #include "CubicSplineInterpolator.hpp"
 #include "MessageInterface.hpp"
+#include <cmath>
 
 //#define DUMP_SPLINE_POINTS
 
@@ -385,9 +389,16 @@ void CubicSplineInterpolator::LoadArrays(void)
  * Perform the estimation using the information from the splines.  
  * 
  * This method is invoked after calling BuildSplines(), using the input 
- * parameters from the Interpolate() method. Each interval is represented as
- * a polynomial about its left knot. Its two values and two second derivatives
- * determine the coefficients, which are evaluated with Horner's rule.
+ * parameters from the Interpolate() method. Let t and u be the distances from
+ * the left and right knots divided by the interval width, so t+u=1. The linear
+ * blend u*yLeft+t*yRight has zero curvature. The correction
+ *
+ *   -t*u*((1+u)*h*h*MLeft + (1+t)*h*h*MRight)/6
+ *
+ * vanishes at both endpoints and supplies the prescribed second derivatives.
+ * Scale each second derivative by h twice before forming this correction;
+ * no coefficient proportional to M/h is required. Exact knots return their
+ * stored values without polynomial arithmetic.
  * 
  * @param ind       The value of the independent parameter.
  * @param results   Data structure for the estimates.
@@ -398,7 +409,7 @@ void CubicSplineInterpolator::LoadArrays(void)
 bool CubicSplineInterpolator::Estimate(const Real ind, Real *results)
 {
    Integer i, kl = -1, kh;
-   Real h, offset;
+   Real h;
 
    // First find the spline we want -- for GMAT, this is more likely to be the
    // last one, so we'll start at the end and work backwards
@@ -434,17 +445,54 @@ bool CubicSplineInterpolator::Estimate(const Real ind, Real *results)
    if (h == 0)
       return false;       // Coincident points are not allowed
     
-   offset = ind - x[kl];
+   if (ind == x[kl] || ind == x[kh])
+   {
+      const Integer knot = (ind == x[kl] ? kl : kh);
+      for (i = 0; i < dimension; ++i)
+         results[i] = y[knot][i];
+      return true;
+   }
+
+   const Real t = (ind - x[kl]) / h;
+   const Real u = (x[kh] - ind) / h;
     
    // Finally, evaluate the spline!
    for (i = 0; i < dimension; ++i)
    {
-      const Real linear = (y[kh][i] - y[kl][i]) / h
-         - h * (2.0 * y2[kl][i] + y2[kh][i]) / 6.0;
-      const Real quadratic = y2[kl][i] / 2.0;
-      const Real cubic = (y2[kh][i] - y2[kl][i]) / (6.0 * h);
-      results[i] = y[kl][i] + offset *
-         (linear + offset * (quadratic + offset * cubic));
+      // A linear segment needs no curvature arithmetic. Use normalized
+      // coordinates when finite: dividing a tiny change in y by a large h
+      // can underflow the physical slope. Anchor at the nearer endpoint to
+      // retain a small endpoint value. For a coordinate overflow during
+      // distant extrapolation, the physical slope can still give a finite
+      // result when the changes in x and y have compensating scales.
+      if (y2[kl][i] == 0.0 && y2[kh][i] == 0.0)
+      {
+         if (y[kl][i] == y[kh][i])
+            results[i] = y[kl][i];
+         else if (std::isfinite(t) && std::isfinite(u))
+            results[i] = (t <= u ?
+               y[kl][i] + t * (y[kh][i] - y[kl][i]) :
+               y[kh][i] + u * (y[kl][i] - y[kh][i]));
+         else
+         {
+            const Real slope = (y[kh][i] - y[kl][i]) / h;
+            results[i] = y[kl][i] + (ind - x[kl]) * slope;
+         }
+         continue;
+      }
+      const Real leftCurvature = (y2[kl][i] * h) * h;
+      const Real rightCurvature = (y2[kh][i] * h) * h;
+      const Real weightedCurvature =
+         ((1.0 + u) * leftCurvature + (1.0 + t) * rightCurvature) / 6.0;
+      // Apply the curvature scale before multiplying the two coordinates;
+      // t*u alone can overflow during otherwise finite extrapolation.
+      const Real correction = -(weightedCurvature * t) * u;
+      // Anchor the linear part at the nearer endpoint to retain small distances
+      // near either knot, and preserve constant values during extrapolation.
+      const Real linear = (t <= u ?
+         y[kl][i] + t * (y[kh][i] - y[kl][i]) :
+         y[kh][i] + u * (y[kl][i] - y[kh][i]));
+      results[i] = linear + correction;
    }
     
    return true;

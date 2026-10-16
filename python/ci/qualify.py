@@ -87,7 +87,8 @@ print('INSTALLED_BYTES_OK',root)
         run([test_python,ci/'sample_states.py',dest/'states.json'],cwd=outside,env=environment,log=dest/'sample.log',timeout=180)
         run([test_python,ci/'check_states.py',dest/'states.json'],cwd=outside,env=environment,log=dest/'state-comparison.json')
         run([test_python,ci/'verify_splines.py',source,dest/'spline'],cwd=outside,env=environment,log=dest/'spline.log',timeout=180)
-        results['profiles'][profile]={'wheel':wheel.name,'sha256':digest(wheel),'bytes':wheel.stat().st_size,'tests':(dest/'pytest.log').read_text().splitlines()[-1],'state_comparison':json.loads((dest/'state-comparison.json').read_text()),'spline_comparison':json.loads((dest/'spline/RESULTS.json').read_text())}
+        run([test_python,ci/'verify_msise.py',source,dest/'msise'],cwd=outside,env=environment,log=dest/'msise.log',timeout=180)
+        results['profiles'][profile]={'wheel':wheel.name,'sha256':digest(wheel),'bytes':wheel.stat().st_size,'tests':(dest/'pytest.log').read_text().splitlines()[-1],'state_comparison':json.loads((dest/'state-comparison.json').read_text()),'spline_comparison':json.loads((dest/'spline/RESULTS.json').read_text()),'msise_comparison':json.loads((dest/'msise/RESULTS.json').read_text())}
         (output/'RESULTS.json').write_text(json.dumps(results,indent=2)+'\n')
         print('PROFILE_QUALIFIED',profile,json.dumps(results['profiles'][profile]),flush=True)
     hashes={str(p.relative_to(output)):digest(p) for p in output.rglob('*') if p.is_file() and (p.suffix in ('.log','.json','.txt','.whl')) and not any(part in ('source','native','test-env','raw','cspice') for part in p.relative_to(output).parts)}

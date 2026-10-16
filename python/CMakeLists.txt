@@ -107,7 +107,7 @@ set(GMAT_PY_DATA_FILES
   gravity/earth/EGM96.cof
   gravity/earth/JGM2.cof
   gravity/earth/JGM3.cof
-  icrf/ICRF_ERFA_Table.txt
+  icrf/ICRF_Table.txt
   planetary_coeff/NUTATION.DAT
   planetary_coeff/SPICEEarthCurrentKernel.bpc
   planetary_coeff/SPICEEarthPredictedKernel.bpc

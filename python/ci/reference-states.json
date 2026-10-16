@@ -1,1 +1,468 @@
-{"profile": "extended", "records": {"default": [[7000.0, 120.0, -80.0, -0.2, 7.4, 1.0], [6973.34969260757, 563.4387389880976, -19.874160622429166, -0.6882215129699988, 7.376119070902279, 1.003494045886284], [6973.34969260757, 563.4387389880976, -19.874160622429166, -0.6882215129699988, 7.376119070902279, 1.003494045886284], [5460.827735851148, 4227.7802427458355, 494.64069505756646, -4.772947647633386, 5.794921521252698, 0.8460418482135299]], "drag70": [[7000.0, 120.0, -80.0, -0.2, 7.4, 1.0], [6973.349693537408, 563.4386976553425, -19.87413407394247, -0.6882213322893154, 7.376117688725776, 1.003495042595935], [6973.349693537408, 563.4386976553425, -19.87413407394247, -0.6882213322893154, 7.376117688725776, 1.003495042595935], [5460.827237861856, 4227.779221742231, 494.6462536337668, -4.772955099659348, 5.794914535517016, 0.8460567290150115]], "jgm3": [[7000.0, 120.0, -80.0, -0.2, 7.4, 1.0], [6973.3496938057215, 563.4386976998386, -19.87413391746359, -0.6882213242055513, 7.376117690567085, 1.0034950491291275], [6973.3496938057215, 563.4386976998386, -19.87413391746359, -0.6882213242055513, 7.376117690567085, 1.0034950491291275], [5460.827268414021, 4227.779172354191, 494.64651021942456, -4.77295481035959, 5.794914337880804, 0.846058274598845]], "point": [[7000.0, 120.0, -80.0, -0.2, 7.4, 1.0], [6973.369414579897, 563.4393766426448, -19.87454493494625, -0.687563310925244, 7.376147268083414, 1.0034840536753882], [6973.369414579897, 563.4393766426448, -19.87454493494625, -0.687563310925244, 7.376147268083414, 1.0034840536753882], [5462.871111744803, 4228.294068902289, 494.76770503340714, -4.766022093718965, 5.797657751942652, 0.8467939462468234]], "icrf": [7000.000017220268, 120.000000367141, -79.99849266161314, -0.2000002129776333, 7.399999973067949, 1.00000015670162], "fixed": [-1078.6974266313562, -6917.596968794976, -63.749816450243536, 6.821146560263549, -0.9872920427160399, 0.9997707338656177]}}
+{
+  "profile": "extended",
+  "records": {
+    "default": [
+      [
+        7000.0,
+        120.0,
+        -80.0,
+        -0.2,
+        7.4,
+        1.0
+      ],
+      [
+        6973.34969260757,
+        563.4387389880976,
+        -19.874160622429166,
+        -0.6882215129699988,
+        7.376119070902279,
+        1.003494045886284
+      ],
+      [
+        6973.34969260757,
+        563.4387389880976,
+        -19.874160622429166,
+        -0.6882215129699988,
+        7.376119070902279,
+        1.003494045886284
+      ],
+      [
+        5460.827735851148,
+        4227.7802427458355,
+        494.64069505756646,
+        -4.772947647633386,
+        5.794921521252698,
+        0.8460418482135299
+      ]
+    ],
+    "drag70": [
+      [
+        7000.0,
+        120.0,
+        -80.0,
+        -0.2,
+        7.4,
+        1.0
+      ],
+      [
+        6973.349693537408,
+        563.4386976553425,
+        -19.87413407394247,
+        -0.6882213322893154,
+        7.376117688725776,
+        1.003495042595935
+      ],
+      [
+        6973.349693537408,
+        563.4386976553425,
+        -19.87413407394247,
+        -0.6882213322893154,
+        7.376117688725776,
+        1.003495042595935
+      ],
+      [
+        5460.827237861856,
+        4227.779221742231,
+        494.6462536337668,
+        -4.772955099659348,
+        5.794914535517016,
+        0.8460567290150115
+      ]
+    ],
+    "jgm3": [
+      [
+        7000.0,
+        120.0,
+        -80.0,
+        -0.2,
+        7.4,
+        1.0
+      ],
+      [
+        6973.3496938057215,
+        563.4386976998386,
+        -19.87413391746359,
+        -0.6882213242055513,
+        7.376117690567085,
+        1.0034950491291275
+      ],
+      [
+        6973.3496938057215,
+        563.4386976998386,
+        -19.87413391746359,
+        -0.6882213242055513,
+        7.376117690567085,
+        1.0034950491291275
+      ],
+      [
+        5460.827268414021,
+        4227.779172354191,
+        494.64651021942456,
+        -4.77295481035959,
+        5.794914337880804,
+        0.846058274598845
+      ]
+    ],
+    "point": [
+      [
+        7000.0,
+        120.0,
+        -80.0,
+        -0.2,
+        7.4,
+        1.0
+      ],
+      [
+        6973.369414579897,
+        563.4393766426448,
+        -19.87454493494625,
+        -0.687563310925244,
+        7.376147268083414,
+        1.0034840536753882
+      ],
+      [
+        6973.369414579897,
+        563.4393766426448,
+        -19.87454493494625,
+        -0.687563310925244,
+        7.376147268083414,
+        1.0034840536753882
+      ],
+      [
+        5462.871111744803,
+        4228.294068902289,
+        494.76770503340714,
+        -4.766022093718965,
+        5.797657751942652,
+        0.8467939462468234
+      ]
+    ],
+    "icrf": [
+      7000.000017033449,
+      120.00001132285847,
+      -79.99849257473296,
+      -0.20000022457114366,
+      7.399999972748458,
+      1.0000001567471413
+    ],
+    "fixed": [
+      -1078.6974266313562,
+      -6917.596968794976,
+      -63.749816450243536,
+      6.821146560263549,
+      -0.9872920427160399,
+      0.9997707338656177
+    ]
+  },
+  "reference_provenance": {
+    "label": "Fresh NASA-source engine with recorded build/startup/binding adapters; not an unmodified official NASA application.",
+    "nasa_revision": "9363e129be366520c6edb0b4079204ed60666007",
+    "packaging_adapter_revision": "50f61a05a1dd68ba2682d74a8631eba1b514630e",
+    "source_receipt_sha256": "97ce1cb34804445317003d2ac11dc76c43e1e0d23e934b4e9ed7e358ff8b5252",
+    "source_receipt": {
+      "label": "Exact NASA native source with listed Python/build/startup adapters; not an unmodified NASA application",
+      "nasa_revision": "9363e129be366520c6edb0b4079204ed60666007",
+      "packaging_revision": "50f61a05a1dd68ba2682d74a8631eba1b514630e",
+      "profile": "extended",
+      "native_changed_paths": [
+        {
+          "path": "src/base/CMakeLists.txt",
+          "adapter": "Headless, C++17 and SPICE build selection; no equations.",
+          "sha256": "24f85eeb8b15724da0c445dd0e561b214af172157ffbfa8d71bbb7a8b75bf5ff"
+        },
+        {
+          "path": "src/base/coordsystem/AxisSystem.cpp",
+          "adapter": "Minimal-profile guard; original enabled-SPICE body used in this extended build.",
+          "sha256": "017a0253a8e30efd023a9c7b0f20e30312723f16aed5e5c39efba377512b9fa2"
+        },
+        {
+          "path": "src/base/executive/Moderator.cpp",
+          "adapter": "Data-updater-disabled build/startup guard.",
+          "sha256": "81168443b7118fb74724d2c90335fd1180606f104ed9c7743edd085cf116aa56"
+        },
+        {
+          "path": "src/base/forcemodel/DragForce.cpp",
+          "nasa_blob": "a5a0795b7aec10ec30e81db6fb7847945bcc924a",
+          "sha256": "96bde3507b38aa5a543c1f8ef844abe70b79152f2fc84acf7dec3345b92e75c4"
+        },
+        {
+          "path": "src/base/function/GetEphemStates.cpp",
+          "adapter": "Minimal-profile guard; original enabled-SPICE body.",
+          "sha256": "16279ca94d21d4193feab9ebee5cf676defb866554176c663b564b77e7d917c4"
+        },
+        {
+          "path": "src/base/interpreter/ScriptInterpreter.cpp",
+          "adapter": "Preserve stream EOF on unsigned-char targets; no numerical change.",
+          "sha256": "37fbeba372905e05f34091c4fc33a1dbbc781902fabcec3060c0ade827f27ab1"
+        },
+        {
+          "path": "src/base/solarsys/CelestialBody.cpp",
+          "adapter": "Minimal-profile guard; original enabled-SPICE body.",
+          "sha256": "66270b61728ac75cec9bd350dd4e9622ddbed6519113c3c36f06d90dd3774d06"
+        },
+        {
+          "path": "src/base/solarsys/CelestialBody.hpp",
+          "adapter": "Minimal-profile guard for SPICE member storage.",
+          "sha256": "5262f847bf19d369ec41e4999f6b850974a5cd645cd70a9c293034008c6859bc"
+        },
+        {
+          "path": "src/base/solarsys/DeFile.cpp",
+          "nasa_blob": "5cb95180781e0c06eb16de150cd6cd2dbb0aae7c",
+          "sha256": "a881daae20466fd1ccff3c5c5857ed4ff6a5a8b06d0109f8bc1951e716bc2058"
+        },
+        {
+          "path": "src/base/solarsys/DeFile.hpp",
+          "nasa_blob": "f7a61e54bdf7cb059f1922d9b8bb12cd4569ac77",
+          "sha256": "58818558614ff34ee7fef4da23312c7e2b118089e3c59679608ad02ad65e22ee"
+        },
+        {
+          "path": "src/base/solarsys/SolarSystem.cpp",
+          "adapter": "Configured SPK filename plus minimal-profile guard; same explicitly selected DE405 input on both engines.",
+          "sha256": "6ab4f441da89e19817e9a05f674810ea9c6170bd25524b955e7af0fbd8aa5dfa"
+        },
+        {
+          "path": "src/base/solarsys/msise90_sub.c",
+          "nasa_blob": "538431e1c2bb6683e5671682cf041ef0392cd63a",
+          "sha256": "4558b734ca4945a12562c4354b394b1992393881e3ada865a0fde4cb868e73ff"
+        },
+        {
+          "path": "src/base/solarsys/msise90_sub.for",
+          "nasa_blob": "5a940c3d27696e3c5bfe31cc9324c6dd7e15fe67",
+          "sha256": "6b9422ee86bd02e9524d2613f5c4b00e6769b9d91d1c42ab2616728bafa0a480"
+        },
+        {
+          "path": "src/base/spice/SpiceInterface.cpp",
+          "nasa_blob": "ae4dc96f8e89fb612b4db8f43d8bc7272b57d292",
+          "sha256": "d6fbd925b6bbabafca9fb8e123c2e6596a78a78a3196211b7b72b4ffc9109dfe"
+        },
+        {
+          "path": "src/base/subscriber/AttitudeWriterCK.cpp",
+          "adapter": "Minimal-profile guard; original enabled-SPICE body.",
+          "sha256": "fb5818f6ca7ad95a3036a2496d52bb28f10ebae4ab5c182c6b867ae20ae930bb"
+        },
+        {
+          "path": "src/base/subscriber/EphemManager.cpp",
+          "adapter": "Minimal-profile guard; original enabled-SPICE body.",
+          "sha256": "5b9dcfc3f803084e8d2b016cc3f3760efc00831b188734a26423cf1b02909c99"
+        },
+        {
+          "path": "src/base/subscriber/EphemManager.hpp",
+          "adapter": "Minimal-profile storage guard.",
+          "sha256": "c55ff1bb040049cdc2b45301ec1723f45932128c13fdc5c9a093d17dc45cd21c"
+        },
+        {
+          "path": "src/base/subscriber/EphemWriterSPK.cpp",
+          "adapter": "Minimal-profile guard; original enabled-SPICE body.",
+          "sha256": "cff48c0914d240daf89ccf595d835124392ff9ce7d3feec09db8e3273d732c6a"
+        },
+        {
+          "path": "src/base/subscriber/EphemerisFile.cpp",
+          "nasa_blob": "3523b6a86833c158f80b5a189d758e651d0eaf76",
+          "sha256": "bdd978518ae062c579565a327fa07bca4284a4dcbfc2db23602e4b2e9e520a51"
+        },
+        {
+          "path": "src/gmatutil/util/FileManager.cpp",
+          "nasa_blob": "b8117259d0d91ad8de4830fe3d1e656e016e2d26",
+          "sha256": "d8a4ab41624ece2fb1501ab2c00d2a7ae0b12607169ed0e7e649800be42baed9"
+        },
+        {
+          "path": "src/gmatutil/util/interpolator/BrentDekkerZero.cpp",
+          "nasa_blob": "88ad09db5755fe9d6ece2531d6843c8e04a834e5",
+          "sha256": "5b13b42d8550e6064c11757891a862e5b2c110fe309d3bc6f6c7aca3b5843990"
+        },
+        {
+          "path": "src/gmatutil/util/interpolator/BrentDekkerZero.hpp",
+          "nasa_blob": "d5be98efaa623ef8fee78d51342d7d61d39bff3a",
+          "sha256": "0ae53c7dd62f60443596d8b2b809af9d2f129538ca963bd84494b97c00baf6b6"
+        },
+        {
+          "path": "src/gmatutil/util/interpolator/CubicSplineInterpolator.cpp",
+          "nasa_blob": "712d19e2558fda5e33b2f762f06e425a815f0150",
+          "sha256": "8ec7a13b69a1616db70f500dced7ce48dd0a2153ec48290b0e1adaa9c0790cc9"
+        },
+        {
+          "path": "src/gmatutil/util/interpolator/CubicSplineInterpolator.hpp",
+          "nasa_blob": "9922e7d06962c06253aebb18dc48b0d32b5e7a5b",
+          "sha256": "325d423a3c633b527da4d7b81545af8f113a4abd80441d665c90695dd7e2f73a"
+        },
+        {
+          "path": "src/gmatutil/util/interpolator/NotAKnotInterpolator.cpp",
+          "nasa_blob": "441e4bdad4c47d2944e0bcc866a0a0275672bc8f",
+          "sha256": "650bad4ff625ed57d41c797555b27b69c6c22a564b059b0ce1ef7310776315b8"
+        }
+      ],
+      "data_aliases": [
+        {
+          "python_filename": "icrf/ICRF_ERFA_Table.txt",
+          "nasa_path": "application/data/icrf/ICRF_Table.txt",
+          "sha256": "e6b3969a7961c56cacd37a3daa2a98d1d7d765e8605699d5151db2a5bde44547"
+        },
+        {
+          "python_filename": "planetary_coeff/NUTATION.DAT",
+          "nasa_path": "application/data/planetary_coeff/NUTATION.DAT",
+          "sha256": "a3e3af2db37547085cd56d96ec9c7039c1b3bb0b0b39e2a7c9ed111ce292928c"
+        },
+        {
+          "python_filename": "planetary_coeff/earth_latest_high_prec.bpc",
+          "nasa_path": "application/data/planetary_coeff/earth_latest_high_prec.bpc",
+          "sha256": "94b3cedf59698eedf429ed50e25a2c9cec3e916cbc1bc5ce405671ce11b3a527"
+        },
+        {
+          "python_filename": "planetary_ephem/de/gmatpy_de405_1941_2201.405",
+          "nasa_path": "application/data/planetary_ephem/de/leDE1941.405",
+          "sha256": "f8695149bc54be449788f4d6007d1f6a7053f5be16eae60229dc89c661f6fe4d"
+        },
+        {
+          "python_filename": "planetary_ephem/spk/gmatpy_de405_all_planets.bsp",
+          "nasa_path": "application/data/planetary_ephem/spk/DE405AllPlanets.bsp",
+          "sha256": "d047c43e67b32aa842fe3c0014ae174ad6c2f1f73382bd4f46d98fe7a05be953"
+        }
+      ],
+      "weather_fixture": "Invented parser tags only; both sources explicitly ConstantFluxAndGeoMag.",
+      "runtime_adapter_sha256": "ce8015b7a9db48961e93c165aaade7b47ed6a852321cad0b32a5398933d574dc",
+      "do_not_publish": true
+    },
+    "common_data_receipt_sha256": "40bcb482e7a22136d03cd500f87aecc24ec872fa415aa5d232faec065b1cfe16",
+    "inputs": [
+      {
+        "path": "atmosphere/earth/EarthExponentialAtmosphereData.txt",
+        "nasa_source_path": "application/data/atmosphere/earth/EarthExponentialAtmosphereData.txt",
+        "git_blob": "ec7f1e2023adba77711abf0c8c3c84577bbf49fc",
+        "sha256": "75762f679f82e089a4a6eadaa1251c797a2151aab5311b36b2ae96cffefda85e",
+        "size_bytes": 661
+      },
+      {
+        "path": "gravity/earth/EGM96.cof",
+        "nasa_source_path": "application/data/gravity/earth/EGM96.cof",
+        "git_blob": "530e0d47efb5573422bc604e2499c9f2b9892ba6",
+        "sha256": "4735c9301e20ee8db09b6d0882a24671b327cd35ec5740ea497c8eeb43a39807",
+        "size_bytes": 3913244
+      },
+      {
+        "path": "gravity/earth/JGM2.cof",
+        "nasa_source_path": "application/data/gravity/earth/JGM2.cof",
+        "git_blob": "e6a02108eb7ba3226e9806aa4e600a666dacec2e",
+        "sha256": "abac32a233e8662885778018d02e41553a5b6e5e1ee7332d2f69c362423025d3",
+        "size_bytes": 152234
+      },
+      {
+        "path": "gravity/earth/JGM3.cof",
+        "nasa_source_path": "application/data/gravity/earth/JGM3.cof",
+        "git_blob": "1e1f6791089ce859b2a2807215879d638ad67ad8",
+        "sha256": "a622342e7c5421ee0b0f01f1b5cd38e6be87f1118fbd81b8c695e8c969603819",
+        "size_bytes": 152234
+      },
+      {
+        "path": "planetary_coeff/NUTATION.DAT",
+        "nasa_source_path": "application/data/planetary_coeff/NUTATION.DAT",
+        "git_blob": "2468169b4b582c2f2dad99f4f91fbd51a06791e2",
+        "sha256": "a3e3af2db37547085cd56d96ec9c7039c1b3bb0b0b39e2a7c9ed111ce292928c",
+        "size_bytes": 34381
+      },
+      {
+        "path": "planetary_coeff/SPICEEarthCurrentKernel.bpc",
+        "nasa_source_path": "application/data/planetary_coeff/SPICEEarthCurrentKernel.bpc",
+        "git_blob": "2a0aa0070b54df40687bc213924686ce5c7b8562",
+        "sha256": "6d899c83542e32dfd77f3b3b79383db88860adca59adf60f4823780760589a52",
+        "size_bytes": 12094464
+      },
+      {
+        "path": "planetary_coeff/SPICEEarthPredictedKernel.bpc",
+        "nasa_source_path": "application/data/planetary_coeff/SPICEEarthPredictedKernel.bpc",
+        "git_blob": "8a6f270c96a70a4b530ab3fa5007bc383bc7d435",
+        "sha256": "f5ed4d1f460dbcf40bf24f657ab9021718048e18fb723093bfd229066b4e3a49",
+        "size_bytes": 19179520
+      },
+      {
+        "path": "planetary_coeff/SPICELunaCurrentKernel.bpc",
+        "nasa_source_path": "application/data/planetary_coeff/SPICELunaCurrentKernel.bpc",
+        "git_blob": "10e35ab7694a103bb1265ec591a96bf4772e6be2",
+        "sha256": "656f90616403d75a75f0cd6c8830fc5b44f8cb4facb5ccb8915e752b397520cf",
+        "size_bytes": 1770496
+      },
+      {
+        "path": "planetary_coeff/SPICELunaFrameKernel.tf",
+        "nasa_source_path": "application/data/planetary_coeff/SPICELunaFrameKernel.tf",
+        "git_blob": "ba35c8e821b79a5d9156e070748d751bf574e84e",
+        "sha256": "78732477b96f9863e7b0d65bcee3c22b8707ca5ed0db56d1173319cb2e8c7993",
+        "size_bytes": 21437
+      },
+      {
+        "path": "planetary_coeff/SPICEPlanetaryConstantsKernel.tpc",
+        "nasa_source_path": "application/data/planetary_coeff/SPICEPlanetaryConstantsKernel.tpc",
+        "git_blob": "c1e08afaa1d7436e4417d954a7895cde4366cd97",
+        "sha256": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+        "size_bytes": 131226
+      },
+      {
+        "path": "planetary_coeff/earth_latest_high_prec.bpc",
+        "nasa_source_path": "application/data/planetary_coeff/earth_latest_high_prec.bpc",
+        "git_blob": "47ba65f2a39f1efcc6cf36e235fdd9eecd090ca7",
+        "sha256": "94b3cedf59698eedf429ed50e25a2c9cec3e916cbc1bc5ce405671ce11b3a527",
+        "size_bytes": 5037056
+      },
+      {
+        "path": "planetary_coeff/eopc04_08.62-now",
+        "nasa_source_path": "application/data/planetary_coeff/eopc04_08.62-now",
+        "git_blob": "6e1958467a236de2284d9809bb943a21df5c48af",
+        "sha256": "52c95d6871066e892463328424ca34f5e9cedde92c747465a40f7cd0ecd86ed3",
+        "size_bytes": 3687646
+      },
+      {
+        "path": "planetary_ephem/de/gmatpy_de405_1941_2201.405",
+        "nasa_source_path": "application/data/planetary_ephem/de/leDE1941.405",
+        "git_blob": "7b42ab5e1164943d718020d32818965065d7c012",
+        "sha256": "f8695149bc54be449788f4d6007d1f6a7053f5be16eae60229dc89c661f6fe4d",
+        "size_bytes": 24195824
+      },
+      {
+        "path": "planetary_ephem/spk/gmatpy_de405_all_planets.bsp",
+        "nasa_source_path": "application/data/planetary_ephem/spk/DE405AllPlanets.bsp",
+        "git_blob": "20279d26e46d96dbff13fd4a293c57d228d409b1",
+        "sha256": "d047c43e67b32aa842fe3c0014ae174ad6c2f1f73382bd4f46d98fe7a05be953",
+        "size_bytes": 19437568
+      },
+      {
+        "path": "time/SPICELeapSecondKernel.tls",
+        "nasa_source_path": "application/data/time/SPICELeapSecondKernel.tls",
+        "git_blob": "e1afdee1b626e01a3f1b04ef8a43154e83972e56",
+        "sha256": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b",
+        "size_bytes": 5257
+      },
+      {
+        "path": "time/tai-utc.dat",
+        "nasa_source_path": "application/data/time/tai-utc.dat",
+        "git_blob": "89d16226f380b98240d9e47de4a845396d3c0ac0",
+        "sha256": "3524e1ae34d67e858873a89e59983bbc5bd100221da898e796c1b36036a310c3",
+        "size_bytes": 3321
+      },
+      {
+        "path": "icrf/ICRF_ERFA_Table.txt",
+        "nasa_source_path": "application/data/icrf/ICRF_Table.txt",
+        "git_blob": "b30ac080e052d9111bd789c0d0cb22a9c0df00c2",
+        "sha256": "e6b3969a7961c56cacd37a3daa2a98d1d7d765e8605699d5151db2a5bde44547",
+        "size_bytes": 4114186
+      }
+    ],
+    "runtime_adapter": {
+      "changes": {
+        "data_assignment": 1,
+        "icrf_filename": 1,
+        "weather_paths": 2,
+        "baseline_temporary_weather_writes_removed": 2
+      },
+      "original_engine_source_sha256": "59f54b3476beff063ff1df783a3607854133346f3f77d5c8980d26f244c2fca7",
+      "adapted_engine_source_sha256": "d5bf932f2a2230d0883ad6c1a56f3397a35941f5078f6650f4b1d1bd059a8bb5"
+    },
+    "sample_script_sha256": "d797312c61494467e8de2ddd9190e9bcc14bde69d8af838d20dcfb69adfde212",
+    "native_files": {
+      "__init__.py": "e659bfb5cf4540d6d3b97d8fe11d3fc1f94bc5cb9ba8a23e2197461b31b1470d",
+      "gmat_py.py": "bd0cc6182baa6db2f06f5fa0458578c8a2bcf8878beccad114dc5ae3af8b3b50",
+      "libGmatBase.so.R2026a": "c8c7941ffa2520728c3cbf18b3c7dd8a96cf8dc5038d4b28027fee7292bfbef9",
+      "libGmatUtil.so.R2026a": "55131d2f8eabe786ddf17bafa9b3ca5044217abb42a81775d3a8b566acb344d1",
+      "_gmat_py.so": "9cb52291db9539037fbe0e3c7cf1003080014fb6b03e63a5dc3dc66049e72802"
+    },
+    "python": "3.14.7 (main, Sep 30 2026, 07:41:18) [GCC 14.2.1 20250110 (Red Hat 14.2.1-11)]",
+    "limits": "Selected propagation/frame regression inputs only; not independent empirical truth, all-path equivalence, or licensing/authorship certification."
+  }
+}

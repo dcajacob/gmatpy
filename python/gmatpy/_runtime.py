@@ -82,7 +82,7 @@ def engine():
         "JGM2_FILE": "gravity/earth/JGM2.cof",
         "JGM3_FILE": "gravity/earth/JGM3.cof",
         "EARTH_EXPONENTIAL_FILE": "atmosphere/earth/EarthExponentialAtmosphereData.txt",
-        "ICRF_FILE": "icrf/ICRF_ERFA_Table.txt",
+        "ICRF_FILE": "icrf/ICRF_Table.txt",
     }
     unbundled_files = {}
     from .capabilities import capabilities

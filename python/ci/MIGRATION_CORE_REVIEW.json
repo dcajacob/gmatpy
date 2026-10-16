@@ -14,18 +14,18 @@
     },
     {
       "path": "application/data/icrf/ICRF_ERFA_Table.txt",
-      "decision": "retain focused source",
-      "reason": "Intended Python package/build/tests/notices or curated data input."
+      "decision": "removed from default",
+      "reason": "Optional ERFA model/grid substitution removed from packaged defaults; historical generator/receipts retained as an explicit alternative."
     },
     {
       "path": "application/data/planetary_coeff/NUTATION.DAT",
       "decision": "retain focused source",
-      "reason": "Intended Python package/build/tests/notices or curated data input."
+      "reason": "Implemented coefficient records equal NASA and restored original summation order; retain applicable ERFA/IERS notices and omit unsupported/unused sections."
     },
     {
       "path": "application/data/planetary_coeff/earth_latest_high_prec.bpc",
-      "decision": "retain focused source",
-      "reason": "Intended Python package/build/tests/notices or curated data input."
+      "decision": "restore NASA input",
+      "reason": "Exact March 2026 NASA snapshot; retain actual coverage and embedded NAIF producer metadata, no silent refresh."
     },
     {
       "path": "application/data/planetary_ephem/de/gmatpy_de405_1941_2201.405",
@@ -440,12 +440,12 @@
     {
       "path": "src/base/solarsys/msise90_sub.c",
       "decision": "retain focused source",
-      "reason": "Independent equation-derived atmospheric spline replacement."
+      "reason": "Retain project-reported equation-derived spline replacements as a scoped provenance choice, not a proved legal/Python necessity. Repair endpoint cancellation with normalized evaluation; unchanged integral helper retains NASA behavior."
     },
     {
       "path": "src/base/spice/SpiceInterface.cpp",
       "decision": "retain focused source",
-      "reason": "Retain whole-pool kernel unload and cache recovery. Remove optional diagnostics-only patch 07 and restore NASA's diagnostic initialization and destination handling; the unload recovery change is outside that patch."
+      "reason": "NASA diagnostics and individual UnloadKernel restored. Retain only explicit kclear-based full reset for vanished text files; it clears externally furnished global pool state too."
     },
     {
       "path": "src/base/subscriber/AttitudeWriterCK.cpp",
@@ -515,27 +515,27 @@
     {
       "path": "src/gmatutil/util/interpolator/BrentDekkerZero.cpp",
       "decision": "retain focused source",
-      "reason": "Independent safeguarded solver replacement and Windows min/max macro isolation."
+      "reason": "NASA solver structure restored with focused initialized-state/copy/exact-root/input/headless safeguards; stale spline citation alone did not justify wholesale replacement."
     },
     {
       "path": "src/gmatutil/util/interpolator/BrentDekkerZero.hpp",
       "decision": "retain focused source",
-      "reason": "Independent solver state/API contract."
+      "reason": "NASA-based solver state declarations plus bounded lifecycle safeguards; preserve public API."
     },
     {
       "path": "src/gmatutil/util/interpolator/CubicSplineInterpolator.cpp",
       "decision": "retain focused source",
-      "reason": "Independent natural spline derivation and validated state lifecycle."
+      "reason": "Retain scoped equation-derived replacement and monotonic/cache safeguards; repair exact-knot cancellation and scale overflow with normalized evaluation. Origin/permissions of specifically referenced inherited source remain unverified."
     },
     {
       "path": "src/gmatutil/util/interpolator/CubicSplineInterpolator.hpp",
       "decision": "retain focused source",
-      "reason": "Natural spline storage for independent derivation."
+      "reason": "Retained replacement declaration/comments; existing API/layout unchanged."
     },
     {
       "path": "src/gmatutil/util/interpolator/NotAKnotInterpolator.cpp",
-      "decision": "retain focused source",
-      "reason": "Independent not-a-knot system and boundary/extrapolation behavior."
+      "decision": "retain comments only",
+      "reason": "Executable algorithm equals NASA. Comments clarify existing not-a-knot/Cramer/local-polynomial implementation; this is not an algorithm replacement."
     },
     {
       "path": "swig/CMakeLists.txt",
@@ -551,6 +551,46 @@
       "path": "swig/gmat.swg",
       "decision": "retain focused source",
       "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "application/data/icrf/ICRF_Table.txt",
+      "decision": "restore NASA input",
+      "reason": "Exact original NASA bytes/grid; bounded numerical-data reuse basis with unknown historical generator recorded separately."
+    },
+    {
+      "path": "python/ci/CORE_BASELINE.md",
+      "decision": "add component disposition",
+      "reason": "Separate Python/headless needs, retained safeguards, optional behavior changes, provenance uncertainty and validation limits."
+    },
+    {
+      "path": "src/base/interpreter/ScriptInterpreter.cpp",
+      "decision": "retain focused source",
+      "reason": "Use istream::int_type for peek EOF to prevent unsigned-char script-load hangs; no equation/data/tolerance change."
+    },
+    {
+      "path": "python/ci/probe_atmosphere_brent.py",
+      "decision": "add focused source comparison",
+      "reason": "Reproducible exact-NASA/reviewed-parent/candidate native probes; optional fresh SciPy reference explicitly distinct from saved historical expectations."
+    },
+    {
+      "path": "python/ci/reference-states-erfa-historical.json",
+      "decision": "preserve historical reference",
+      "reason": "Exact prior derivative/ERFA reference bytes retained; not relabeled NASA output."
+    },
+    {
+      "path": "python/ci/verify_msise.py",
+      "decision": "add installed-library regression",
+      "reason": "Analytic endpoint, line, extrapolation and clamped-cubic checks against the actual installed GmatBase; no runtime SciPy dependency."
+    },
+    {
+      "path": "python/tests/test_brent_nasa_guards.py",
+      "decision": "add installed regression",
+      "reason": "Either initial endpoint and linked quiet TestDriver contracts around the NASA-based solver."
+    },
+    {
+      "path": "python/tests/test_spice_recovery.py",
+      "decision": "add installed regression",
+      "reason": "Subprocess checks for single-unload priority and explicit reset of vanished/untracked kernel state."
     }
   ],
   "removed_tip_inputs": [
@@ -561,7 +601,41 @@
     "application/data/atmosphere/earth/SpaceWeather-All-v1.2.txt",
     "application/data/atmosphere/earth/SpaceWeather-v1.2.txt",
     "application/data/atmosphere/earth/marini.dat",
-    "application/data/icrf/ICRF_Table.txt"
+    "application/data/icrf/ICRF_ERFA_Table.txt"
   ],
-  "note": "Shared-core follow-up on 2026-10-16 removes optional patches 02, 03, 04 and 07, and retains 01, 05 and 06 as temporary downstream patches pending upstream review. Separately retained SPICE unload recovery, numerical replacements, scientific data, headless/profile and packaging changes are outside this action. Prior qualification remains historical; regenerate source identity and qualify the resulting revision. No Qt UI/debugger/viewer implementation is carried."
+  "note": "The four optional patches02/03/04/07 removed in b70c4fd remain NASA behavior. This follow-up restores NASA default ICRF/PCK and nutation order, removes single-unload SPICE replay, narrows Brent toward NASA and repairs retained spline evaluation regressions. Retained deviations and specific provenance uncertainty are in python/ci/CORE_BASELINE.md. FileManager ownership, selected-weather and output-path safeguards remain temporary downstream patches; profile/headless/EOF/binding/build adapters remain. Prior qualification is historical; regenerate source identity and qualify the final revision. No Qt UI/debugger/viewer implementation is carried.",
+  "reviewed_parent_revision": "50f61a05a1dd68ba2682d74a8631eba1b514630e",
+  "inventory_scope": "decisions preserves the migration decision log, including rejected legacy Qt paths; current_native_differences is the complete native/build/SWIG path diff from exact NASA for this cleanup.",
+  "current_native_differences": [
+    "CMakeLists.txt",
+    "build/cmake_modules/GmatSwigConfig.cmake",
+    "src/base/CMakeLists.txt",
+    "src/base/coordsystem/AxisSystem.cpp",
+    "src/base/executive/Moderator.cpp",
+    "src/base/forcemodel/DragForce.cpp",
+    "src/base/function/GetEphemStates.cpp",
+    "src/base/interpreter/ScriptInterpreter.cpp",
+    "src/base/solarsys/CelestialBody.cpp",
+    "src/base/solarsys/CelestialBody.hpp",
+    "src/base/solarsys/DeFile.cpp",
+    "src/base/solarsys/DeFile.hpp",
+    "src/base/solarsys/SolarSystem.cpp",
+    "src/base/solarsys/msise90_sub.c",
+    "src/base/solarsys/msise90_sub.for",
+    "src/base/spice/SpiceInterface.cpp",
+    "src/base/subscriber/AttitudeWriterCK.cpp",
+    "src/base/subscriber/EphemManager.cpp",
+    "src/base/subscriber/EphemManager.hpp",
+    "src/base/subscriber/EphemWriterSPK.cpp",
+    "src/base/subscriber/EphemerisFile.cpp",
+    "src/gmatutil/util/FileManager.cpp",
+    "src/gmatutil/util/interpolator/BrentDekkerZero.cpp",
+    "src/gmatutil/util/interpolator/BrentDekkerZero.hpp",
+    "src/gmatutil/util/interpolator/CubicSplineInterpolator.cpp",
+    "src/gmatutil/util/interpolator/CubicSplineInterpolator.hpp",
+    "src/gmatutil/util/interpolator/NotAKnotInterpolator.cpp",
+    "swig/CMakeLists.txt",
+    "swig/PythonSwigUtil.swg",
+    "swig/gmat.swg"
+  ]
 }
