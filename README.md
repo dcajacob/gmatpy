@@ -4,15 +4,22 @@ GMAT Py is a standalone Python interface to the NASA GMAT astrodynamics engine.
 It is an independently maintained derivative project. NASA's history and license
 notices are preserved; NASA does not endorse this project.
 
-The headless package provides propagation, state/frame/time conversion, native
-DE405 and access to engine interfaces. The extended profile adds SPICE kernels,
-impulsive maneuvers, multiple spacecraft, bounded SMA targeting and mission-script
-execution. Finite-burn workflows use mission scripts. Discover the installed
-boundary with `gmatpy.capabilities()`; optional plugins and a GUI are not bundled.
+The single headless package provides propagation, state/frame/time conversion,
+native DE405, SPICE kernels, impulsive maneuvers, multiple spacecraft, bounded SMA
+targeting and mission-script execution. It bundles the engine and 17 selected
+scientific inputs. Finite-burn workflows use mission scripts. Discover the
+supported boundary with `gmatpy.capabilities()`; optional plugins and a GUI are
+not bundled.
 
-See [Python usage/build documentation](python/README.rst),
-[profile details](python/PROFILES.rst), and
+See the [documentation](https://gmatpy.readthedocs.io/en/latest/),
+[Python usage/build documentation](python/README.rst),
+[capability details](python/PROFILES.rst), and
 [native qualification](python/ci/README.md).
+
+GMAT Py 0.2.0 is not yet published on PyPI. Install a matching candidate wheel
+with `python -m pip install /path/to/gmatpy-0.2.0-<python>-<abi>-<platform>.whl`.
+There is one standard wheel per supported Python ABI and platform; no feature
+profile, build tag, or extra is needed.
 
 This repository preserves NASA ancestry and maintains an explicit upstream update
 path described in [UPSTREAM.md](UPSTREAM.md). Custom Qt GUI, debugger and viewer

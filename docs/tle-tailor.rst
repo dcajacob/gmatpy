@@ -22,10 +22,9 @@ additional bridge and fitting workflow.
 What the bridge requires
 ------------------------
 
-The adapter calls ``gmatpy.propagate`` and ``gmatpy.transform_state``. Both
-:ref:`minimal and extended profiles <build-profiles>` provide those
-operations, native DE405 inputs, and the ICRF orientation table. Its native
-physics tests also use ``native_session`` to read Earth's GMAT gravitational
+The adapter calls ``gmatpy.propagate`` and ``gmatpy.transform_state``. The
+standard GMAT Py package provides those operations, native DE405 inputs, and
+the ICRF orientation table. Its native physics tests also use ``native_session`` to read Earth's GMAT gravitational
 constant. The adapter does not require GMAT's TLE/ephemeris-propagator
 plugins, SPICE kernel readers, the GUI, a separate GMAT installation,
 Space-Track credentials, or live scientific-data downloads.
@@ -35,9 +34,9 @@ then install the adapter-bearing TLE Tailor checkout in the same isolated
 environment. GMAT Py 0.2.0 is not currently published on PyPI. The
 ``gmat`` extra declares its dependency but does not supply a missing wheel;
 the local TLE Tailor project uses a ``wheels/`` find-links directory with uv.
-Select the actual profile-tagged filename rather than copying an older
-unqualified wheel name from external notes. TLE Tailor has additional Python
-dependencies including NumPy, pandas, Astropy, and its fitting libraries.
+Use the actual matching wheel filename; the standard package has no feature
+profile build tag. TLE Tailor has additional Python dependencies including
+NumPy, pandas, Astropy, and its fitting libraries.
 
 Keep the legacy, separately installed GMAT Python API out of this process.
 The adapter checks for the standalone ``propagate`` and ``transform_state``
@@ -164,14 +163,13 @@ are placeholders.
 GMAT Py itself does not provide a standalone TLE parser, SGP4 propagator,
 TLE fitter, or TLE exporter. This bridge accepts an initial Cartesian state
 and samples one forward Earth orbit; it does not pass maneuver schedules,
-estimation settings, or the extended mission wrappers to GMAT Py. The
+estimation settings, or the mission wrappers to GMAT Py. The
 external TLE Tailor project may provide other backends with different input
 contracts.
 
-The restored native candidate has fresh both-profile qualification on Linux
-x86_64 with CPython 3.14.7. Earlier ARM64 and macOS results apply to an older
-source revision and do not qualify this candidate or the external TLE Tailor
-fitters. See :ref:`platform-support` for the current qualification scope.
+The native matrix evidence belongs to the exact GMAT Py source revision and
+artifacts recorded in :ref:`platform-support`. It does not qualify the external
+TLE Tailor fitters or establish a fresh native build of the packaging cleanup.
 
 Parallel calls follow :ref:`GMAT's native concurrency rules <native-access>`:
 use spawned processes for independent work. Within one process, GMAT calls

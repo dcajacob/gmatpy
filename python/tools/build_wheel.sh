@@ -5,14 +5,13 @@ set -euo pipefail
 task_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 python_bin="${GMAT_PY_PYTHON:-python3}"
 output_root="${GMAT_PY_WHEEL_DIR:-${task_root}/wheelhouse}"
-: "${CSPICE_DIR:?Set CSPICE_DIR to a PIC CSPICE include/ and lib/ tree}"
 parallelism="${CMAKE_BUILD_PARALLEL_LEVEL:-2}"
-profile="${GMAT_PY_PROFILE:-extended}"
-case "${profile}" in
-  minimal) build_tag=1minimal ;;
-  extended) build_tag=2extended ;;
-  *) echo "GMAT_PY_PROFILE must be minimal or extended" >&2; exit 2 ;;
-esac
+if [[ -v GMAT_PY_PROFILE && "${GMAT_PY_PROFILE}" != extended ]]; then
+  echo "GMAT_PY_PROFILE=${GMAT_PY_PROFILE} is obsolete; GMAT Py builds one full headless package (SPICE included)" >&2
+  exit 2
+fi
+unset GMAT_PY_PROFILE
+: "${CSPICE_DIR:?Set CSPICE_DIR to a PIC CSPICE include/ and lib/ tree}"
 mkdir -p "${output_root}"
 output_root="$(cd -- "${output_root}" && pwd)"
 
@@ -34,9 +33,7 @@ trap cleanup EXIT
 # dist/ must never be repaired, tested or returned as the current candidate.
 "${python_bin}" -m build --wheel --no-isolation --outdir "${build_dir}/raw" \
   -Ccmake.define.CSPICE_DIR="${CSPICE_DIR}" \
-  -Cbuild-dir="${GMAT_PY_BUILD_DIR:-${build_dir}/native}" \
-  -Ccmake.define.GMAT_PY_PROFILE="${profile}" \
-  -Cwheel.build-tag="${build_tag}"
+  -Cbuild-dir="${GMAT_PY_BUILD_DIR:-${build_dir}/native}"
 shopt -s nullglob
 wheels=("${build_dir}"/raw/*.whl)
 if [[ ${#wheels[@]} -ne 1 ]]; then

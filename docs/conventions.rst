@@ -191,8 +191,7 @@ is current or suitable for the requested scientific accuracy.
      - Coverage and consequences
    * - Native DE405
      - JD 2430000.5 through 2525008.5 TDB (1941-01-06 through 2201-02-20).
-       Used by default Sun/Moon forces and :func:`gmatpy.body_state` in both
-       profiles. Outside-range native requests can fail.
+       Used by default Sun/Moon forces and :func:`gmatpy.body_state`. Outside-range native requests can fail.
    * - Earth orientation
      - The inherited ``eopc04_08.62-now`` snapshot spans 1962-01-01 through
        2026-09-14 and includes forecast/error-sentinel rows. It is not a live
@@ -210,14 +209,13 @@ is current or suitable for the requested scientific accuracy.
        epochs outside the endpoints are rejected. Interpolation across a gap
        does not establish accuracy relative to an independent frame model.
    * - SPICE Earth orientation kernel
-     - Extended's ``earth_latest_high_prec.bpc`` is the exact March 2026
+     - ``earth_latest_high_prec.bpc`` is the exact March 2026
        baseline snapshot, identified internally as
        ``earth_000101_260612_260316.bpc``. Coverage is 2000-01-01 through
        2026-06-12, with its last input datum dated 2026-03-16 and predictions
        afterward. This bounds native SPICE frame queries using that kernel;
-       the September EOP endpoint does not extend its coverage. Minimal does
-       not bundle this kernel, and the default EarthFixed helper does not
-       select it as its rotation model.
+       the September EOP endpoint does not extend its coverage. The default
+       EarthFixed helper does not select it as its rotation model.
    * - Nutation coefficients
      - The implemented 106 IAU1980 and 263 IAU1996 records retain the pinned
        NASA baseline's values and summation order. File headings are
@@ -231,9 +229,9 @@ is current or suitable for the requested scientific accuracy.
 The limits apply to the operations and forces that use each input, not as one
 uniform validated epoch range for the entire API. Inspect the bundled
 ``gmatpy/licenses/DATA_MANIFEST.json`` for source URLs, hashes, regeneration
-notes and scientific changes. Both profiles retain the inputs required for
-the propagation/time/frame/DE405 facade. Extended additionally includes native
-SPICE kernel facilities; this does not extend every convenience API contract.
+notes and scientific changes. The package includes the inputs required for
+the propagation/time/frame/DE405 facade and native SPICE kernel facilities;
+SPICE support does not extend every convenience API contract.
 
 The restored ICRF/PCK bytes come from NASA GMAT source baseline
 ``9363e129be366520c6edb0b4079204ed60666007``. Exact input identity is distinct

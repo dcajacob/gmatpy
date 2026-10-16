@@ -1,4 +1,4 @@
-"""Value-based core mission workflows for the extended build profile.
+"""Value-based core mission workflows for the headless library.
 
 Impulses do not consume mass. Outputs at an impulse epoch are post-burn;
 coincident burns execute in input order. No optional plugins are required.

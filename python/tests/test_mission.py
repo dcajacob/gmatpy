@@ -9,10 +9,8 @@ EPOCH = "2020-07-20T12:00:00Z"
 MU = 398600.4415
 STATE = (7000., 0., 0., 0., math.sqrt(MU/7000), 0.)
 POINT = g.ForceModel(degree=0, sun=False, moon=False, srp=False)
-extended = pytest.mark.skipif(g.capabilities().profile != "extended", reason="extended-profile workflow")
 
 
-@extended
 def test_two_spacecraft_share_native_propagator_and_match_independent_orbits():
     other = (8000., 0., 0., 0., math.sqrt(MU/8000), 0.)
     times = [0, 600, 600, 1800]
@@ -25,7 +23,6 @@ def test_two_spacecraft_share_native_propagator_and_match_independent_orbits():
     assert math.dist(actual["first"][-1].position_km, actual["second"][-1].position_km) > 1000
 
 
-@extended
 @pytest.mark.parametrize("burn_time", [0., 60., 120.])
 def test_native_impulse_has_exact_jump_and_correct_following_arc(burn_time):
     dv = (.001, .01, -.002)
@@ -43,7 +40,6 @@ def test_native_impulse_has_exact_jump_and_correct_following_arc(burn_time):
     assert actual[-1].state == pytest.approx(expected.state, rel=0, abs=3e-8)
 
 
-@extended
 def test_coincident_burns_duplicate_samples_and_per_spacecraft_isolation():
     burns = [g.Impulse(60, (0,.01,0)), g.Impulse(60, (0,0,.02))]
     actual = g.propagate_many({"burned": STATE,"quiet":STATE}, EPOCH,[60,60,120],
@@ -56,7 +52,6 @@ def test_coincident_burns_duplicate_samples_and_per_spacecraft_isolation():
         tuple(a+b for a,b in zip(baseline[0].velocity_km_s,(0,.01,.02))), abs=1e-12)
 
 
-@extended
 def test_vnb_burn_uses_velocity_direction():
     before = g.propagate(STATE,EPOCH,[600],forces=POINT)[0]
     after = g.propagate_mission(STATE,EPOCH,[600],forces=POINT,
@@ -66,7 +61,6 @@ def test_vnb_burn_uses_velocity_direction():
     assert delta == pytest.approx(tuple(.01*v/speed for v in before.velocity_km_s),abs=1e-13)
 
 
-@extended
 @pytest.mark.parametrize('target',[6800.,7200.,8000.])
 def test_differential_corrector_matches_analytic_instantaneous_burn(target):
     result = g.target_sma(STATE,EPOCH,target)
@@ -77,14 +71,12 @@ def test_differential_corrector_matches_analytic_instantaneous_burn(target):
     assert -MU/(2*energy) == pytest.approx(target,abs=1e-5)
 
 
-@extended
 def test_unconverged_target_raises_and_next_operation_recovers():
     with pytest.raises(RuntimeError,match='converge|complete'):
         g.target_sma(STATE,EPOCH,20000,max_iterations=1,tolerance_km=1e-10)
     assert len(g.propagate(STATE,EPOCH,[0],forces=POINT)) == 1
 
 
-@extended
 def test_core_script_result_is_copied_and_cleanup_follows_error(tmp_path):
     script = tmp_path/'mission.script'
     script.write_text('Create Spacecraft Sat;\nBeginMissionSequence;\nSat.X = 7100;\n')
@@ -97,19 +89,6 @@ def test_core_script_result_is_copied_and_cleanup_follows_error(tmp_path):
     assert g.run_script(script,outputs={'Sat':['X']}) == result
 
 
-def test_minimal_reports_missing_workflows_before_native_work():
-    if g.capabilities().profile != 'minimal':
-        pytest.skip('minimal profile only')
-    for fn,args in [(g.propagate_many,({},EPOCH,[])),
-                    (g.propagate_mission,(STATE,EPOCH,[0])),
-                    (g.target_sma,(STATE,EPOCH,7200)),
-                    (g.run_script,('absent.script',))]:
-        with pytest.raises(g.UnsupportedCapabilityError,match='extended'):
-            fn(*args,**({'outputs':{}} if fn is g.run_script else {}))
-    assert not g.capabilities().supports('spice_kernels')
-
-
-@extended
 @pytest.mark.parametrize('kwargs',[
     {'impulses':{'missing':[g.Impulse(0,(0,0,0))]}},
     {'impulses':{'sat':[g.Impulse(100,(0,0,0))]}},
@@ -122,7 +101,6 @@ def test_invalid_mission_inputs_do_not_poison_engine(kwargs):
     assert len(g.propagate(STATE,EPOCH,[0],forces=POINT)) == 1
 
 
-@extended
 def test_multi_spacecraft_preserves_individual_srp_properties():
     forces = g.ForceModel(degree=0, sun=False, moon=False, srp=True)
     props = {'light':g.Spacecraft(mass_kg=100,srp_area_m2=20),

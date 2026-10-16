@@ -25,9 +25,9 @@ with a NASA GMAT release.
 .. important::
 
    The distribution is ``gmatpy`` version |release|, imported as ``gmatpy``.
-   It is **not yet on PyPI**. Install an explicitly selected candidate wheel or
-   build from source. The minimal and extended profiles share the same name and
-   import tree. See :doc:`installation` before choosing an artifact.
+   It is **not yet on PyPI**. Install a matching candidate wheel or build from
+   source. The single headless package includes SPICE and all supported mission
+   workflows; no feature profile or extra is needed. See :doc:`installation`.
 
 Find your starting point
 ------------------------
@@ -35,7 +35,7 @@ Find your starting point
 * :doc:`installation`: choose a wheel, understand platform qualification, or
   prepare a native source build.
 * :doc:`quickstart`: propagate an Earth-centered state and interpret the samples.
-* :doc:`workflows`: choose a profile and explore burns, multiple spacecraft,
+* :doc:`workflows`: explore burns, multiple spacecraft,
   targeting, scripts, and native sessions.
 * :doc:`tle-tailor`: use the GMAT Py propagation backend in a TLE-fitting workflow.
 * :doc:`conventions`: check time scales, reference frames, units, and data limits.
@@ -46,7 +46,7 @@ Scope and confidence
 --------------------
 
 The value-based API covers Earth propagation, state/time/frame conversions,
-geometric DE405 body states, and a bounded set of extended mission operations.
+geometric DE405 body states, and a bounded set of mission operations.
 The bundled core SWIG interface is broader and experimental. Optional GMAT
 plugins and GUI workflows are outside the supported facade.
 
@@ -57,14 +57,12 @@ equivalence. Their scope is described in :doc:`development`; passing them does
 not validate operational mission use. Scientific inputs are fixed snapshots,
 with coverage and freshness limits in :doc:`conventions`.
 
-These pages describe core candidate
-``ea39c085a95e5bf6151139bf69b977f74c80690b``. Its tested native wheels remain
-bound to ``540c4c1c84bf422a96bc8667a8585beba8af2ad9``; the child changes only
-verifiers, which were rerun against those exact libraries. Current native
-qualification covers Linux x86_64 with standard-ABI CPython 3.14.7. Earlier
-ARM64/macOS results do not qualify this changed candidate. See
-:ref:`platform-support` for the exact scope and :doc:`development` for evidence
-boundaries.
+These pages describe the single-package cleanup based on
+``bff0ed4687964cd1f36a3ebaeb278b451bac271d``. That base revision has six passed
+native matrix cells across Linux x86_64/ARM64 and macOS ARM64; Intel macOS remains
+pending. Those historical profile builds do not establish a fresh native build
+of the packaging cleanup. See :ref:`platform-support` for exact source and
+artifact boundaries and :doc:`development` for the checks.
 
 .. toctree::
    :maxdepth: 2

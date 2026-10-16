@@ -3,7 +3,7 @@
 This verifies declared minimum OS and relocation; it cannot prove execution on
 older macOS releases. Installed tests must run separately on the native runner.
 """
-import argparse,json,re,subprocess,tempfile,zipfile
+import argparse,re,subprocess,tempfile,zipfile
 from pathlib import Path
 from check_distribution import check as check_distribution
 
@@ -12,8 +12,7 @@ def check(path, *, arch, source_manifest=None, deployment_target='11.0'):
     check_distribution(path,source_manifest=source_manifest)
     def run(*args):return subprocess.check_output(list(map(str,args)),text=True)
     with zipfile.ZipFile(path) as wheel,tempfile.TemporaryDirectory() as directory:
-        names=wheel.namelist();profile=json.loads(wheel.read('gmatpy/BUILD_PROFILE.json'))
-        assert ('-1minimal-' if profile['profile']=='minimal' else '-2extended-') in Path(path).name
+        names=wheel.namelist()
         assert Path(path).name.endswith(f'-macosx_11_0_{arch}.whl'),Path(path).name
         binaries=[n for n in names if n.endswith(('.so','.dylib'))]
         assert set(binaries)=={'gmatpy/_native/_gmat_py.so','gmatpy/_native/libGmatBase.dylib','gmatpy/_native/libGmatUtil.dylib'},binaries
@@ -41,7 +40,8 @@ def check(path, *, arch, source_manifest=None, deployment_target='11.0'):
                 assert ids==['@rpath/'+Path(name).name] or ids==['@loader_path/'+Path(name).name],ids
             symbols=run('nm','-g',binary)
             assert 'FileUpdaterSVN' not in symbols
-            if profile['profile']=='minimal':assert '_spkezr_c' not in symbols and '_furnsh_c' not in symbols
+            if name=='gmatpy/_native/libGmatBase.dylib':
+                assert '_spkezr_c' in symbols and '_furnsh_c' in symbols,'Full SPICE implementation missing'
             print(name,'architecture',arch,'minimum OS',os_min,'rpaths',rpaths,'dependencies',deps)
         print('MACOS_WHEEL_OK: native single architecture, relative load paths, system-only external dependencies')
 

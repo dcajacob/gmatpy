@@ -1,7 +1,6 @@
 """Check a repaired Linux wheel: python python/tools/check_wheel.py path.whl."""
 
 import argparse
-import json
 from pathlib import Path
 import re
 import subprocess
@@ -16,11 +15,6 @@ def check(path, *, source_manifest=None):
     check_distribution(path, source_manifest=source_manifest)
     with zipfile.ZipFile(path) as wheel, tempfile.TemporaryDirectory() as directory:
         names = wheel.namelist()
-        profile = json.loads(wheel.read("gmatpy/BUILD_PROFILE.json")) if "gmatpy/BUILD_PROFILE.json" in names else None
-        if profile and profile["profile"] == "minimal":
-            assert "-1minimal-" in Path(path).name, "Minimal wheel must have its identifying build tag"
-        if profile and "-1minimal-" in Path(path).name:
-            assert profile["profile"] == "minimal", "Wheel tag/profile mismatch"
         assert "gmatpy/_native/gmat_py.py" in names
         assert any(name.startswith("gmatpy/_native/_gmat_py") for name in names)
         for library in ("GmatBase", "GmatUtil"):
@@ -41,8 +35,8 @@ def check(path, *, source_manifest=None):
                 assert not re.search(r"lib(?:Qt|wx|gtk|X11|GL\.so|xerces)", dynamic), name
                 symbols = subprocess.check_output(["nm", "-D", file], text=True)
                 assert "FileUpdaterSVN" not in symbols, name
-                if profile and profile["profile"] == "minimal":
-                    assert "spkezr_c" not in symbols and "furnsh_c" not in symbols, "Kernel implementation leaked into minimal build"
+                if file.name.startswith("libGmatBase.so."):
+                    assert "spkezr_c" in symbols and "furnsh_c" in symbols, "Full SPICE implementation missing"
                 for line in dynamic.splitlines():
                     if "RPATH" in line or "RUNPATH" in line:
                         entries = line.split("[", 1)[1].split("]", 1)[0].split(":")

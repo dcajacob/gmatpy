@@ -1,16 +1,13 @@
 cmake_minimum_required(VERSION 3.19)
 project(GmatPy LANGUAGES C CXX)
-set(GMAT_PY_PROFILE "extended" CACHE STRING "GMAT Py profile: minimal or extended")
-if(NOT GMAT_PY_PROFILE MATCHES "^(minimal|extended)$")
-  message(FATAL_ERROR "GMAT_PY_PROFILE must be minimal or extended")
+# GMAT Py ships one complete headless library. Keep the historical extended
+# token in its internal build record without exposing alternative wheel flavors.
+if(DEFINED GMAT_PY_PROFILE AND NOT GMAT_PY_PROFILE STREQUAL "extended")
+  message(FATAL_ERROR "GMAT Py ships one full headless package; remove the obsolete GMAT_PY_PROFILE override")
 endif()
-if(GMAT_PY_PROFILE STREQUAL "minimal")
-  set(GMAT_ENABLE_SPICE OFF CACHE BOOL "" FORCE)
-  set(GMAT_PY_HAS_SPICE false)
-else()
-  set(GMAT_ENABLE_SPICE ON CACHE BOOL "" FORCE)
-  set(GMAT_PY_HAS_SPICE true)
-endif()
+set(GMAT_PY_PROFILE "extended")
+set(GMAT_ENABLE_SPICE ON CACHE BOOL "" FORCE)
+set(GMAT_PY_HAS_SPICE true)
 
 # Windows x64 is an explicit qualification path; other ports stay gated.
 option(GMAT_PY_EXPERIMENTAL_WINDOWS "Enable Windows x64 qualification builds" OFF)
@@ -121,9 +118,6 @@ set(GMAT_PY_DATA_FILES
   time/SPICELeapSecondKernel.tls
   time/tai-utc.dat
 )
-if(GMAT_PY_PROFILE STREQUAL "minimal")
-  list(FILTER GMAT_PY_DATA_FILES EXCLUDE REGEX "(^planetary_ephem/spk/|/SPICE|/earth_latest_high_prec)")
-endif()
 string(REPLACE ";" "\", \"" GMAT_PY_JSON_FILES "${GMAT_PY_DATA_FILES}")
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/BUILD_PROFILE.json"
   "{\"schema_version\": 1, \"profile\": \"${GMAT_PY_PROFILE}\", \"spice\": ${GMAT_PY_HAS_SPICE}, \"data_files\": [\"${GMAT_PY_JSON_FILES}\"]}\n")

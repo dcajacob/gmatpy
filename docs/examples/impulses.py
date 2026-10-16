@@ -1,21 +1,10 @@
-"""Compare a maneuvering spacecraft with an unburned companion (extended)."""
+"""Compare a maneuvering spacecraft with an unburned companion."""
 
 import math
 
 import gmatpy as gmat
 
 epoch = "2020-07-20T12:00:00Z"
-if not gmat.capabilities().supports("multi_spacecraft"):
-    # Capability checks precede even validation of these deliberately invalid inputs.
-    for operation in (gmat.propagate_many, gmat.propagate_mission):
-        try:
-            operation({}, epoch, [])
-        except gmat.UnsupportedCapabilityError:
-            pass
-        else:
-            raise AssertionError("Expected an early extended-profile capability error")
-    print("SKIP: impulses.py requires the extended profile")
-    raise SystemExit(0)
 
 mu = 398600.4415
 state = (7000.0, 0.0, 0.0, 0.0, math.sqrt(mu / 7000), 0.0)

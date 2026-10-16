@@ -31,7 +31,6 @@ def test_ephemeris_output_cannot_replace_a_directory(tmp_path):
     assert destination.is_dir()
 
 
-@pytest.mark.skipif(not g.capabilities().supports('spice_kernels'),reason='extended kernel implementation only')
 def test_kernel_failure_and_missing_file_clear_leave_engine_usable(tmp_path):
     # Isolate the process-global kernel pool from the rest of this test suite.
     code='''import pathlib,shutil,sys,math

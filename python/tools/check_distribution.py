@@ -8,8 +8,10 @@ import argparse
 from contextlib import contextmanager
 from email.parser import BytesParser
 import hashlib
+from itertools import product
 import json
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
+import re
 import tarfile
 import zipfile
 
@@ -48,15 +50,18 @@ def archive_files(path):
 
 def check(path, *, release=False, source_manifest=None):
     with archive_files(path) as (names, open_member, package, data_prefix):
+        is_wheel = package == "gmatpy"
         profile = None
         profile_name = f"{package}/BUILD_PROFILE.json"
         if profile_name in names:
             with open_member(names[profile_name]) as stream:
                 profile = json.loads(stream.read())
-            if profile.get("schema_version") != 1 or profile.get("profile") not in {"minimal", "extended"}:
-                raise ValueError("Invalid build profile")
-            if profile["spice"] != (profile["profile"] == "extended"):
-                raise ValueError("Profile SPICE configuration mismatch")
+            if profile.get("schema_version") != 1 or profile.get("profile") != "extended":
+                raise ValueError("Only the standard full headless build is supported (internal profile: extended)")
+            if profile.get("spice") is not True:
+                raise ValueError("Standard full headless build must include SPICE")
+        elif is_wheel:
+            raise ValueError("Wheel is missing required BUILD_PROFILE.json")
         def read(name):
             if name not in names:
                 raise ValueError(f"Required distribution file missing: {name}")
@@ -87,6 +92,29 @@ def check(path, *, release=False, source_manifest=None):
         for field in ("Name", "Version"):
             if metadata[field] != code["package"][field.lower()]:
                 raise ValueError(f"Package {field} differs from code manifest")
+        if is_wheel:
+            # A wheel build number cannot select a different installed feature
+            # set. The one published package uses ordinary, untagged filenames.
+            filename = Path(path).name
+            parts = filename.removesuffix(".whl").split("-")
+            if not filename.endswith(".whl") or len(parts) != 5:
+                raise ValueError("Standard wheel filename must not contain a build tag")
+            distribution, version, python_tag, abi_tag, platform_tag = parts
+            if distribution != metadata["Name"].replace("-", "_") or version != metadata["Version"].replace("-", "_"):
+                raise ValueError("Wheel filename differs from package metadata")
+            if not all(re.fullmatch(r"[A-Za-z0-9_]+(?:\.[A-Za-z0-9_]+)*", tag)
+                       for tag in (python_tag, abi_tag, platform_tag)):
+                raise ValueError("Invalid wheel compatibility tags")
+            wheel_name = metadata_name.removesuffix("METADATA") + "WHEEL"
+            if [name for name in names if name.endswith(".dist-info/WHEEL")] != [wheel_name]:
+                raise ValueError("Wheel must contain exactly one matching WHEEL metadata file")
+            wheel_metadata = BytesParser().parsebytes(read(wheel_name))
+            if wheel_metadata.get_all("Build") is not None:
+                raise ValueError("Standard WHEEL metadata must not contain a Build tag")
+            tags = {"-".join(items) for items in product(
+                python_tag.split("."), abi_tag.split("."), platform_tag.split("."))}
+            if set(wheel_metadata.get_all("Tag", [])) != tags:
+                raise ValueError("WHEEL compatibility tags differ from filename")
         if source_manifest is not None:
             with open(source_manifest, "rb") as stream:
                 expected_provenance = stream.read()
@@ -135,13 +163,10 @@ def check(path, *, release=False, source_manifest=None):
             selected = profile["data_files"]
             if len(selected) != len(set(selected)) or not set(selected) <= expected:
                 raise ValueError("Invalid profile data inventory")
-            minimal = {name for name in expected if not (
-                name.startswith("planetary_ephem/spk/") or "/SPICE" in name or
-                "/earth_latest_high_prec" in name)}
-            permitted = minimal if profile["profile"] == "minimal" else expected
-            if set(selected) != permitted:
+            if set(selected) != expected:
                 raise ValueError("Build profile has an unexpected data selection")
-            expected = permitted
+        if is_wheel and len(expected) != 17:
+            raise ValueError("Standard full headless wheel must include all 17 packaged data files")
         if actual != expected:
             raise ValueError(f"Data inventory mismatch: extra={sorted(actual-expected)}, "
                              f"missing={sorted(expected-actual)}")

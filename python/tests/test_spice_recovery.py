@@ -2,22 +2,16 @@
 import subprocess
 import sys
 
-import pytest
-
 
 def _run_spice_child(code, tmp_path, marker):
     # The kernel pool and native singleton state are process-global. Exercise
     # each failure in a fresh installed-package process, outside the source tree.
     prefix = '''import gmatpy as g
-if not g.capabilities().supports("spice_kernels"):
- print("SPICE_MINIMAL_SKIP")
- raise SystemExit(0)
+assert g.capabilities().supports("spice_kernels")
 '''
     result = subprocess.run([sys.executable, "-I", "-c", prefix + code, str(tmp_path)],
                             cwd=tmp_path, capture_output=True, text=True, timeout=60)
     assert result.returncode == 0, result.stdout + result.stderr
-    if "SPICE_MINIMAL_SKIP" in result.stdout:
-        pytest.skip("extended kernel implementation only")
     assert marker in result.stdout
 
 

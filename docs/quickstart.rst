@@ -1,7 +1,7 @@
 Propagate your first orbit
 ============================
 
-Install a matching wheel using :doc:`installation`. Both profiles support
+Install a matching wheel using :doc:`installation`. The standard package supports
 this example; the installed runtime needs only the standard library and its
 bundled binaries/data.
 

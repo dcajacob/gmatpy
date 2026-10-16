@@ -311,16 +311,12 @@
     }
   ],
   "build_profiles": {
-    "minimal": {
-      "spice_kernel_support": false,
-      "data_files": 9,
-      "scope": "Shared headless GMAT core and propagation/frame helpers; CSPICE-supplied f2c objects retained. Extended convenience workflows are unsupported in this profile. Broad remaining core bindings are not a sandbox."
-    },
     "extended": {
       "spice_kernel_support": true,
       "data_files": 17,
-      "scope": "Headless core, existing native bindings and tested mission increment. No optional plugin families enabled; not full GMAT parity."
+      "scope": "The single standard complete headless library: shared GMAT core, native bindings, SPICE kernels and supported mission workflows. No GUI or optional plugin families. The historical extended token is retained only in the internal build/capability record."
     },
-    "release_review": "The existing owner-dependent publication hold is retained for both profiles; reducing compiled functionality is not a legal clearance."
-  }
+    "release_review": "The existing owner-dependent CSPICE product determination remains unresolved for the standard package."
+  },
+  "distribution_policy": "One standard complete headless gmatpy wheel per supported Python ABI/platform; no minimal variant, profile build tags, GUI or published feature extras."
 }

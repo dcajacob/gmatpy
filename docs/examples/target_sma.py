@@ -1,19 +1,10 @@
-"""Solve for an instantaneous tangential burn to a specified SMA (extended)."""
+"""Solve for an instantaneous tangential burn to a specified SMA."""
 
 import math
 
 import gmatpy as gmat
 
 epoch = "2020-07-20T12:00:00Z"
-if not gmat.capabilities().supports("targeting"):
-    try:
-        gmat.target_sma([], epoch, -1)
-    except gmat.UnsupportedCapabilityError:
-        pass
-    else:
-        raise AssertionError("Expected an early extended-profile capability error")
-    print("SKIP: target_sma.py requires the extended profile")
-    raise SystemExit(0)
 
 mu = 398600.4415
 radius_km = 7000.0

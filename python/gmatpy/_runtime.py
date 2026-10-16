@@ -84,16 +84,6 @@ def engine():
         "EARTH_EXPONENTIAL_FILE": "atmosphere/earth/EarthExponentialAtmosphereData.txt",
         "ICRF_FILE": "icrf/ICRF_Table.txt",
     }
-    unbundled_files = {}
-    from .capabilities import capabilities
-    if capabilities().profile == "minimal":
-        paths["PLANETARY_EPHEM_SPK_PATH"] = output
-        omitted = {"PLANETARY_SPK_FILE", "PLANETARY_PCK_FILE", "EARTH_LATEST_PCK_FILE",
-                   "EARTH_PCK_PREDICTED_FILE", "EARTH_PCK_CURRENT_FILE", "LUNA_PCK_CURRENT_FILE",
-                   "LUNA_FRAME_KERNEL_FILE", "LSK_FILE"}
-        unbundled_files = {key: output / ("unbundled-" + Path(value).name)
-                           for key, value in files.items() if key in omitted}
-        files = {key: value for key, value in files.items() if key not in omitted}
     missing = [str(data / value) for value in files.values() if not (data / value).is_file()]
     if missing:
         raise RuntimeError("GMAT scientific data missing: " + ", ".join(missing))
@@ -102,7 +92,6 @@ def engine():
              "WRITE_PERSONALIZATION_FILE = OFF", f"LOG_FILE = {output / 'engine.log'}"]
     lines += [f"{key} = {value.as_posix()}/" for key, value in paths.items()]
     lines += [f"{key} = {(data / value).as_posix()}" for key, value in files.items()]
-    lines += [f"{key} = {value.as_posix()}" for key, value in unbundled_files.items()]
     # Optional weather datasets are deliberately absent from the distribution.
     # GMAT requires configured names even for constant-flux drag, but only reads
     # these files when a caller selects a file-based weather source. Native callers

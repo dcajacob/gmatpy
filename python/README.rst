@@ -15,33 +15,36 @@ Install a built wheel::
 Platform support
 ------------------
 
-The current core candidate is ``ea39c085a95e5bf6151139bf69b977f74c80690b``.
-Both native wheel profiles were built from
-``540c4c1c84bf422a96bc8667a8585beba8af2ad9`` and freshly qualified on Linux
-x86_64, standard-ABI CPython 3.14.7 and glibc 2.28. The child changes only two
-verifiers, which passed against those same installed wheel libraries; it does
-not give the wheels a new source binding. Minimal passed 124 tests with 22
-expected skips; extended passed 144 with two expected skips.
+This package ships one complete headless library with SPICE and all seventeen
+curated scientific inputs. There is no profile selection or feature extra.
+The historical ``extended`` value returned by ``capabilities().profile`` is an
+internal compatibility label. No GUI is included or planned for GMAT Py.
 
-The earlier ``50f61a0`` CPython 3.14 Linux ARM64 and macOS Intel/Apple Silicon
-results do not qualify this changed candidate. Older Windows results are also
-historical. Python 3.10+ metadata is broader than the tested interpreter scope;
-other Python versions and free-threaded Python remain unqualified. Wheels are
-specific to their Python ABI and platform. Runtime needs only the standard
-library and bundled native binaries/data; native build requirements are
-separate. This qualification does not imply public binary availability.
+The most recent native qualification is for source
+``bff0ed4687964cd1f36a3ebaeb278b451bac271d``, before this packaging cleanup.
+Its full headless wheels passed 144 tests with two expected skips on Linux
+x86_64 and ARM64 and macOS ARM64, using standard-ABI CPython 3.14.7; macOS Intel
+was still pending when this cleanup was prepared. The cleanup retains the full
+native configuration and scientific inputs; tests reusing earlier extended
+binaries do not make them newly built artifacts of this source revision.
+Final release files require their own source/build receipts and validation.
+
+The earlier minimal/extended wheel variants and Windows results are historical.
+Python 3.10+ metadata is broader than the qualified interpreter scope; other
+Python versions and free-threaded Python remain unqualified. Wheels are specific
+to their Python ABI and platform. Runtime needs only the standard library and
+bundled native binaries/data; source-build requirements are separate.
+This qualification does not imply public binary availability.
 
 Documentation
 ---------------
 
-The Sphinx documentation in ``docs/`` covers installation, profiles, quickstart,
-TLE Tailor integration, time/frames/units, all public Python exports, scripts,
-native access, examples and development. See the `documentation sources
-<https://github.com/dcajacob/gmatpy/tree/main/docs>`_. To render them locally,
-install ``docs/requirements.txt`` and run
+Read the `hosted documentation <https://gmatpy.readthedocs.io/en/latest/>`_ for
+installation, quickstart, TLE Tailor integration, time/frames/units, public Python
+exports, scripts, native access, examples and development. The Sphinx sources
+are in ``docs/``. To render locally, install ``docs/requirements.txt`` and run
 ``python -m sphinx -W --keep-going -n -b html docs docs/_build/html`` from the
-repository root. This does not install or compile GMAT. Read the Docs
-configuration is included; hosted project setup is separate.
+repository root. This does not install or compile GMAT.
 
 Propagate an orbit
 --------------------
@@ -154,7 +157,7 @@ coverage approximately 1960-01-01 through 2100-01-01. The restored March 2026
 Earth high-precision PCK ends on 2026-06-12; that SPICE-frame limit is separate
 from the default FK5/EOP path. The legacy SVN updater and Xerces are excluded. A new data updater is
 deferred. Numerical regressions are provided, but this is not validated as an
-operational mission-analysis tool or an STK HPOP replacement. The extended convenience API exposes impulsive maneuvers, multi-spacecraft
+operational mission-analysis tool or an STK HPOP replacement. The convenience API exposes impulsive maneuvers, multi-spacecraft
 propagation, bounded SMA targeting and mission scripts. Finite burns use scripts.
 Estimation and STM helpers remain deferred.
 Other core facilities are accessible experimentally through ``native_session``.
@@ -164,7 +167,7 @@ Licensing and distribution status
 
 GMAT and GMAT Py code use Apache-2.0; CSPICE and embedded f2c runtime components
 have their own notices. ``gmatpy/NOTICE.txt``, ``gmatpy/LICENSES.md`` and
-``gmatpy/licenses/`` are included in both wheel and source archive. The component
+``gmatpy/licenses/`` are included in the wheel and source archive. The component
 manifests record source URLs, content hashes, applicable terms, numerical-data
 reuse assessments and scientific changes. They are an engineering inventory,
 not a worldwide legal guarantee. The optional archive-wide SPDX expression is
@@ -228,12 +231,10 @@ isolated Python build environment::
 
     python -m build --wheel --no-isolation ^
         -Ccmake.define.GMAT_PY_EXPERIMENTAL_WINDOWS=ON ^
-        -Ccmake.define.CSPICE_DIR=C:/path/to/cspice ^
-        -Ccmake.define.GMAT_PY_PROFILE=extended -Cwheel.build-tag=2extended
+        -Ccmake.define.CSPICE_DIR=C:/path/to/cspice
 
-For minimal use ``GMAT_PY_PROFILE=minimal`` and ``wheel.build-tag=1minimal``.
-Both profiles still require the platform-native CSPICE/f2c dependency. Windows
-ARM64 and macOS remain gated; passing Windows x64 tests does not qualify them.
+The package requires the platform-native CSPICE/f2c dependency. Windows
+ARM64 is outside this path; macOS has its separate explicit architecture gate.
 The Bash/auditwheel helper and ELF checker are Linux tools. From the existing
 MSVC developer environment, use ``python/tools/check_windows_wheel.py`` for PE
 architecture, engine DLL and imported-library checks. Install the wheel in a
@@ -282,11 +283,23 @@ Tests cover independent analytic propagation and element calculations, native
 GMAT comparison, coordinate round trips and rotating velocity, time offsets,
 ephemeris origins, native session lifetime/reentry, validation and concurrency.
 
-Build profiles and expanded mission workflows
------------------------------------------------
+Package contents and mission workflows
+-----------------------------------------
 
-See ``python/PROFILES.rst`` for the minimal/extended wheel boundary, TLE Tailor
-contract, supported impulse/multi-spacecraft/targeting/script workflows and
-explicit remaining coverage. ``gmatpy.capabilities()`` reports the installed
-profile. Minimal and extended are alternative builds of the same distribution;
-Python extras do not change its native contents. The default remains extended.
+See ``python/PROFILES.rst`` for package contents, the TLE Tailor contract,
+supported impulse/multi-spacecraft/targeting/script workflows and remaining
+coverage. ``gmatpy.capabilities()`` reports available features. The internal
+``extended`` label is retained for compatibility; all current standard wheels
+contain the full headless feature set and require no profile flags or extras.
+
+Contributor dependencies
+--------------------------
+
+Testing and source-archive tools are in the local ``dev`` dependency group.
+With uv, use ``uv sync --group dev``; this installs development tools and also
+builds the project, so the native source-build prerequisites above still apply.
+To obtain only contributor tools without building GMAT, use
+``uv sync --group dev --no-install-project``. Pip contributors can install
+``build`` and ``pytest`` explicitly in an isolated environment. Documentation
+uses its separate pinned ``docs/requirements.txt``. Dependency groups are
+contributor tooling, not alternate published package editions.

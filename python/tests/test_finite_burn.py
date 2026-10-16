@@ -4,7 +4,6 @@ import math
 import pytest
 import gmatpy as g
 
-@pytest.mark.skipif(g.capabilities().profile != 'extended', reason='extended-profile workflow')
 def test_finite_burn_matches_thrust_and_mass_flow(tmp_path):
     fields=['X','Y','Z','VX','VY','VZ','TotalMass']
     base='''Create Spacecraft Sat;

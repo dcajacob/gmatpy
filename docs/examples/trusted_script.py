@@ -6,16 +6,6 @@ import tempfile
 
 import gmatpy as gmat
 
-if not gmat.capabilities().supports("mission_scripts"):
-    # The nonexistent path must not be examined before the capability check.
-    try:
-        gmat.run_script("does-not-exist.script", outputs={})
-    except gmat.UnsupportedCapabilityError:
-        pass
-    else:
-        raise AssertionError("Expected an early extended-profile capability error")
-    print("SKIP: trusted_script.py requires the extended profile")
-    raise SystemExit(0)
 
 # Resolve bundled data from the installed package, never a local GMAT checkout.
 gravity_file = Path(gmat.__file__).resolve().parent / "data/gravity/earth/EGM96.cof"

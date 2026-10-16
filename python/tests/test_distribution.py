@@ -178,7 +178,6 @@ def test_combined_weather_sources_accept_both_caller_files(tmp_path):
         assert all(math.isfinite(value) for value in integrator.GetState())
 
 
-@pytest.mark.skipif(gmatpy.capabilities().profile == "minimal", reason="SPICE kernel support is excluded")
 def test_regenerated_ephemeris_sources_initialize_and_switch():
     # Initialization and source switching must use the configured renamed SPK,
     # rather than the absent old DE405AllPlanets/DE421AllPlanets filenames.

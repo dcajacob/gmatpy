@@ -14,6 +14,14 @@ requires-python = ">=3.10"
 license-files = ["application/License.txt", "python/gmatpy/NOTICE.txt",
                  "python/gmatpy/licenses/*.txt"]
 
+[project.urls]
+Documentation = "https://gmatpy.readthedocs.io/en/latest/"
+Repository = "https://github.com/dcajacob/gmatpy"
+Issues = "https://github.com/dcajacob/gmatpy/issues"
+
+[dependency-groups]
+dev = ["build>=1.4,<2", "pytest>=9,<10"]
+
 [tool.scikit-build]
 minimum-version = "build-system.requires"
 cmake.source-dir = "python"

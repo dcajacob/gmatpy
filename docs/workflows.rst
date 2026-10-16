@@ -4,113 +4,75 @@ Mission workflows and native access
 ===================================
 
 GMAT Py provides a value-based Python interface over selected parts of the
-bundled GMAT engine. Choose the installed profile and interface for the
-calculation you need. Available SWIG classes do not establish support for every
-GMAT command, plugin, or workflow.
+bundled GMAT engine. The standard package includes every supported workflow
+below. Available SWIG classes do not establish support for every GMAT command,
+plugin, or workflow.
 
 .. _build-profiles:
 
-Minimal and extended profiles
------------------------------
+Included capabilities
+---------------------
 
-Both profiles are builds of ``gmatpy`` version 0.2.0 and use the same import
-tree. Their wheel build tags are ``1minimal`` and ``2extended``. Install an
-explicit wheel filename to select a profile; Python extras do not switch
-native contents. An unconstrained resolver presented with both wheels can
-prefer the extended build tag. Replace a profile in an isolated environment
-using ``python -m pip install --force-reinstall /path/to/profile.whl``.
-The default source-build profile is extended.
-
-Inspect the installed capabilities before selecting a workflow:
+The one standard ``gmatpy`` package includes SPICE kernel support and 17 selected
+scientific inputs. It needs no feature profile, alternate wheel build tag or
+Python extra. Inspect its supported boundary without initializing the engine:
 
 .. code-block:: python
 
    import gmatpy as gmat
 
    info = gmat.capabilities()
-   print(info.profile)
-   if info.supports("impulsive_maneuvers"):
-       print("Scheduled impulse workflows are available")
+   print(sorted(info.features))
+   print(info.supports("impulsive_maneuvers"))  # True
 
-The strings below are the exact keys accepted by
-``Capabilities.supports(feature)``. Unknown keys return ``False``.
+``capabilities().profile`` retains the internal compatibility label
+``"extended"``. It is not an installation choice. The strings below are the
+exact keys accepted by ``Capabilities.supports(feature)``; unknown keys return
+``False``. Every listed key is available in the standard package.
 
-.. list-table:: Supported profile features
+.. list-table:: Supported capabilities
    :header-rows: 1
-   :widths: 24 9 9 58
+   :widths: 28 72
 
    * - Capability key
-     - Minimal
-     - Extended
      - Interface and scope
    * - ``propagation``
-     - Yes
-     - Yes
      - ``propagate``; forward Earth-centered Cartesian sampling.
    * - ``state_conversion``
-     - Yes
-     - Yes
      - ``convert_state``; supported six-component orbital representations.
    * - ``frame_conversion``
-     - Yes
-     - Yes
      - ``transform_state``; supported Earth-centered full-state transforms.
    * - ``time_conversion``
-     - Yes
-     - Yes
      - ``epoch_mjd``; supported time scales.
    * - ``native_de405``
-     - Yes
-     - Yes
      - ``body_state``; geometric states from bundled native DE405.
    * - ``native_session``
-     - Yes
-     - Yes
      - Scoped access to bundled core SWIG bindings.
    * - ``impulsive_maneuvers``
-     - No
-     - Yes
      - ``Impulse`` schedules used by ``propagate_mission`` and ``propagate_many``.
    * - ``multi_spacecraft``
-     - No
-     - Yes
      - ``propagate_many``; independent spacecraft in a common propagation setup.
    * - ``targeting``
-     - No
-     - Yes
      - ``target_sma``; one bounded tangential impulse solve.
    * - ``mission_scripts``
-     - No
-     - Yes
      - ``run_script``; trusted core mission scripts and copied output fields.
    * - ``spice_kernels``
-     - No
-     - Yes
      - Native SPICE bindings and bundled kernel inputs; no dedicated value-based kernel-loading helper.
 
-Calling an unavailable convenience operation raises
-``UnsupportedCapabilityError`` before native execution, with instructions for
-replacing the minimal wheel. The capability set describes the supported
-profile; it is not a security boundary around the raw engine.
-
-Minimal disables SPICE source modules and wrapper classes and bundles nine
-selected scientific inputs instead of extended's seventeen. It retains the
-shared GMAT framework and broad core bindings, native DE405, Earth gravity,
-constant-flux drag support, time/orientation data, and the restored NASA
-``ICRF_Table.txt`` required by the :ref:`TLE Tailor bridge <tle-tailor>`.
-The table retains NASA's original values and unequal sampling grid; the former
-ERFA-generated alternative is outside the packaged defaults. JGM2 is retained as
-an engine-initialization dependency even when the facade selects EGM96 or
-JGM3. Minimal still has native dependencies, including CSPICE-supplied f2c
-runtime objects used by MSISE. A smaller profile does not settle distribution
-or licensing approval.
+The scientific inputs include native DE405, Earth gravity, time/orientation
+data and NASA's restored ``ICRF_Table.txt`` required by the
+:ref:`TLE Tailor bridge <tle-tailor>`. The ICRF table retains NASA's original
+values and unequal sampling grid; the former ERFA-generated alternative is
+outside the packaged defaults. JGM2 remains an engine-initialization dependency
+even when the facade selects EGM96 or JGM3. The reported capability set describes
+the supported interface, not a security boundary around the raw engine.
 
 .. _impulsive-missions:
 
 Schedule instantaneous maneuvers
 --------------------------------
 
-The extended profile's ``propagate_mission`` starts from one Cartesian state
+``propagate_mission`` starts from one Cartesian state
 and samples an orbit with native impulsive burns. Its inputs use the same
 EarthMJ2000Eq frame, km, km/s, timezone-aware epoch, and propagation settings
 as ``propagate``.
@@ -222,7 +184,7 @@ GMAT scripts or optional plugins will work. Use a temporary or dedicated
 working location and control the paths referenced by your script.
 
 Finite-duration thrust with tank mass depletion is available through trusted
-core scripts in the extended profile. A script creates ``ChemicalTank``,
+core scripts. A script creates ``ChemicalTank``,
 ``ChemicalThruster``, and ``FiniteBurn`` objects, attaches them to the
 spacecraft, and brackets propagation with ``BeginFiniteBurn`` and
 ``EndFiniteBurn``. The repository's
@@ -280,7 +242,7 @@ process.
 SPICE kernel cleanup is process-global
 --------------------------------------
 
-The extended native API exposes ``SpiceInterface``. Its CSPICE kernel pool is
+The bundled native API exposes ``SpiceInterface``. Its CSPICE kernel pool is
 shared by the whole process, including other libraries that call CSPICE.
 ``native_session`` serializes GMAT access and clears configured GMAT objects;
 it does not create a private kernel pool or isolate external pool owners.
@@ -302,17 +264,16 @@ This operation has no private-ownership boundary. Coordinate a full reset and
 any required reloads with every user of the process-global pool, or run
 independent native work in separate spawned processes.
 
-The extended profile includes the restored March 2026 Earth high-precision
+The package includes the restored March 2026 Earth high-precision
 PCK snapshot, whose coverage ends on 2026-06-12; its
 ``earth_latest_high_prec.bpc`` alias does not mean it is a current download.
 Implemented nutation coefficients retain NASA's original summation order.
 These restored scientific inputs do not enlarge the facade's frame or
 mission coverage. See :doc:`conventions` for the individual data limits.
 
-The restored source candidate has fresh native qualification for Linux
-x86_64, CPython 3.14.7, in both profiles. Previous Linux ARM64 and macOS
-results concern the older source and do not qualify the restored candidate.
-Read :ref:`platform-support` for the current source and artifact boundaries.
+The native evidence remains bound to the source revision and artifacts that
+produced it. Read :ref:`platform-support` for the current matrix status and the
+boundary between base-revision qualification and the packaging cleanup.
 
 Deferred coverage
 -----------------
@@ -320,9 +281,9 @@ Deferred coverage
 ``capabilities().deferred_plugins`` currently reports
 ``estimation/ekf``, ``station/measurement``, ``tle_propagator``,
 ``external_force_callbacks``, ``optional_optimizers``, ``csalt``, ``matlab``,
-``gmat_functions``, and ``gui``. These plugin families are not enabled by
-installing the extended wheel. Optional ephemeris-propagator plugins are also
-outside the supported facade.
+``gmat_functions``. These plugin families are outside the standard package.
+Optional ephemeris-propagator plugins are also outside the supported facade.
+GUI workflows are outside the project scope.
 
 Dedicated value-based STM/covariance helpers, finite burns/tanks, maneuvers
 with mass depletion, general multi-goal targeting, additional gravity
@@ -332,5 +293,5 @@ expose other core classes experimentally; that exposure is not complete GMAT
 coverage or evidence of numerical equivalence to a NASA GMAT release.
 
 The supported boundary is defined by the
-`profile specification <https://github.com/dcajacob/gmatpy/blob/50f61a05a1dd68ba2682d74a8631eba1b514630e/python/PROFILES.rst>`_,
+`capability specification <https://github.com/dcajacob/gmatpy/blob/main/python/PROFILES.rst>`_,
 the facade, and its regression tests.

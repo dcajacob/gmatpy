@@ -11,7 +11,7 @@ build configuration is in ``pyproject.toml`` and ``python/CMakeLists.txt``.
 
 Use an isolated checkout and environment. Native builds take substantially more
 work than documentation builds; :ref:`source-build` describes their compilers,
-CSPICE dependency and profile flags. The wheel build disables the GUI, optional
+CSPICE dependency and platform flags. The wheel build disables the GUI, optional
 plugins, CSALT, legacy data updater and Java API. Building the upstream desktop
 application is a separate workflow.
 
@@ -52,18 +52,18 @@ wheel installed:
 
 .. code-block:: console
 
-   python -m pip install /absolute/path/to/gmatpy-0.2.0-<build>-<python>-<abi>-<platform>.whl
+   python -m pip install /absolute/path/to/gmatpy-0.2.0-<python>-<abi>-<platform>.whl
    python docs/run_examples.py
 
 Use the actual wheel filename and its matching interpreter. The example runner
 is separate from the source-only Sphinx build so rendered documentation does not
-silently substitute mocked numerical results. Test both profiles when changing
-shared examples, and use the extended profile for extended workflows.
+silently substitute mocked numerical results. Run all six examples against
+the standard package when changing the documented workflows.
 
 The ``.readthedocs.yaml`` configuration describes a documentation-only build. It
-does not publish a wheel or qualify a native platform. Connecting a Read the Docs
-project, granting repository access and choosing a hosted domain are separate
-hosting steps.
+does not publish a wheel or qualify a native platform. The hosted documentation
+is live at https://gmatpy.readthedocs.io/en/latest/; publication of a wheel remains
+a separate release action.
 
 The configuration follows the official
 `Read the Docs v2 reference <https://docs.readthedocs.com/platform/stable/config-file/v2.html>`_.
@@ -93,21 +93,19 @@ out of that environment:
    cd /absolute/path/to/outside-source
    /absolute/path/to/new-test-env/bin/python -m pytest -q -ra /absolute/path/to/gmatpy/python/tests
 
-Select the interpreter and wheel for the platform under test. Run both minimal
-and extended in separate environments.
-Some tests intentionally skip profile-specific functionality; review the skip
-reasons as well as the pass count. The full qualification driver additionally
+Select the interpreter and standard wheel for the platform under test.
+Review skip reasons as well as the pass count; a skip is not evidence that the
+associated calculation ran. The full qualification driver additionally
 verifies every installed package byte against the wheel, including native
 libraries, so a source-path overlay cannot be mistaken for an installed test.
 
-The current Linux x86_64 CPython 3.14.7/glibc 2.28 qualification recorded
-124 passed / 22 skipped for minimal and 144 passed / 2 skipped for extended.
-The native wheels were built from
-``540c4c1c84bf422a96bc8667a8585beba8af2ad9``. Its child
-``ea39c085a95e5bf6151139bf69b977f74c80690b`` changes only two CI verifiers;
-the stricter verifiers passed against the exact installed libraries from those
-wheels. No rebuilt-child wheel or fresh macOS/ARM qualification is claimed.
-See :ref:`platform-support` for the distinction from historical platform runs.
+Native qualification for base revision
+``bff0ed4687964cd1f36a3ebaeb278b451bac271d`` has passed six of eight historical
+profile/target cells across Linux x86_64/ARM64 and macOS ARM64; Intel macOS is
+pending. The single-package cleanup does not change scientific code or inputs,
+but task-local checks using retained extended binaries remain checks against
+those identified binaries, not fresh native builds from the changed source.
+See :ref:`platform-support` for the exact evidence boundary.
 
 .. list-table:: What the tests establish
    :header-rows: 1
@@ -125,7 +123,7 @@ See :ref:`platform-support` for the distinction from historical platform runs.
        translation using the same engine.
    * - Interface and lifetime tests
      - Validation, time-scale offsets, frame round trips and rotating velocity,
-       body-state origins, profile rejection, mission semantics, script errors,
+       body-state origins, capability reporting, mission semantics, script errors,
        native object cleanup, threads, spawned processes and fork rejection.
    * - Controlled NASA-source fixture
      - ``sample_states.py`` and ``check_states.py`` compare selected propagation
@@ -144,17 +142,17 @@ See :ref:`platform-support` for the distinction from historical platform runs.
        a small caller against installed ``GmatBase`` and checks exact-line and
        exact-cubic invariants. These checks require no runtime SciPy.
 
-Both profiles reported zero sampled position/velocity error against the
-source-controlled NASA-source fixture. The fixture embeds source, input,
-sampling-script and native-library receipts. It is a bounded regression subset;
+The historical profile runs reported zero sampled position/velocity error
+against the source-controlled NASA-source fixture. The fixture embeds source,
+input, sampling-script and native-library receipts. It is a bounded regression subset;
 the old ERFA-based derivative reference remains separately preserved in
 ``reference-states-erfa-historical.json``.
 
-The broader local controlled comparison recorded zero state, matrix and epoch
-differences in eight supported minimal cases and ten extended cases; minimal
-explicitly omitted two SPICE-only cases. Both profiles also passed the stricter
-verifiers' 17 fresh Cubic analytic cases / 54 values and 12 MSISE analytic cases /
-51 values. Their fresh comparison against the 320 saved SciPy cases had maximum
+The retained earlier controlled comparison recorded zero state, matrix and
+epoch differences in eight historical minimal cases and ten extended cases;
+minimal explicitly omitted two SPICE-only cases. Those profile runs also passed
+the stricter verifiers' 17 fresh Cubic analytic cases / 54 values and 12 MSISE
+analytic cases / 51 values. Their fresh comparison against the 320 saved SciPy cases had maximum
 scaled error ``4.694258908022594e-13``. These are executed-input results, not
 range-wide numerical bounds or newly generated SciPy references.
 
@@ -201,10 +199,9 @@ Reproduce native qualification
 ------------------------------
 
 The manually dispatched ``.github/workflows/native-qualification.yml`` is
-configured to build minimal and extended from one immutable source archive on
-Linux x86_64/ARM64 and native macOS x86_64/ARM64. The configured matrix is broader
-than the current candidate's fresh Linux x86_64 results; it is not evidence that
-the new source passed on all four targets. It pins Linux container digests and
+configured to build one standard wheel from an immutable source archive on
+Linux x86_64/ARM64 and native macOS x86_64/ARM64. Configuration is not evidence
+that changed source has passed on every target. It pins Linux container digests and
 macOS runner architecture. ``python/ci/requirements.txt`` pins the Python build,
 repair and test tools. The driver requires standard-ABI CPython 3.14 and records
 its exact patch version rather than assuming identical interpreters everywhere.
@@ -226,8 +223,8 @@ paths:
 Run the driver on the corresponding native host/container. Its output directory
 must not exist. It rebuilds CSPICE unless ``--cspice`` supplies a matching tree
 with its required ``BUILD_DEPENDENCY.json`` record; ``--archive`` can provide the
-pinned NAIF source archive for that rebuild. It then builds and repairs both
-profiles, checks artifacts and installed bytes, runs tests and numerical
+pinned NAIF source archive for that rebuild. It then builds and repairs the
+standard wheel, checks artifacts and installed bytes, runs tests and numerical
 comparisons, and records results and evidence hashes. Linux repair explicitly
 requests ``manylinux_2_28``; macOS uses delocate and one native architecture.
 

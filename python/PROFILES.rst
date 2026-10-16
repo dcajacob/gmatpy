@@ -1,48 +1,28 @@
-GMAT Py build profiles and mission coverage
-==========================================
+GMAT Py package contents and mission coverage
+==============================================
 
-Two wheel variants use the same project name/version and ``import gmatpy``.
-``minimal`` has wheel build tag ``1minimal``; ``extended`` has ``2extended``.
-Install one explicit wheel path in an isolated environment. Use ``python -m pip install --force-reinstall /path/to/profile.whl`` to
-switch variants of the same version. This replaces the same distribution; do not create separate distributions
-that both own this namespace. Pip cannot select these profiles using extras.
-When both wheel files are available to an unconstrained resolver, its wheel
-build-tag preference can select extended; specify the minimal file explicitly.
-The default source build remains extended for existing native-API callers.
+GMAT Py ships one complete headless Python library. The standard wheel contains
+its native engine, SWIG bindings, all seventeen curated scientific inputs,
+SPICE support and the supported mission helpers below. There are no minimal
+and extended distributions, variant build tags or optional feature extras.
+The historical ``extended`` token remains in ``BUILD_PROFILE.json`` and
+``gmatpy.capabilities().profile`` for API compatibility; it is not an install
+choice. No GUI is included or planned for this package.
 
-Build with ``GMAT_PY_PROFILE=minimal`` or ``extended`` using
-``python/tools/build_wheel.sh``. ``GMAT_PY_BUILD_DIR`` optionally selects a
-persistent, isolated native build directory; never share it between profiles.
-Direct build frontends must set both ``cmake.define.GMAT_PY_PROFILE`` and
-``wheel.build-tag`` (``1minimal`` / ``2extended``). ``GMAT_PY_REPAIR=0`` selects a
-local Linux wheel; it does not establish manylinux compatibility.
+Build the standard wheel with ``python/tools/build_wheel.sh`` and a matching
+``CSPICE_DIR``. Direct build frontends need no profile or wheel build-tag flags.
+``GMAT_PY_BUILD_DIR`` optionally selects a persistent isolated native build
+directory. ``GMAT_PY_REPAIR=0`` selects a local Linux wheel; it does not establish
+manylinux compatibility. Obsolete minimal-profile overrides are rejected.
 
-The minimal profile is a real C++/data build variant. It disables
-``GMAT_ENABLE_SPICE``, omits SPICE source modules and wrapper classes, and ships
-nine selected scientific inputs instead of seventeen. Native DE405 remains
-because the default propagation force model needs Sun/Moon ephemerides. The
-ICRF orientation table remains because TLE Tailor requires the full six-state
-MJ2000Eq/ICRF transformation before its Astropy TEME bridge. Earth gravity,
-constant-flux drag, time, EOP and nutation data remain. JGM2 also remains because
-the inherited force-model factory opens it during default object construction,
-before the facade selects EGM96 or JGM3. It is an initialization dependency. Removing those inputs or
-relabeling frames would change the existing TLE Tailor contract.
+Propagation, state/time/frame conversion, native DE405 ephemeris helpers and
+scoped ``native_session`` are always available. Sun/Moon ephemerides, the ICRF
+orientation table, EOP/nutation/time inputs and gravity data retain their exact
+scientific values and coverage limits. The source/data inventory and component
+notices remain attached. CSPICE and embedded f2c have their separate terms;
+the owner-dependent product export-determination item remains unresolved.
 
-Minimal still includes the shared GMAT framework and broad core SWIG bindings;
-it is not a rewrite containing only an integrator. Its underlying core can have
-methods beyond the supported convenience surface. Capability reporting describes
-the supported profile, not a security boundary. CSPICE-supplied f2c runtime
-objects remain linked for MSISE; keep their terms and the existing release hold.
-Omitting kernel support is not an export/legal clearance.
-
-Both profiles retain the existing propagation, state/time/frame conversion,
-native DE405 ephemeris helpers, and scoped ``native_session``. Existing imports
-and ordinary ``ForceModel`` / ``Spacecraft`` settings are preserved. Inspect
-``gmatpy.capabilities()`` and ``.supports(feature)`` before selecting a workflow.
-A profile-unavailable convenience operation raises ``UnsupportedCapabilityError``
-with replacement-install guidance before entering the native engine.
-
-The extended profile adds these supported value-based operations:
+The package includes these supported value-based mission operations:
 
 * ``propagate_mission(state, epoch, times, impulses=[Impulse(...)])`` uses native
   impulsive burns and synchronizes the propagator across velocity discontinuities.
@@ -66,7 +46,7 @@ All calls obey GMAT's global-state serialization and native-session lifetime
 rules. Parallel work uses spawned processes. Optional plugin families are not
 newly enabled: estimation/EKF, station/measurement, TLE/ephemeris plugin
 propagators, external-force/Python callbacks, optional optimizers, CSALT, MATLAB,
-GMAT functions and GUI remain deferred. High-level finite-duration burn/tank
+GMAT functions remain deferred. GUI support is outside this package's scope. High-level finite-duration burn/tank
 models, STM/covariance, general multi-goal targeting, maneuvers with mass depletion,
 additional gravity bodies/models and full C++ binding parity remain future work.
 

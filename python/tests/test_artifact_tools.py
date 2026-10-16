@@ -1,8 +1,12 @@
 """Artifact identity and archive validation; no installed engine required."""
 
 import io
+import hashlib
 import json
+import importlib.util
+import os
 from pathlib import Path
+import subprocess
 import sys
 import tarfile
 import zipfile
@@ -26,7 +30,16 @@ def _files():
         "schema_version": 1, "package": {"name": "gmatpy", "version": "0.2.0"},
         "components": [], "publication_review": [{"id": "owner", "status": "pending", "notes": "decision needed"}],
     }).encode()
-    result[package + "licenses/DATA_MANIFEST.json"] = b'{"schema_version":1,"files":[]}'
+    data = []
+    for index in range(17):
+        name = ("planetary_ephem/spk/kernel.bsp" if index == 0 else
+                f"time/generated-{index:02d}.dat")
+        contents = f"synthetic data {index}\n".encode()
+        result["application/data/" + name] = contents
+        data.append({"path": name, "status": "documented_reuse_basis",
+                     "sha256": hashlib.sha256(contents).hexdigest()})
+    result[package + "licenses/DATA_MANIFEST.json"] = json.dumps({
+        "schema_version": 1, "files": data}).encode()
     result[package + "__init__.py"] = b"value = 1\n"
     result["PKG-INFO"] = b"Name: gmatpy\nVersion: 0.2.0\n"
     return result
@@ -52,6 +65,30 @@ def _candidate(tmp_path):
     return artifact, manifest_path, files
 
 
+def _wheel(path, files, *, profile=None, build=None, tag="cp314-cp314-linux_x86_64",
+           omit=()):
+    profile = profile if profile is not None else {
+        "schema_version": 1, "profile": "extended", "spice": True,
+        "data_files": [name.removeprefix("application/data/") for name in files
+                       if name.startswith("application/data/")],
+    }
+    wheel_files = {}
+    for name, contents in files.items():
+        if name.startswith("python/gmatpy/"):
+            wheel_files[name[len("python/"):]] = contents
+        elif name.startswith("application/data/"):
+            wheel_files["gmatpy/data/" + name[len("application/data/"):]] = contents
+    wheel_files["gmatpy/BUILD_PROFILE.json"] = json.dumps(profile).encode()
+    wheel_files["gmatpy-0.2.0.dist-info/METADATA"] = files["PKG-INFO"]
+    wheel_files["gmatpy-0.2.0.dist-info/WHEEL"] = (
+        "Wheel-Version: 1.0\nRoot-Is-Purelib: false\n" +
+        (f"Build: {build}\n" if build is not None else "") + f"Tag: {tag}\n").encode()
+    with zipfile.ZipFile(path, "w") as archive:
+        for name, contents in wheel_files.items():
+            if name not in omit:
+                archive.writestr(name, contents)
+
+
 def test_sdist_identity_and_release_hold(tmp_path):
     artifact, manifest, _ = _candidate(tmp_path)
     assert check(artifact, source_manifest=manifest) == ["owner: decision needed"]
@@ -70,12 +107,11 @@ def test_changed_source_fails_candidate_identity(tmp_path):
 def test_wheel_matches_copied_sources_and_rejects_tamper(tmp_path):
     _, manifest, files = _candidate(tmp_path)
     for tamper in (False, True):
-        artifact = tmp_path / "candidate.whl"
-        with zipfile.ZipFile(artifact, "w") as archive:
-            for name, contents in files.items():
-                if name.startswith("python/gmatpy/"):
-                    archive.writestr(name[len("python/"):], b"changed" if tamper and name.endswith("__init__.py") else contents)
-            archive.writestr("gmatpy-0.2.0.dist-info/METADATA", files["PKG-INFO"])
+        artifact = tmp_path / "gmatpy-0.2.0-cp314-cp314-linux_x86_64.whl"
+        contents = dict(files)
+        if tamper:
+            contents["python/gmatpy/__init__.py"] = b"changed"
+        _wheel(artifact, contents)
         if tamper:
             with pytest.raises(ValueError, match="Wheel/source hash mismatch"):
                 check(artifact, source_manifest=manifest)
@@ -107,15 +143,91 @@ def test_metadata_mismatch_rejected(tmp_path):
         check(artifact)
 
 
-def test_profile_metadata_cannot_claim_a_partial_arbitrary_inventory(tmp_path):
-    _, manifest, files = _candidate(tmp_path)
-    artifact = tmp_path/'minimal.whl'
-    with zipfile.ZipFile(artifact,'w') as archive:
-        for name, contents in files.items():
-            if name.startswith('python/gmatpy/'):
-                archive.writestr(name[len('python/'):],contents)
-        archive.writestr('gmatpy-0.2.0.dist-info/METADATA',files['PKG-INFO'])
-        archive.writestr('gmatpy/BUILD_PROFILE.json',json.dumps({
-            'schema_version':1,'profile':'minimal','spice':True,'data_files':[]}))
-    with pytest.raises(ValueError,match='SPICE configuration mismatch'):
-        check(artifact,source_manifest=manifest)
+@pytest.mark.parametrize("profile,spice,message", [
+    ("minimal", False, "Only the standard full headless build"),
+    ("minimal", True, "Only the standard full headless build"),
+    ("extended", False, "must include SPICE"),
+    ("extended", 1, "must include SPICE"),
+])
+def test_wheel_requires_full_build_metadata(tmp_path, profile, spice, message):
+    artifact = tmp_path / "gmatpy-0.2.0-cp314-cp314-linux_x86_64.whl"
+    _wheel(artifact, _files(), profile={
+        "schema_version": 1, "profile": profile, "spice": spice, "data_files": []})
+    with pytest.raises(ValueError, match=message):
+        check(artifact)
+
+
+@pytest.mark.parametrize("tag", ["1minimal", "2extended", "3"])
+@pytest.mark.parametrize("location", ["filename", "metadata"])
+def test_wheel_rejects_variant_build_tags(tmp_path, tag, location):
+    prefix = f"gmatpy-0.2.0-{tag}" if location == "filename" else "gmatpy-0.2.0"
+    artifact = tmp_path / f"{prefix}-cp314-cp314-linux_x86_64.whl"
+    _wheel(artifact, _files(), build=tag if location == "metadata" else None)
+    with pytest.raises(ValueError, match="[Bb]uild tag"):
+        check(artifact)
+
+
+@pytest.mark.parametrize("missing,message", [
+    ("gmatpy/BUILD_PROFILE.json", "missing required BUILD_PROFILE"),
+    ("gmatpy-0.2.0.dist-info/WHEEL", "exactly one matching WHEEL"),
+])
+def test_wheel_requires_profile_and_wheel_metadata(tmp_path, missing, message):
+    artifact = tmp_path / "gmatpy-0.2.0-cp314-cp314-linux_x86_64.whl"
+    _wheel(artifact, _files(), omit=(missing,))
+    with pytest.raises(ValueError, match=message):
+        check(artifact)
+
+
+def test_wheel_rejects_compatibility_tag_laundering(tmp_path):
+    artifact = tmp_path / "gmatpy-0.2.0-cp314-cp314-linux_x86_64.whl"
+    _wheel(artifact, _files(), tag="cp313-cp313-linux_x86_64")
+    with pytest.raises(ValueError, match="compatibility tags differ"):
+        check(artifact)
+
+
+def test_wheel_cannot_drop_spice_from_profile_and_inventory(tmp_path):
+    files = _files()
+    selected = [name.removeprefix("application/data/") for name in files
+                if name.startswith("application/data/") and not name.endswith("kernel.bsp")]
+    artifact = tmp_path / "gmatpy-0.2.0-cp314-cp314-linux_x86_64.whl"
+    _wheel(artifact, files, profile={"schema_version": 1, "profile": "extended",
+                                   "spice": True, "data_files": selected},
+           omit=("gmatpy/data/planetary_ephem/spk/kernel.bsp",))
+    with pytest.raises(ValueError, match="unexpected data selection"):
+        check(artifact)
+
+
+def test_wheel_requires_current_complete_17_file_data_manifest(tmp_path):
+    files = _files()
+    del files["application/data/planetary_ephem/spk/kernel.bsp"]
+    manifest = json.loads(files["python/gmatpy/licenses/DATA_MANIFEST.json"])
+    manifest["files"] = [record for record in manifest["files"]
+                         if not record["path"].endswith("kernel.bsp")]
+    files["python/gmatpy/licenses/DATA_MANIFEST.json"] = json.dumps(manifest).encode()
+    artifact = tmp_path / "gmatpy-0.2.0-cp314-cp314-linux_x86_64.whl"
+    _wheel(artifact, files)
+    with pytest.raises(ValueError, match="all 17 packaged data files"):
+        check(artifact)
+
+
+@pytest.mark.parametrize("profile", ["minimal", "unknown", ""])
+def test_build_helper_rejects_obsolete_profile_before_build(tmp_path, profile):
+    environment = dict(os.environ, GMAT_PY_PROFILE=profile,
+                       GMAT_PY_PYTHON="must-not-run-a-build",
+                       GMAT_PY_WHEEL_DIR=str(tmp_path / "uncreated"))
+    environment.pop("CSPICE_DIR", None)
+    result = subprocess.run(["bash", str(TOOLS / "build_wheel.sh")],
+                            env=environment, capture_output=True, text=True, timeout=10)
+    assert result.returncode == 2
+    assert "is obsolete" in result.stderr
+    assert not (tmp_path / "uncreated").exists()
+
+
+def test_qualification_rejects_obsolete_profile_before_build(monkeypatch):
+    spec = importlib.util.spec_from_file_location(
+        "qualification", TOOLS.parent / "ci" / "qualify.py")
+    qualification = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(qualification)
+    monkeypatch.setenv("GMAT_PY_PROFILE", "minimal")
+    with pytest.raises(ValueError, match="GMAT_PY_PROFILE is obsolete"):
+        qualification.qualify(None)

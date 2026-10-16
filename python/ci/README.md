@@ -1,6 +1,7 @@
 # Native portability qualification (experimental)
 
-`qualify.py` builds both minimal and extended profiles from a single frozen sdist
+`qualify.py` builds one full headless wheel, with SPICE and all 17 packaged data
+files, from a single frozen sdist
 using standard-ABI CPython 3.14. Exact patch versions are recorded per target;
 the pinned x86_64 image uses 3.14.7 and the pinned ARM64 image uses 3.14.8. Run with `requirements.txt` in a fresh tools virtualenv.
 It leaves native build trees, wheels, pytest logs, source/data/license checks,
@@ -38,8 +39,14 @@ numerical replacements and shutdown behavior. New run logs determine results;
 previous Windows/Linux runs are historical evidence only.
 
 All wheels must pass exact source provenance, notice/data hashes and exclusions,
-binary checks and installed tests. `--release` is deliberately expected to fail
-only on `cspice-derived-export-designation`. The owner must adopt a product export
+binary checks and installed tests. The ordinary wheel filename has no profile
+build tag. `BUILD_PROFILE.json` and the `profiles.extended` results key retain the
+historical internal label for compatibility; they do not select distribution
+variants. Stale `GMAT_PY_PROFILE` overrides other than `extended` are rejected.
+
+`--release` records either a clean preflight or the unresolved
+`cspice-derived-export-designation` owner item. Other failures stop qualification.
+The owner must adopt a product export
 determination bound to the final source/artifact hashes, entity, location and
 jurisdiction, distribution scope and relevant input/contract facts. Tests and
 NAIF toolkit classification do not make that owner determination. No assertion
@@ -51,7 +58,7 @@ is unverified, so upload is disabled rather than assumed free. Public source sha
 in PUBLIC_SOURCE_DECISION.md. The product release determination remains separate.
 The workflow freezes clean immutable Git inputs; it does not publish packages.
 
-Every native profile also compiles a small harness against its installed GmatUtil
+Each native qualification also compiles a small harness against its installed GmatUtil
 library and compares 320 spline cases / 9920 values with fixed independent SciPy
 expectations at scaled tolerance 1e-10. These are fresh comparisons; reference
 values are pre-recorded, with their generation script and hash retained.

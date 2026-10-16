@@ -19,7 +19,7 @@ or a claim of equivalence with a NASA GMAT installation.
 Quickstart: circular orbit
 ----------------------------
 
-Available in both profiles. Explicit point-mass settings make the circular-orbit
+Explicit point-mass settings make the circular-orbit
 position check independent of the default perturbations. Change the force model
 deliberately when moving to a perturbed orbit; circular geometry will then no
 longer be the appropriate invariant.
@@ -32,7 +32,7 @@ longer be the appropriate invariant.
 Time, frames, elements, and ephemeris
 ---------------------------------------
 
-Available in both profiles. This combines a conventional MJD check, osculating
+This combines a conventional MJD check, osculating
 Keplerian elements, a complete position/velocity frame conversion, and the
 geometric Earth–Moon state. ``EarthFixed`` uses GMAT's FK5/IAU1980 convention;
 it is not advertised as ITRF or TEME. The offsets checked below apply to the
@@ -46,12 +46,11 @@ specific July 2020 epoch.
 Impulses and two spacecraft
 -----------------------------
 
-Requires the extended profile. A 10 m/s impulse in the velocity direction affects
+A 10 m/s impulse in the velocity direction affects
 only the selected spacecraft. Samples at the burn epoch are post-burn, and
 duplicate output times return identical values. Impulses do not consume mass.
 The single-spacecraft and multi-spacecraft helpers are checked against each
-other. On minimal, this example verifies the early capability error and prints
-``SKIP``.
+other.
 
 :download:`Download impulses.py <examples/impulses.py>`
 
@@ -61,7 +60,7 @@ other. On minimal, this example verifies the early capability error and prints
 Target an instantaneous SMA change
 ------------------------------------
 
-Requires the extended profile. ``target_sma`` uses the native differential
+``target_sma`` uses the native differential
 corrector to solve a tangential VNB burn at the input epoch. It supports
 Earth-centered elliptic starting orbits; the requested post-burn SMA is not a
 transfer trajectory or time-of-flight constraint. This circular starting orbit
@@ -75,7 +74,7 @@ also permits an independent vis-viva check of the solved delta-v.
 Trusted script: finite burn
 -----------------------------
 
-Requires the extended profile. Download both files into the same directory.
+Download both files into the same directory.
 The Python driver reads the script beside itself and replaces the gravity-file
 placeholder with the installed wheel's data path in a temporary script. Run
 ``trusted_script.py`` to execute a 1 N, 10 s chemical-thruster burn with propellant
@@ -102,7 +101,7 @@ this example's coverage.
 Scoped native API and error recovery
 --------------------------------------
 
-Available in both profiles. Native handles belong to their ``native_session``
+Native handles belong to their ``native_session``
 and must never be used afterward. Copy ordinary Python values before leaving
 the context. Convenience calls that enter the engine and another native session
 cannot be nested inside an active session. Cleanup still runs when a native

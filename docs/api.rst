@@ -8,8 +8,10 @@ Import them from ``gmatpy``. The reference describes the value-based interface;
 the broader SWIG interface is reached through :func:`native_session`.
 See :doc:`conventions` for the shared time, frame and unit contracts.
 
-``minimal`` and ``extended`` expose the same Python names. Availability below
-describes the installed native profile, not whether a name can be imported.
+The standard package includes all the supported Python operations documented
+below, together with native SPICE support. No feature profile or extra is
+needed. ``Capabilities.profile`` retains ``"extended"`` as an internal
+compatibility label.
 
 Common error behavior
 ---------------------
@@ -25,8 +27,7 @@ missing bundled scientific data, failed native operations, non-finite native
 results, calls after ``fork``, or entry from an active native session. Native
 errors may propagate as the SWIG API's ``APIException`` (a Python exception);
 the facade does not translate every native failure into one exception type.
-Unsupported mission workflows raise :exc:`UnsupportedCapabilityError` before
-entering the engine. See :func:`native_session` for lifetime and concurrency
+See :func:`native_session` for lifetime and concurrency
 rules, and :doc:`conventions` for scientific data limits.
 
 Propagation configuration and results
@@ -34,8 +35,7 @@ Propagation configuration and results
 
 .. py:class:: Spacecraft(mass_kg=1000.0, drag_area_m2=1.0, srp_area_m2=1.0, cd=2.2, cr=1.8)
 
-   Frozen dataclass containing constant spacecraft properties. Available in
-   both profiles. The propagation wrappers use spherical drag/SRP models.
+   Frozen dataclass containing constant spacecraft properties. The propagation wrappers use spherical drag/SRP models.
 
    :param float mass_kg: Positive dry mass in kg.
    :param float drag_area_m2: Nonnegative drag area in m².
@@ -70,7 +70,6 @@ Propagation configuration and results
 .. py:class:: ForceModel(gravity_model="EGM96", degree=8, order=None, sun=True, moon=True, srp=True, drag=False, f107=150.0, f107a=150.0, kp=3.0)
 
    Frozen dataclass selecting Earth gravity and optional perturbations.
-   Available in both profiles.
 
    :param str gravity_model: ``"EGM96"`` (degree/order through 360) or
       ``"JGM3"`` (through 70).
@@ -138,7 +137,7 @@ Propagation configuration and results
 
 .. py:class:: Sample(time_s, position_km, velocity_km_s)
 
-   Frozen result dataclass, available in both profiles. Propagation functions
+   Frozen result dataclass. Propagation functions
    populate it with copied Python values in ``EarthMJ2000Eq``. Direct
    construction does not validate or normalize the fields.
 
@@ -164,7 +163,7 @@ Propagation configuration and results
 .. py:function:: propagate(state, epoch, times, *, forces=None, spacecraft=None, accuracy=1e-12, max_step_s=60.0)
 
    Start a fresh Earth-centered orbit and sample native Prince-Dormand 7/8
-   integration. Available in both profiles.
+   integration.
 
    :param state: Iterable of six finite Cartesian components
       ``[x, y, z, vx, vy, vz]`` in ``EarthMJ2000Eq`` (km, km/s).
@@ -194,7 +193,7 @@ State, frame, time and ephemeris utilities
 .. py:function:: convert_state(state, from_type="Cartesian", to_type="Keplerian", *, mu=None, anomaly="TA")
 
    Convert a six-component orbital representation with GMAT's native state
-   conversion routines. Available in both profiles.
+   conversion routines.
 
    :param state: Iterable of six finite numbers in ``from_type`` ordering.
    :param str from_type: Input representation.
@@ -222,7 +221,7 @@ State, frame, time and ephemeris utilities
 .. py:function:: transform_state(state, epoch, *, from_frame="EarthMJ2000Eq", to_frame="EarthFixed")
 
    Transform the full Cartesian position **and velocity** between supported
-   Earth-centered frames. Available in both profiles.
+   Earth-centered frames.
 
    :param state: Iterable of six finite Cartesian numbers, in km and km/s.
    :param epoch: Timezone-aware ``datetime`` or ISO 8601 string with a timezone.
@@ -243,13 +242,13 @@ State, frame, time and ephemeris utilities
    NASA baseline, with its irregular grid and gaps up to 16 days. Native
    ninth-order Lagrange interpolation spans internal gaps; the table endpoints
    bound supported epochs. This is not the former ERFA-generated alternative.
-   See :doc:`conventions` for exact date limits and the separate extended
+   See :doc:`conventions` for exact date limits and the separate
    SPICE Earth-PCK limit; that PCK is not the default EarthFixed rotation model.
 
 .. py:function:: epoch_mjd(epoch, scale="UTC")
 
    Express an input UTC instant as conventional Modified Julian Date in a
-   selected time scale. Available in both profiles.
+   selected time scale.
 
    :param epoch: Timezone-aware ``datetime`` or ISO 8601 string with a timezone.
    :param str scale: ``UTC``, ``TAI``, ``TT``, ``TDB``, ``UT1`` or GMAT's ``A1``.
@@ -265,7 +264,7 @@ State, frame, time and ephemeris utilities
 .. py:function:: body_state(body, epoch, *, origin="Earth")
 
    Obtain a geometric ephemeris six-state with native DE405, available in
-   both profiles.
+   the standard package.
 
    :param str body: ``Sun``, ``Mercury``, ``Venus``, ``Earth``, ``Luna``
       (or alias ``Moon``), ``Mars``, ``Jupiter``, ``Saturn``, ``Uranus``,
@@ -280,13 +279,13 @@ State, frame, time and ephemeris utilities
 
    No light-time or aberration correction is applied. Requests outside the
    bundled DE405 interval may raise a native exception. This helper does not
-   depend on the extended profile's SPICE kernel readers.
+   depend on the SPICE kernel readers.
 
 Mission workflows
 -----------------
 
-The following functions require the extended profile. Their result objects
-and :class:`Impulse` can be imported and constructed in either profile.
+The standard package includes the following mission functions, their result
+objects and :class:`Impulse`.
 
 .. py:class:: Impulse(time_s, delta_v_km_s, frame="EarthMJ2000Eq")
 
@@ -316,7 +315,6 @@ and :class:`Impulse` can be imported and constructed in either profile.
 .. py:function:: propagate_mission(state, epoch, times, *, impulses=(), forces=None, spacecraft=None, accuracy=1e-12, max_step_s=60.0)
 
    Propagate one spacecraft with scheduled native impulsive maneuvers.
-   Requires ``impulsive_maneuvers`` (extended).
 
    :param state: Six-component initial Cartesian state as in :func:`propagate`.
    :param epoch: Timezone-aware initial epoch as in :func:`propagate`.
@@ -332,7 +330,6 @@ and :class:`Impulse` can be imported and constructed in either profile.
       post-burn. Equal-time burns retain input order; duplicate output times
       repeat the post-burn state. Empty times with no burns returns ``[]``.
    :rtype: list[Sample]
-   :raises UnsupportedCapabilityError: The installed profile is minimal.
    :raises ValueError: Invalid propagation input or a burn beyond the sampled
       interval (including any burn with empty output times).
    :raises TypeError: Invalid forces, spacecraft or impulse object types.
@@ -340,8 +337,8 @@ and :class:`Impulse` can be imported and constructed in either profile.
 
 .. py:function:: propagate_many(states, epoch, times, *, forces=None, spacecraft=None, impulses=None, accuracy=1e-12, max_step_s=60.0)
 
-   Co-propagate named spacecraft in one native propagator. Requires
-   ``multi_spacecraft`` (extended). This uses the core propagator, without
+   Co-propagate named spacecraft in one native propagator. This uses the core
+   propagator, without
    the optional Formation plugin or spacecraft mutual gravity/collisions.
 
    :param states: Nonempty mapping of nonempty string names to six-component
@@ -359,7 +356,6 @@ and :class:`Impulse` can be imported and constructed in either profile.
       per output time. Empty times with no burns returns each name mapped to
       ``[]``. Samples at maneuvers are post-burn.
    :rtype: dict[str, list[Sample]]
-   :raises UnsupportedCapabilityError: The installed profile is minimal.
    :raises ValueError: Invalid states/names/times, unknown names in the optional
       mappings, or a burn beyond the final sample.
    :raises TypeError: Invalid force, spacecraft or impulse object types.
@@ -395,7 +391,7 @@ and :class:`Impulse` can be imported and constructed in either profile.
 .. py:function:: target_sma(state, epoch, target_sma_km, *, tolerance_km=1e-5, max_iterations=25)
 
    Solve an instantaneous tangential VNB burn with GMAT's
-   ``DifferentialCorrector``. Requires ``targeting`` (extended).
+   ``DifferentialCorrector``.
 
    :param state: Six finite ``EarthMJ2000Eq`` Cartesian components (km, km/s)
       describing an Earth-centered elliptic initial orbit.
@@ -407,7 +403,6 @@ and :class:`Impulse` can be imported and constructed in either profile.
       booleans are rejected.
    :returns: Burn and post-burn state at the input epoch.
    :rtype: TargetResult
-   :raises UnsupportedCapabilityError: The installed profile is minimal.
    :raises ValueError: Invalid vector/epoch, non-elliptic initial orbit,
       invalid target/tolerance or iteration count.
    :raises RuntimeError: Script execution fails or the final residual exceeds
@@ -421,7 +416,6 @@ and :class:`Impulse` can be imported and constructed in either profile.
 .. py:function:: run_script(path, *, outputs)
 
    Run a trusted core GMAT mission script and copy selected runtime fields.
-   Requires ``mission_scripts`` (extended).
 
    :param path: Filesystem path accepted by ``pathlib.Path``. ``~`` is expanded;
       the path is resolved with ``strict=True`` before loading.
@@ -431,7 +425,6 @@ and :class:`Impulse` can be imported and constructed in either profile.
       Values are native ``GetField`` strings; the wrapper does not parse units,
       numbers or arrays. An empty mapping requests execution without fields.
    :rtype: dict[str, dict[str, str]]
-   :raises UnsupportedCapabilityError: The installed profile is minimal.
    :raises OSError: Path resolution fails, including a missing file.
    :raises TypeError: ``outputs`` is not a mapping, or a field list is a string
       or cannot be iterated.
@@ -451,11 +444,12 @@ Capabilities and native access
 
 .. py:class:: Capabilities(profile, features, deferred_plugins)
 
-   Frozen dataclass describing supported installation capabilities. Available
-   in both profiles. :func:`capabilities` supplies normalized values; direct
+   Frozen dataclass describing supported installation capabilities.
+   :func:`capabilities` supplies normalized values; direct
    dataclass construction does not validate the fields.
 
-   :param str profile: ``"minimal"`` or ``"extended"`` for installed builds.
+   :param str profile: ``"extended"``, the retained internal compatibility label
+      for the standard package.
    :param features: Frozen set of feature tokens.
    :param deferred_plugins: Tuple of deferred plugin-family tokens.
 
@@ -481,32 +475,31 @@ Capabilities and native access
    If the file is absent in a source overlay, the implementation defaults to
    ``extended``; this fallback does not verify built native artifacts.
 
-   :returns: Installed profile and supported feature/deferred-plugin sets.
+   :returns: Internal compatibility label and supported feature/deferred-plugin sets.
    :rtype: Capabilities
-   :raises RuntimeError: The profile token is neither minimal nor extended.
+   :raises RuntimeError: Installed metadata requests an unsupported build profile.
+      Historical minimal metadata is rejected.
 
-   Both profiles report ``propagation``, ``state_conversion``,
-   ``frame_conversion``, ``time_conversion``, ``native_de405`` and
-   ``native_session``. Extended also reports ``impulsive_maneuvers``,
+   The standard package reports ``propagation``, ``state_conversion``,
+   ``frame_conversion``, ``time_conversion``, ``native_de405``,
+   ``native_session``, ``impulsive_maneuvers``,
    ``multi_spacecraft``, ``targeting``, ``mission_scripts`` and ``spice_kernels``.
 
    The deferred plugin tuple is ``estimation/ekf``, ``station/measurement``,
    ``tle_propagator``, ``external_force_callbacks``, ``optional_optimizers``,
-   ``csalt``, ``matlab``, ``gmat_functions`` and ``gui``. Reporting describes
-   the supported build surface; it is not a security boundary or a complete
+   ``csalt``, ``matlab`` and ``gmat_functions``. GUI workflows are outside
+   the project scope. Reporting describes the supported build surface; it is not a security boundary or a complete
    inventory of every underlying C++ method.
 
 .. py:exception:: UnsupportedCapabilityError
 
-   Subclass of :class:`RuntimeError` raised by a convenience mission operation
-   unavailable in the selected profile. The message advises replacing the
-   minimal wheel with an explicit extended wheel using ``--force-reinstall``.
-   Both variants own the same ``gmatpy`` distribution and import tree.
+   Subclass of :class:`RuntimeError` retained for API compatibility when a
+   convenience operation requests an unavailable capability. All currently
+   documented mission operations are included in the standard package.
 
 .. py:function:: native_session()
 
    Context manager giving access to the bundled core's existing SWIG module.
-   Available in both profiles; minimal omits SPICE classes and kernel support.
 
    :returns: A context manager whose ``with ... as api`` value is the native
       GMAT API module. Configure and use all native objects inside that block.
@@ -532,7 +525,7 @@ Capabilities and native access
    Startup files and logs use a private temporary directory. Value-based
    helpers preserve the caller's working directory.
 
-   In extended, the SPICE kernel pool is process-global. The native
+   The SPICE kernel pool is process-global. The native
    ``UnloadAllKernels()`` operation clears the entire pool, including kernels
    or inserted values furnished outside that interface; coordinate ownership
    with other SPICE users. An individual ``UnloadKernel()`` failure retains
