@@ -191,9 +191,14 @@ current candidate; see :ref:`platform-support`.
 Artifact checking verifies inventories, notices, data hashes and exclusions.
 The optional ``--source-manifest`` argument binds copied package inputs to a
 recorded source inventory. ``check_distribution.py --release`` also checks
-unresolved release-review items. The CSPICE-derived product determination is
-still owner-dependent; passing numerical or binary tests does not resolve it.
-See the source ``python/gmatpy/LICENSES.md`` and component manifests for details.
+unresolved release-review items. Dan CaJacob personally adopted the recorded
+publication-based determination for the reviewed full headless package on
+2026-10-16. Qualification requires a successful release preflight; it no longer
+accepts the former CSPICE owner hold. The version scope, owner attestations,
+primary sources and limits are in
+``python/gmatpy/licenses/EXPORT_DETERMINATION.md`` and its JSON record.
+Passing numerical or binary tests does not make an export determination.
+See ``python/gmatpy/LICENSES.md`` and the component manifests for details.
 
 Reproduce native qualification
 ------------------------------

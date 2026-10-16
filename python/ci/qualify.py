@@ -67,15 +67,8 @@ def qualify(args):
     if system=='linux':
         assert manylinux in wheel.name,wheel.name
         run([sys.executable,'-m','auditwheel','show',wheel],cwd=output,env=environment,log=dest/'auditwheel-after.log')
-    release=subprocess.run([sys.executable,str(tools/'check_distribution.py'),str(wheel),'--release','--source-manifest',str(manifest)],cwd=output,env=environment,capture_output=True,text=True)
-    (dest/'release-hold.log').write_text(release.stdout+release.stderr)
-    if release.returncode:
-        unresolved=release.stderr.splitlines()
-        assert release.returncode==1 and unresolved and unresolved[0]=='Release review unresolved:',release
-        assert len(unresolved)==2 and unresolved[1].strip().startswith('cspice-derived-export-designation:'),release
-        results['release_hold']='owner_decision_required'
-    else:
-        results['release_hold']=None
+    run([sys.executable,tools/'check_distribution.py',wheel,'--release','--source-manifest',manifest],cwd=output,env=environment,log=dest/'release-preflight.log')
+    results['release_preflight']='passed'
     test_env=dest/'test-env';run([sys.executable,'-m','venv','--without-pip',test_env],cwd=output,env=environment,log=dest/'venv.log');test_python=test_env/'bin/python'
     # pip's --python installs into the empty test venv. No source/editable install.
     command=[sys.executable,'-m','pip','--python',test_python,'install',wheel,'pytest==9.1.1','iniconfig==2.3.1','packaging==26.0','pluggy==1.6.0','pygments==2.19.2']

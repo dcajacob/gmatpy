@@ -300,8 +300,10 @@
   "publication_review": [
     {
       "id": "cspice-derived-export-designation",
-      "status": "owner_decision_required",
-      "notes": "NAIF requires an outside producer incorporating SPICE to obtain its own product export designation. Owner must adopt and record the exact-release determination, confirming entity/location, nonpublic/controlled inputs and contracts. NAIF rules do not prescribe universal government filing or lawyer approval; documented self-determination is a regulatory route where facts support it, with NAIF contractual acceptance an inference. No designation assigned by this manifest."
+      "status": "resolved",
+      "notes": "Dan CaJacob personally adopted the documented publication-based not-subject-to-EAR determination on 2026-10-16 for the exact reviewed GMAT Py 0.2.0 scientific payload and approved packaging successors. Owner confirmed no nonpublic employer/client code or other restricted inputs. Separate ITAR analysis, scope fingerprint, publication conditions and limitations are in the included record. This is an owner determination, not government clearance or PyPI upload approval.",
+      "determination_file": "EXPORT_DETERMINATION.json",
+      "determination_sha256": "a4105579b73b8c19dbef870a1d17eb50d83d3fb1b732f8940e86b599a6dbfe52"
     },
     {
       "id": "inherited-event-location-provenance",

@@ -44,18 +44,18 @@ build tag. `BUILD_PROFILE.json` and the `profiles.extended` results key retain t
 historical internal label for compatibility; they do not select distribution
 variants. Stale `GMAT_PY_PROFILE` overrides other than `extended` are rejected.
 
-`--release` records either a clean preflight or the unresolved
-`cspice-derived-export-designation` owner item. Other failures stop qualification.
-The owner must adopt a product export
-determination bound to the final source/artifact hashes, entity, location and
-jurisdiction, distribution scope and relevant input/contract facts. Tests and
-NAIF toolkit classification do not make that owner determination. No assertion
-of controlled input or universal filing requirement is made here.
+The wheel must also pass `check_distribution.py --release --source-manifest ...`.
+Every failure stops qualification; there is no accepted owner-hold failure.
+The log is `extended/release-preflight.log`, and completed results record
+`release_preflight: passed`. The adopted published-software determination and its
+scope are retained in `python/gmatpy/licenses/EXPORT_DETERMINATION.md` and
+`EXPORT_DETERMINATION.json`. Qualification checks the final artifact and manifest;
+it does not replace that recorded determination or extend it to different inputs.
 
 Prepared GitHub runs use only public standard runner compute, read-only workflow
 tokens, no secrets, cache, artifact upload or release. Artifact storage allowance
 is unverified, so upload is disabled rather than assumed free. Public source sharing for the dedicated repository is owner approved, recorded
-in PUBLIC_SOURCE_DECISION.md. The product release determination remains separate.
+in PUBLIC_SOURCE_DECISION.md. The adopted product determination is recorded separately.
 The workflow freezes clean immutable Git inputs; it does not publish packages.
 
 Each native qualification also compiles a small harness against its installed GmatUtil

@@ -18,6 +18,25 @@ import zipfile
 from record_source import PROVENANCE, source_digest, source_files
 
 
+def export_scope_files(records):
+    """Select the scientific/build payload covered by the adopted determination."""
+    prefixes = ("src/", "swig/", "application/data/", "build/", "depends/")
+    exact = {"CMakeLists.txt", "pyproject.toml", "python/CMakeLists.txt",
+             "python/ci/build_cspice.py", "python/ci/cspice-sources.json"}
+    excluded_python = {"python/gmatpy/NOTICE.txt", "python/gmatpy/LICENSES.md",
+                       PROVENANCE, "python/gmatpy/BUILD_PROFILE.json"}
+    return sorted((record for record in records if (
+        record["path"].startswith(prefixes) or record["path"] in exact or (
+            record["path"].startswith("python/gmatpy/") and
+            not record["path"].startswith("python/gmatpy/licenses/") and
+            record["path"] not in excluded_python))), key=lambda record: record["path"])
+
+
+def export_scope_digest(records):
+    """Hash selected complete source records, including path, mode, size and hash."""
+    return source_digest(export_scope_files(records))
+
+
 def unique_names(raw_names):
     names = list(raw_names)
     if len(names) != len(set(names)):
@@ -81,6 +100,9 @@ def check(path, *, release=False, source_manifest=None):
         code = json.loads(read(f"{package}/licenses/CODE_MANIFEST.json"))
         if code.get("schema_version") != 1:
             raise ValueError("Unsupported code-manifest schema")
+        resolved_export = [item for item in code.get("publication_review", [])
+                           if item.get("id") == "cspice-derived-export-designation"
+                           and item.get("status") == "resolved"]
         metadata_names = [name for name in names if name.endswith(".dist-info/METADATA")]
         if package.startswith("python/"):
             metadata_name = "PKG-INFO"
@@ -115,12 +137,13 @@ def check(path, *, release=False, source_manifest=None):
                 python_tag.split("."), abi_tag.split("."), platform_tag.split("."))}
             if set(wheel_metadata.get_all("Tag", [])) != tags:
                 raise ValueError("WHEEL compatibility tags differ from filename")
-        if source_manifest is not None:
-            with open(source_manifest, "rb") as stream:
-                expected_provenance = stream.read()
+        if source_manifest is not None or resolved_export:
             embedded = read(f"{package}/BUILD_PROVENANCE.json")
-            if embedded != expected_provenance:
-                raise ValueError("Embedded source provenance differs from candidate manifest")
+            if source_manifest is not None:
+                with open(source_manifest, "rb") as stream:
+                    expected_provenance = stream.read()
+                if embedded != expected_provenance:
+                    raise ValueError("Embedded source provenance differs from candidate manifest")
             provenance = json.loads(embedded)
             records = provenance["files"]
             if provenance.get("schema_version") != 1 or source_digest(records) != provenance["source_tree_sha256"]:
@@ -143,8 +166,34 @@ def check(path, *, release=False, source_manifest=None):
                 for name, record in mapped.items():
                     if hashlib.sha256(read(name)).hexdigest() != record["sha256"]:
                         raise ValueError(f"Wheel/source hash mismatch: {name}")
+                generated = {"gmatpy/BUILD_PROVENANCE.json", "gmatpy/BUILD_PROFILE.json",
+                             "gmatpy/_native/gmat_py.py", "gmatpy/_native/_gmat_py.so",
+                             "gmatpy/_native/_gmat_py.pyd"}
+                generated.update(f"gmatpy/_native/lib{library}{suffix}"
+                                 for library in ("GmatBase", "GmatUtil")
+                                 for suffix in (".so.R2026a", ".dylib", ".R2026a.dylib", ".dll"))
+                extra = {name for name in names if name.startswith("gmatpy/")
+                         and name not in mapped and name not in generated}
+                if extra:
+                    raise ValueError(f"Unrecorded wheel package payload: {sorted(extra)}")
             print(f"SOURCE_IDENTITY_OK: {provenance['source_revision']} + "
                   f"{provenance['source_tree_sha256']}")
+        for item in resolved_export:
+            if item.get("determination_file") != "EXPORT_DETERMINATION.json":
+                raise ValueError("Resolved CSPICE export review requires EXPORT_DETERMINATION.json")
+            contents = read(f"{package}/licenses/EXPORT_DETERMINATION.json")
+            if hashlib.sha256(contents).hexdigest() != item.get("determination_sha256"):
+                raise ValueError("Export determination hash mismatch")
+            determination = json.loads(contents)
+            if determination.get("schema_version") != 1 or determination.get("status") != "owner_adopted":
+                raise ValueError("Export determination is not an adopted schema-1 record")
+            if determination.get("package") != code["package"]:
+                raise ValueError("Export determination package differs from package metadata")
+            scope = determination.get("scope", {})
+            if scope.get("selection") != "gmatpy-scientific-payload-v1":
+                raise ValueError("Unsupported export determination scope selection")
+            if scope.get("sha256") != export_scope_digest(provenance["files"]):
+                raise ValueError("Export determination scope differs from scientific payload")
         for component in code["components"]:
             if component.get("license_file"):
                 contents = read(f"{package}/licenses/{component['license_file']}")

@@ -67,11 +67,15 @@ coefficients retain its BSD notice; optional ERFA ICRF generation is separate.
 Exact inputs, reuse bases and coverage are in the data manifest. Optional
 weather/troposphere inputs remain excluded.
 
-The separately recorded release action is the responsible owner's product-specific
-export determination under NAIF's derived-product provision. The toolkit's TSPA
-designation cannot simply be inherited. The published rules do not prescribe a
-universal government filing or lawyer approval. Owner facts and applicable
-jurisdiction must support the adopted decision; no designation is assigned here.
+Dan CaJacob personally adopted the version-specific, publication-based
+**not-subject-to-the-EAR** determination recorded in
+[EXPORT_DETERMINATION.md](licenses/EXPORT_DETERMINATION.md) and its
+[machine-readable record](licenses/EXPORT_DETERMINATION.json) on 2026-10-16.
+The record includes the exact reviewed scope, owner input attestations, separate
+ITAR reasoning and limitations. This is the owner's documented determination,
+not government clearance or a universal designation for future derivatives.
+The toolkit's TSPA designation is not simply inherited. NAIF's published rules
+do not prescribe universal government filing or lawyer approval.
 
 Component observations remain bounded as described above and in the manifest.
 These are targeted engineering/provenance records, not a worldwide legal

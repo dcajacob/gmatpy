@@ -88,7 +88,7 @@ jobs:
               if p.exists():print(name+'\n'+p.read_text())
           # 'extended' is the historical evidence key for the one full wheel.
           for profile in ['extended']:
-              for name in ['pytest.log','binary-contents-check.log','auditwheel-after.log','state-comparison.json','release-hold.log']:
+              for name in ['pytest.log','binary-contents-check.log','auditwheel-after.log','state-comparison.json','release-preflight.log']:
                   p=root/profile/name
                   if p.exists():print(str(p.relative_to(root))+'\n'+p.read_text()[-16000:])
           PY

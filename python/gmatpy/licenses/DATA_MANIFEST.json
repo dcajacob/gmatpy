@@ -11,7 +11,7 @@
     "documented_reuse_basis": "Scientific/mechanical numeric data with a documented U.S. factual-data assessment; no invented provider license or worldwide guarantee."
   },
   "release_preflight": {
-    "public_release_allowed": false,
+    "public_release_allowed": true,
     "blocking_statuses": [
       "Any included status outside verified_unmodified_naif, licensing_verified or documented_reuse_basis"
     ],
@@ -19,7 +19,7 @@
     "included_file_sha256_must_match": true,
     "test_builds_allowed": true,
     "legal_guarantee": false,
-    "human_action": "Owner must adopt a product-specific export designation for CSPICE-derived release; see CODE_MANIFEST.json."
+    "human_action": "Product-specific export determination adopted by Dan CaJacob personally on2026-10-16; require successful release preflight, scope/provenance verification and separately authorized publication. See CODE_MANIFEST.json and EXPORT_DETERMINATION.json."
   },
   "packaging_notes": [
     "Explicit 17-file data allowlist; no recursive data installation.",

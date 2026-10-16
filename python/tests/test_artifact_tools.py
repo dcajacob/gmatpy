@@ -15,8 +15,8 @@ import pytest
 
 TOOLS = Path(__file__).resolve().parents[1] / "tools"
 sys.path.insert(0, str(TOOLS))
-from check_distribution import check
-from record_source import record
+from check_distribution import check, export_scope_digest, export_scope_files
+from record_source import record, source_digest
 
 
 def _files():
@@ -53,8 +53,8 @@ def _sdist(path, files, duplicate=None):
             archive.addfile(info, io.BytesIO(contents))
 
 
-def _candidate(tmp_path):
-    files = _files()
+def _candidate(tmp_path, files=None):
+    files = _files() if files is None else files
     artifact = tmp_path / "source.tar.gz"
     _sdist(artifact, files)
     manifest = json.dumps(record(artifact, "a" * 40, "b" * 64)).encode()
@@ -63,6 +63,34 @@ def _candidate(tmp_path):
     manifest_path.write_bytes(manifest)
     _sdist(artifact, files)
     return artifact, manifest_path, files
+
+
+def _export_candidate(tmp_path):
+    files = _files()
+    source = tmp_path / "scope-source.tar.gz"
+    _sdist(source, files)
+    determination = {
+        "schema_version": 1, "status": "owner_adopted",
+        "package": {"name": "gmatpy", "version": "0.2.0"},
+        "scope": {"selection": "gmatpy-scientific-payload-v1",
+                  "sha256": export_scope_digest(record(source, "a" * 40, "b" * 64)["files"])},
+    }
+    code = json.loads(files["python/gmatpy/licenses/CODE_MANIFEST.json"])
+    code["publication_review"] = [{
+        "id": "cspice-derived-export-designation", "status": "resolved",
+        "determination_file": "EXPORT_DETERMINATION.json", "notes": "adopted",
+    }]
+    files["python/gmatpy/licenses/CODE_MANIFEST.json"] = json.dumps(code).encode()
+    _export_record(files, determination)
+    return _candidate(tmp_path, files)
+
+
+def _export_record(files, determination):
+    contents = json.dumps(determination).encode()
+    files["python/gmatpy/licenses/EXPORT_DETERMINATION.json"] = contents
+    code = json.loads(files["python/gmatpy/licenses/CODE_MANIFEST.json"])
+    code["publication_review"][0]["determination_sha256"] = hashlib.sha256(contents).hexdigest()
+    files["python/gmatpy/licenses/CODE_MANIFEST.json"] = json.dumps(code).encode()
 
 
 def _wheel(path, files, *, profile=None, build=None, tag="cp314-cp314-linux_x86_64",
@@ -231,3 +259,142 @@ def test_qualification_rejects_obsolete_profile_before_build(monkeypatch):
     monkeypatch.setenv("GMAT_PY_PROFILE", "minimal")
     with pytest.raises(ValueError, match="GMAT_PY_PROFILE is obsolete"):
         qualification.qualify(None)
+
+
+def test_export_scope_selection_is_exact_sorted_and_preserves_complete_records():
+    included = ["src/base/engine.cpp", "swig/api.i", "application/data/ephemeris.bin",
+                "build/toolchain.cmake", "depends/library/source.c", "CMakeLists.txt",
+                "pyproject.toml", "python/CMakeLists.txt", "python/ci/build_cspice.py",
+                "python/ci/cspice-sources.json", "python/gmatpy/__init__.py",
+                "python/gmatpy/_native/__init__.py"]
+    excluded = ["src-other/file.cpp", "swig-other/file.i", "README.md", "docs/index.rst",
+                "python/tests/test_artifact_tools.py", "python/tools/check_distribution.py",
+                "python/ci/qualify.py", "python/gmatpy/NOTICE.txt", "python/gmatpy/LICENSES.md",
+                "python/gmatpy/BUILD_PROVENANCE.json", "python/gmatpy/BUILD_PROFILE.json",
+                "python/gmatpy/licenses/CODE_MANIFEST.json",
+                "python/gmatpy/licenses/EXPORT_DETERMINATION.json"]
+    records = [{"path": name, "mode": 0o644, "size": 1, "sha256": "a" * 64}
+               for name in reversed(included + excluded)]
+    selected = export_scope_files(records)
+    assert [item["path"] for item in selected] == sorted(included)
+    assert export_scope_digest(records) == source_digest(selected)
+    for field, value in [("mode", 0o755), ("size", 2), ("sha256", "b" * 64),
+                         ("path", "src/base/changed.cpp")]:
+        changed = [dict(item) for item in selected]
+        changed[0][field] = value
+        assert export_scope_digest(changed) != export_scope_digest(selected)
+
+
+@pytest.mark.parametrize("kind", ["sdist", "wheel"])
+@pytest.mark.parametrize("external_manifest", [False, True])
+def test_resolved_export_record_proves_scope(tmp_path, kind, external_manifest):
+    artifact, manifest, files = _export_candidate(tmp_path)
+    if kind == "wheel":
+        artifact = tmp_path / "gmatpy-0.2.0-cp314-cp314-linux_x86_64.whl"
+        _wheel(artifact, files)
+    assert check(artifact, release=True,
+                 source_manifest=manifest if external_manifest else None) == []
+
+
+def test_resolved_export_requires_included_determination_record(tmp_path):
+    _, _, files = _export_candidate(tmp_path)
+    del files["python/gmatpy/licenses/EXPORT_DETERMINATION.json"]
+    artifact, _, _ = _candidate(tmp_path, files)
+    with pytest.raises(ValueError, match="Required distribution file missing: .*EXPORT_DETERMINATION.json"):
+        check(artifact, release=True)
+
+
+def test_resolved_export_rejects_record_hash_tamper(tmp_path):
+    _, _, files = _export_candidate(tmp_path)
+    files["python/gmatpy/licenses/EXPORT_DETERMINATION.json"] += b"\n"
+    artifact, _, _ = _candidate(tmp_path, files)
+    with pytest.raises(ValueError, match="Export determination hash mismatch"):
+        check(artifact, release=True)
+
+
+@pytest.mark.parametrize("field,value,message", [
+    ("schema_version", 2, "not an adopted schema-1 record"),
+    ("status", "draft", "not an adopted schema-1 record"),
+    ("package", {"name": "gmatpy", "version": "0.3.0"}, "package differs"),
+    ("scope", {"selection": "other", "sha256": "a" * 64}, "Unsupported export determination scope"),
+    ("scope", {"selection": "gmatpy-scientific-payload-v1", "sha256": "a" * 64},
+     "scope differs from scientific payload"),
+])
+def test_resolved_export_rejects_wrong_adoption_or_scope(tmp_path, field, value, message):
+    _, _, files = _export_candidate(tmp_path)
+    determination = json.loads(files["python/gmatpy/licenses/EXPORT_DETERMINATION.json"])
+    determination[field] = value
+    _export_record(files, determination)
+    artifact, _, _ = _candidate(tmp_path, files)
+    with pytest.raises(ValueError, match=message):
+        check(artifact, release=True)
+
+
+def test_resolved_export_requires_exact_record_filename(tmp_path):
+    _, _, files = _export_candidate(tmp_path)
+    code = json.loads(files["python/gmatpy/licenses/CODE_MANIFEST.json"])
+    code["publication_review"][0]["determination_file"] = "another.json"
+    files["python/gmatpy/licenses/CODE_MANIFEST.json"] = json.dumps(code).encode()
+    artifact, _, _ = _candidate(tmp_path, files)
+    with pytest.raises(ValueError, match="requires EXPORT_DETERMINATION.json"):
+        check(artifact, release=True)
+
+
+def test_resolved_export_rejects_changed_science_with_fresh_provenance(tmp_path):
+    _, _, files = _export_candidate(tmp_path)
+    files["python/gmatpy/__init__.py"] = b"changed scientific facade\n"
+    artifact, _, _ = _candidate(tmp_path, files)
+    with pytest.raises(ValueError, match="scope differs from scientific payload"):
+        check(artifact, release=True)
+
+
+def test_resolved_export_independently_validates_embedded_provenance(tmp_path):
+    artifact, _, files = _export_candidate(tmp_path)
+    provenance = json.loads(files["python/gmatpy/BUILD_PROVENANCE.json"])
+    provenance["source_tree_sha256"] = "a" * 64
+    files["python/gmatpy/BUILD_PROVENANCE.json"] = json.dumps(provenance).encode()
+    _sdist(artifact, files)
+    with pytest.raises(ValueError, match="Source provenance digest mismatch"):
+        check(artifact, release=True)
+
+
+@pytest.mark.parametrize("kind,message", [
+    ("sdist", "Source archive differs from candidate source manifest"),
+    ("wheel", "Wheel/source hash mismatch"),
+])
+def test_resolved_export_rejects_payload_tamper_without_external_manifest(tmp_path, kind, message):
+    artifact, _, files = _export_candidate(tmp_path)
+    files["python/gmatpy/__init__.py"] = b"tampered facade\n"
+    if kind == "sdist":
+        _sdist(artifact, files)
+    else:
+        artifact = tmp_path / "gmatpy-0.2.0-cp314-cp314-linux_x86_64.whl"
+        _wheel(artifact, files)
+    with pytest.raises(ValueError, match=message):
+        check(artifact, release=True)
+
+
+@pytest.mark.parametrize("external_manifest", [False, True])
+@pytest.mark.parametrize("name", ["gmatpy/unrecorded_science.py", "gmatpy/_native/unrecorded.py",
+                                  "gmatpy/_native/libGmatBase.so.unrecorded.py"])
+def test_resolved_export_rejects_unrecorded_wheel_payload(tmp_path, external_manifest, name):
+    _, manifest, files = _export_candidate(tmp_path)
+    artifact = tmp_path / "gmatpy-0.2.0-cp314-cp314-linux_x86_64.whl"
+    _wheel(artifact, files)
+    with zipfile.ZipFile(artifact, "a") as archive:
+        archive.writestr(name, b"unrecorded scientific behavior\n")
+    with pytest.raises(ValueError, match="Unrecorded wheel package payload"):
+        check(artifact, release=True,
+              source_manifest=manifest if external_manifest else None)
+
+
+@pytest.mark.parametrize("suffix", [".so.R2026a", ".dylib", ".R2026a.dylib", ".dll"])
+def test_resolved_export_allows_known_generated_native_outputs(tmp_path, suffix):
+    _, manifest, files = _export_candidate(tmp_path)
+    artifact = tmp_path / "gmatpy-0.2.0-cp314-cp314-linux_x86_64.whl"
+    _wheel(artifact, files)
+    with zipfile.ZipFile(artifact, "a") as archive:
+        for name in ["_gmat_py.pyd" if suffix == ".dll" else "_gmat_py.so", "gmat_py.py",
+                     "libGmatBase" + suffix, "libGmatUtil" + suffix]:
+            archive.writestr("gmatpy/_native/" + name, b"synthetic generated file\n")
+    assert check(artifact, release=True, source_manifest=manifest) == []
