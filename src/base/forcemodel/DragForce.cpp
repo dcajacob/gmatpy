@@ -1,4 +1,6 @@
 //$Id$
+// GMAT Py modification (2026-10-01): require weather files only when the
+// selected historic/predicted source reads them; constant-flux physics is unchanged.
 //------------------------------------------------------------------------------
 //                                DragForce
 //------------------------------------------------------------------------------
@@ -1085,34 +1087,32 @@ bool DragForce::Initialize()
             atmos->SetRealParameter(F107AID, fluxF107A);
             atmos->SetRealParameter(KPID, kp);
 
-            // Set the file names, possibly with path prefixes
+            // Only validate files used by the selected weather sources. Requiring
+            // both files unconditionally prevents constant-flux models from running
+            // in packages that intentionally do not redistribute optional datasets.
             FileManager *fm = FileManager::Instance();
 
-            std::string weatherfile = cssiWFile;
-            if (fm->DoesFileExist(weatherfile) == false)
-               weatherfile = fluxPath + cssiWFile;
-            if (fm->DoesFileExist(weatherfile) == false)
-               throw ODEModelException("Cannot open the CSSI space weather file " +
-                     cssiWFile + ", nor the file at the location " + weatherfile);
-            atmos->SetStringParameter(cssiWFileID, weatherfile);
-
-            #ifdef DEBUG_FLUX_FILE
-               MessageInterface::ShowMessage("CSSI File setting: %s\n",
-                     atmos->GetStringParameter(cssiWFileID).c_str());
-            #endif
-
-            weatherfile = schattenWFile;
-            if (fm->DoesFileExist(weatherfile) == false)
-               weatherfile = fluxPath + schattenWFile;
-            if (fm->DoesFileExist(weatherfile) == false)
-               throw ODEModelException("Cannot open the predicted space weather file " +
-                     schattenWFile + ", nor the file at the location " + weatherfile);
-            atmos->SetStringParameter(schattenWFileID, weatherfile);
-
-            #ifdef DEBUG_FLUX_FILE
-               MessageInterface::ShowMessage("Schatten File setting: %s\n",
-                     atmos->GetStringParameter(schattenWFileID).c_str());
-            #endif
+            if (historicWSource == "CSSISpaceWeatherFile" ||
+                predictedWSource == "CSSISpaceWeatherFile")
+            {
+               std::string weatherfile = cssiWFile;
+               if (!fm->DoesFileExist(weatherfile))
+                  weatherfile = fluxPath + cssiWFile;
+               if (!fm->DoesFileExist(weatherfile))
+                  throw ODEModelException("Cannot open the CSSI space weather file " +
+                        cssiWFile + ", nor the file at the location " + weatherfile);
+               atmos->SetStringParameter(cssiWFileID, weatherfile);
+            }
+            if (predictedWSource == "SchattenFile")
+            {
+               std::string weatherfile = schattenWFile;
+               if (!fm->DoesFileExist(weatherfile))
+                  weatherfile = fluxPath + schattenWFile;
+               if (!fm->DoesFileExist(weatherfile))
+                  throw ODEModelException("Cannot open the predicted space weather file " +
+                        schattenWFile + ", nor the file at the location " + weatherfile);
+               atmos->SetStringParameter(schattenWFileID, weatherfile);
+            }
 
             if (cbFixed != NULL)
                atmos->SetFixedCoordinateSystem(cbFixed);
@@ -2951,9 +2951,9 @@ bool DragForce::SetInternalAtmosphereModel(AtmosphereModel* atm)
    internalAtmos->SetRealParameter(F107AID, fluxF107A);
    internalAtmos->SetRealParameter(KPID, kp);
 
-   // Set the file names
-   internalAtmos->SetStringParameter(cssiWFileID, cssiWFile);
-   internalAtmos->SetStringParameter(schattenWFileID, schattenWFile);
+   // Validate file content during Initialize(), after the caller has selected
+   // weather sources and supplied any optional input paths. At attachment time
+   // the default constant-flux model needs no external weather files.
 
 
    #ifdef DEBUG_DRAGFORCE_REFOBJ
@@ -3481,4 +3481,3 @@ Real DragForce::CalculateAp(Real kp)
 
    return newAp;
 }
-

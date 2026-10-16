@@ -1,4 +1,10 @@
 //$Id$
+// GMAT Py modification, 2026-10-01: independently replaced the entire
+// inherited root-finder implementation using inverse interpolation and
+// bisection derived from Brent's published mathematics, under Apache-2.0.
+// The old Numerical Recipes citation did not establish source provenance;
+// no Numerical Recipes or other solver implementation was copied. Retained
+// the public stepwise API and CheckConvergence's true-means-continue convention.
 //------------------------------------------------------------------------------
 //                            BrentDekkerZero
 //------------------------------------------------------------------------------
@@ -25,242 +31,237 @@
 // Created: 2009/04/10
 //
 /**
- * Implements interpolation class using the cubic spline algorithm described in
- * Numerical Recipes in C, 2nd Ed., pp 113 ff
+ * Implements a Brent-Dekker zero finder using bisection, linear interpolation,
+ * and inverse quadratic interpolation to update a bracketed root estimate.
+ *
+ * Mathematical reference: R. P. Brent, An algorithm with guaranteed
+ * convergence for finding a zero of a function, Computer Journal 14 (1971),
+ * 422-425, sections 1-7; Algorithms for Minimization without Derivatives
+ * (1973), chapter 4. New code implements the mathematics, not published code.
  */
 //------------------------------------------------------------------------------
 
 
 #include "BrentDekkerZero.hpp"
+#include "InterpolatorException.hpp"
+#include <algorithm>
 #include <cmath>
-#include "MessageInterface.hpp"
+#include <limits>
 
+// GMAT Py 2026-10-15: Windows headers define min/max macros; this
+// implementation needs the standard-library overloads in this translation unit.
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
 
-#define DEBUG_ZERO_FINDER
+namespace
+{
+   bool OppositeSigns(Real first, Real second)
+   {
+      // Test signs directly: multiplying function values can under/overflow.
+      return std::signbit(first) != std::signbit(second);
+   }
 
+   Real HalfDifference(Real first, Real second)
+   {
+      // Subtract before halving to preserve subnormal-width brackets. For
+      // large opposite signs, halve first to avoid overflowing the difference.
+      const Real halfMaximum = std::numeric_limits<Real>::max() * 0.5;
+      if (OppositeSigns(first, second) &&
+          (std::fabs(first) > halfMaximum || std::fabs(second) > halfMaximum))
+         return first * 0.5 - second * 0.5;
+      return (first - second) * 0.5;
+   }
+
+   long double SecantEstimate(Real left, Real right, Real fLeft, Real fRight)
+   {
+      const long double scale = std::max(std::fabs(fLeft), std::fabs(fRight));
+      const long double l = fLeft / scale;
+      const long double r = fRight / scale;
+      return right + (static_cast<long double>(left) - right) * r / (r - l);
+   }
+
+   long double InverseQuadraticEstimate(Real first, Real best, Real previous,
+                                        Real fFirst, Real fBest, Real fPrevious)
+   {
+      // Regard x as a quadratic function of f. Evaluate its Lagrange basis at
+      // f=0, using offsets about best to avoid summing large absolute epochs:
+      // x(0)-best = sum_i (x_i-best) product_{j!=i} f_j/(f_i-f_j).
+      // This generic interpolation construction is independently authored.
+      const long double scale = std::max({std::fabs(fFirst), std::fabs(fBest),
+                                          std::fabs(fPrevious)});
+      const long double positions[3] = {first, best, previous};
+      const long double values[3] = {fFirst / scale, fBest / scale, fPrevious / scale};
+      long double displacement = 0.;
+      for (Integer i = 0; i < 3; ++i)
+      {
+         if (i == 1)
+            continue; // Its offset about best is zero.
+         long double weight = 1.;
+         for (Integer j = 0; j < 3; ++j)
+            if (i != j)
+            {
+               const long double separation = values[i] - values[j];
+               if (separation == 0.)
+                  return std::numeric_limits<long double>::quiet_NaN();
+               weight *= values[j] / separation;
+            }
+         displacement += (positions[i] - best) * weight;
+      }
+      return best + displacement;
+   }
+}
 
 BrentDekkerZero::BrentDekkerZero() :
-   macheps        (1.0e-15)
+   a(0.), b(0.), macheps(1.0e-15), t(-1.), c(0.), d(0.), e(0.),
+   fa(0.), fb(0.), fc(0.), tol(0.), m(0.), p(1.), q(0.), r(0.), s(0.)
 {
 }
 
-BrentDekkerZero::~BrentDekkerZero()
+BrentDekkerZero::~BrentDekkerZero() = default;
+BrentDekkerZero::BrentDekkerZero(const BrentDekkerZero &other) = default;
+BrentDekkerZero& BrentDekkerZero::operator=(const BrentDekkerZero &other) = default;
+
+void BrentDekkerZero::SetInterval(Real first, Real second, Real fFirst,
+                                 Real fSecond, Real tolerance)
 {
-}
+   if (!std::isfinite(first) || !std::isfinite(second) ||
+       !std::isfinite(fFirst) || !std::isfinite(fSecond) ||
+       !std::isfinite(tolerance) || tolerance < 0.)
+      throw InterpolatorException("BrentDekkerZero requires finite inputs and a nonnegative tolerance");
+   if (fFirst != 0. && fSecond != 0. &&
+       (first == second || !OppositeSigns(fFirst, fSecond)))
+      throw InterpolatorException("BrentDekkerZero requires an interval that brackets a zero");
 
-
-BrentDekkerZero::BrentDekkerZero(const BrentDekkerZero &bdz)
-{
-}
-
-
-BrentDekkerZero&  BrentDekkerZero::operator=(const BrentDekkerZero &bdz)
-{
-   if (&bdz != this)
-   {
-      
-   }
-   
-   return *this;
-}
-
-
-void BrentDekkerZero::SetInterval(Real a0, Real b0, Real fa0, Real fb0, 
-      Real tolerance)
-{
-   a = a0;
-   b = b0;
-   fa = fa0;
-   fb = fb0;
+   a = first;
+   b = second;
+   fa = fFirst;
+   fb = fSecond;
    t = tolerance;
-   
-   // Load up the c, fc, d, e variables
+   FindStepParameters();
    SwapAC();
 }
 
-
 Real BrentDekkerZero::FindStep(Real lastStep, Real lastEval)
 {
-   b = lastStep;
-   fb = lastEval;
-   
-   if (((fb > 0.0) && (fc > 0.0)) || ((fb <= 0.0) && (fc <= 0.0)))
-      SwapAC();
-   
+   if (t < 0.)
+      throw InterpolatorException("BrentDekkerZero requires SetInterval before FindStep");
+   if (!std::isfinite(lastStep) || !std::isfinite(lastEval) ||
+       lastStep < std::min(a, b) || lastStep > std::max(a, b))
+      throw InterpolatorException("BrentDekkerZero requires a finite evaluation inside its current bracket");
+
+   if (lastStep == a)
+      fa = lastEval;
+   else if (lastStep == b)
+      fb = lastEval;
+   else
+   {
+      // Retain evaluated history for inverse interpolation and step safeguards.
+      const Real previousBest = b;
+      const Real previousValue = fb;
+      if (lastEval == 0. || OppositeSigns(fa, lastEval))
+      {
+         b = lastStep;
+         fb = lastEval;
+      }
+      else
+      {
+         a = lastStep;
+         fa = lastEval;
+      }
+      d = c;
+      c = previousBest;
+      fc = previousValue;
+   }
+   if (fa != 0. && fb != 0. && !OppositeSigns(fa, fb))
+      throw InterpolatorException("BrentDekkerZero received values that no longer bracket a zero");
    FindStepParameters();
-   
-   #ifdef DEBUG_ZERO_FINDER
-      MessageInterface::ShowMessage("      a = %.12lf, f(a) = %.12lf"
-            "\n      b = %.12lf, f(b) = %.12lf\n", a, fa, b, fb);
-   #endif
+   if (!CheckConvergence())
+      return b;
 
-   if ((fabs(e) < tol) || (fabs(fa) <= fabs(fb)))
-   {
-      #ifdef DEBUG_ZERO_FINDER
-         MessageInterface::ShowMessage("   |e|(%.12lf) < tol(%.12lf)? %s\n",
-               e, tol, ((fabs(e) < tol) ? "true" : "false"));
-         MessageInterface::ShowMessage("   |fa|(%.12lf) < |fb|(%.12lf)? %s\n",
-               fa, fb, ((fabs(fa) <= fabs(fb)) ? "true" : "false"));
-      #endif
-      d = e = m;
-   }
+   long double estimate;
+   if (fa != fb && fa != fc && fb != fc)
+      estimate = InverseQuadraticEstimate(a, b, c, fa, fb, fc);
    else
-   {
-      s = fb / fa;
-      if (a == c)
-      {
-         // Linear interpolation
-         #ifdef DEBUG_ZERO_FINDER
-            MessageInterface::ShowMessage("   Using Linear Interp\n");
-         #endif
-         p = 2 * m * s;
-         q = 1 - s;
-      }
-      else
-      {
-         // Inverse quadratic interpolation
-         #ifdef DEBUG_ZERO_FINDER
-            MessageInterface::ShowMessage("   Using Inverse Q Interp\n");
-         #endif
-         q = fa / fc;
-         r = fb / fc;
-         p = s * (2.0 * m * q * (q - r) - (b - a) * (r - 1));
-         q = (q - 1) * (r - 1) * (s - 1);
-      }
-      
-      if (p > 0.0)
-         q = -q;
-      else
-         p = -p;
-      s = e;
-      e = d;
-      
-      if ((2.0 * p < (3.0 * m * q - fabs(tol * q))) && 
-          (p < fabs(0.5 * s * q)))
-         d = p / q;
-      else
-         d = e = m;
-   }
-   
-   a = b;
-   fa = fb;
-   
-   if (fabs(d) > tol)
-      b += d;
-   else
-   {
-      if (m > 0.0)
-         b += tol;
-      else
-         b -= tol;
-   }
-   
-   return b;
+      estimate = SecantEstimate(a, b, fa, fb);
+
+   // Brent/Dekker safeguards: interpolation must remain within the bracket,
+   // move at most three quarters of its width, and halve the relevant recent
+   // movement. Otherwise bisect. p records whether the preceding proposal was
+   // a bisection; c/d are the preceding two evaluated best points.
+   const long double width = std::fabs(static_cast<long double>(a) - b);
+   const long double movement = std::fabs(estimate - b);
+   const long double recent = p != 0. ?
+      std::fabs(static_cast<long double>(b) - c) :
+      std::fabs(static_cast<long double>(c) - d);
+   const bool interpolate = std::isfinite(estimate) &&
+      estimate > std::min(a, b) && estimate < std::max(a, b) &&
+      movement < 0.75L * width && movement < 0.5L * recent && recent > tol;
+   p = interpolate ? 0. : 1.;
+   if (!interpolate)
+      estimate = static_cast<long double>(a) * 0.5L + static_cast<long double>(b) * 0.5L;
+
+   // Make a representable minimum step toward the other bracket endpoint.
+   if (std::fabs(estimate - b) < tol)
+      estimate = static_cast<long double>(b) + (a > b ? tol : -tol);
+   s = static_cast<Real>(estimate);
+   if (s == b)
+      s = std::nextafter(b, a);
+   if (s <= std::min(a, b) || s >= std::max(a, b))
+      s = a * 0.5 + b * 0.5;
+   e = s - b;
+   return s;
 }
-
 
 bool BrentDekkerZero::CheckConvergence()
 {
-#ifdef DEBUG_ZERO_FINDER
-   MessageInterface::ShowMessage("Convergence Check\n");
-   MessageInterface::ShowMessage("      m = %.12le >? tol = %.12le\n      "
-         "      fb = %.12le\n", m, tol, fb);
-#endif
-   
-   bool retval = (fabs(m) > tol) && (fabs(fb) != 0.0);
-   return retval;
+   if (t < 0.)
+      throw InterpolatorException("BrentDekkerZero requires SetInterval before CheckConvergence");
+   // Historical API semantics: true requests another evaluation; false means
+   // an evaluated endpoint is exact, the bracket is within tolerance, or no
+   // floating-point number remains strictly inside it.
+   return fb != 0. && std::fabs(m) > tol && std::nextafter(b, a) != a;
 }
 
-
-Real BrentDekkerZero::TestDriver(Real aVal, Real bVal, Real tVal)
+Real BrentDekkerZero::TestDriver(Real first, Real second, Real tolerance)
 {
-   #ifdef DEBUG_ZERO_FINDER
-      MessageInterface::ShowMessage("Testing Brent-Dekker Zero\n   Inputs:\n");
-      MessageInterface::ShowMessage("      a = %.12lf\n      b = %.12lf\n      "
-            "tol = %le\n", aVal, bVal, tVal);
-   #endif
-   
-   Real fa0, fb0;
-   fa0 = TestFunction(aVal);
-   fb0 = TestFunction(bVal);
-
-   #ifdef DEBUG_ZERO_FINDER
-      MessageInterface::ShowMessage("      fa = %.12lf\n      fb = %.12lf\n", 
-            fa0, fb0);
-   #endif
-   
-   // 1.  Setup the internal data
-   SetInterval(aVal, bVal, fa0, fb0, tVal);
-
-   Real newVal = bVal, nextVal = bVal, fNext;
-   Integer count = 0;
+   SetInterval(first, second, TestFunction(first), TestFunction(second), tolerance);
+   Real evaluated = b;
    while (CheckConvergence())
-   {
-      #ifdef DEBUG_ZERO_FINDER
-         MessageInterface::ShowMessage("   Iteration %d:\n", ++count);
-      #endif
-      nextVal = newVal;
-      fNext = TestFunction(nextVal);
-      newVal = FindStep(nextVal, fNext);
-   }
-   
-   #ifdef DEBUG_ZERO_FINDER
-      MessageInterface::ShowMessage("   Converged to %.12lf\n", nextVal);
-   #endif
-
+      evaluated = FindStep(evaluated, TestFunction(evaluated));
    return b;
 }
 
 void BrentDekkerZero::SwapAC()
 {
+   // Initialize interpolation history. Existing protected fields are retained
+   // to preserve the class layout; q/r are unused legacy workspace.
    c = a;
    fc = fa;
-   d = e = b - a;
-   #ifdef DEBUG_ZERO_FINDER
-      MessageInterface::ShowMessage("SwapAC at end: a  = %.12lf b  = %.12lf  "
-                                    "c = %.12lf\n            fa = %.12lf "
-                                    "fb = %.12lf fc = %.12lf\n"
-                                    "            d = %.12lf e = %.12lf\n",
-                                    a, b, c, fa, fb, fc, d, e);
-   #endif
+   d = a;
+   e = 0.;
+   p = 1.;
+   q = r = 0.;
+   s = b;
 }
-
 
 void BrentDekkerZero::FindStepParameters()
 {
-   #ifdef DEBUG_ZERO_FINDER
-      MessageInterface::ShowMessage("FSP: a  = %.12lf b  = %.12lf  c = %.12lf\n"
-                                    "     fa = %.12lf fb = %.12lf "
-                                    "fc = %.12lf\n", a, b, c, fa, fb, fc);
-   #endif
-   
-   if (fabs(fc) < fabs(fb))
+   // b is always the best evaluated endpoint, a the opposite-sign endpoint.
+   if (std::fabs(fa) < std::fabs(fb))
    {
-      a = b;
-      b = c;
-      c = a;
-      fa = fb;
-      fb = fc;
-      fc = fa;
+      std::swap(a, b);
+      std::swap(fa, fb);
    }
-   tol = 2.0 * macheps * fabs(b) + t;
-   m = 0.5 * (c - b);
-   
-   #ifdef DEBUG_ZERO_FINDER
-      MessageInterface::ShowMessage("FSP at end: a  = %.12lf b  = %.12lf  "
-                                    "c = %.12lf\n            fa = %.12lf "
-                                    "fb = %.12lf fc = %.12lf\n", a, b, c, fa, 
-                                    fb, fc);
-      MessageInterface::ShowMessage("            tol = %.12lf  m = %.12lf\n"
-                                    "=================\n", tol, m);
-   #endif
+   tol = t + 2. * macheps * std::fabs(b);
+   m = HalfDifference(a, b);
 }
 
-
-#ifdef DEBUG_ZERO_FINDER
-   Real BrentDekkerZero::TestFunction(Real x)
-   {
-      // Zero at about 0.7544
-      return 3.0 * x * x * x - x * x + 7.0 * x - 6.0;  
-   }
-#endif
+Real BrentDekkerZero::TestFunction(Real value)
+{
+   // Preserve the existing demonstration polynomial in Horner form.
+   return ((3. * value - 1.) * value + 7.) * value - 6.;
+}

@@ -1,3 +1,7 @@
+// GMAT Py modification notice (2026-10-01):
+// This file has been modified from NASA GMAT commit
+// 9363e129be366520c6edb0b4079204ed60666007 and is distributed in GMAT Py.
+//
 //$Id$
 //------------------------------------------------------------------------------
 //                            EquinoctialParameters.cpp
@@ -111,7 +115,7 @@ GmatBase* EquinSma::Clone(void) const
 // SMADot(const std::string &name, GmatBase *obj)
 //------------------------------------------------------------------------------
 SMADot::SMADot(const std::string &name, GmatBase *obj)
-   : OrbitReal(name, "EquinoctialSMADot", obj, "Equinoctial SMA dot", "?",
+   : OrbitReal(name, "SMADot", obj, "Equinoctial SMA dot", "?",
          GmatParam::ODE_MODEL, EQ_K_DOT, false)
 {
    mDepObjectName = "";

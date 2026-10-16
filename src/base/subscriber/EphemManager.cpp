@@ -1082,6 +1082,8 @@ bool EphemManager::GetIntrusionIntervals(const std::string &instName,
                                          RealArray         &starts,
                                          RealArray         &ends)
 {
+// GMAT Py 2026-10-15: no kernel operation in the minimal native profile.
+#ifdef __USE_SPICE__
    if (targetShape != "ELLIPSOID" && targetShape != "POINT")
    {
       std::string errmsg = "Error calling GetIntrusionIntervals! The provided "
@@ -1383,6 +1385,9 @@ bool EphemManager::GetIntrusionIntervals(const std::string &instName,
    scard_c(0, &illmnResults);   // reset (empty) the window cell
 
    return true;
+#else
+   throw SubscriberException("SPICE kernel operations require the extended GMAT Py profile");
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -1471,6 +1476,8 @@ bool EphemManager::GetTargetPosition(Real epoch,
                                      Rvector3 &targPos,
                                      Real &lightTime)
 {
+// GMAT Py 2026-10-15: no kernel operation in the minimal native profile.
+#ifdef __USE_SPICE__
    // Gather neccessary ID's from GMAT
    Spacecraft  *theSc = (Spacecraft*)theObj;
    Integer     scNAIFId = theSc->GetIntegerParameter("NAIFId");
@@ -1525,6 +1532,9 @@ bool EphemManager::GetTargetPosition(Real epoch,
    lightTime = lt;
 
    return true;
+#else
+   throw SubscriberException("SPICE kernel operations require the extended GMAT Py profile");
+#endif
 }
 
 
@@ -1556,6 +1566,8 @@ bool EphemManager::GetTargetState(SpiceInt targetNaif,
                                   SpiceInt observerNaif,
                                   SpiceDouble *state)
 {
+// GMAT Py 2026-10-15: no kernel access in a minimal native build.
+#ifdef __USE_SPICE__
    if (!spice)
       spice = new SpiceInterface();
    SpiceDouble et = spice->A1ToSpiceTime(epoch);
@@ -1609,6 +1621,9 @@ bool EphemManager::GetTargetState(SpiceInt targetNaif,
    }
 
    return true;
+#else
+   throw SubscriberException("SPICE target states require the extended GMAT Py profile");
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -1634,6 +1649,8 @@ Real EphemManager::GetPhaseAngle(Real epoch,
                                  Integer illmnNaifId,
                                  const std::string &abCorrection)
 {
+// GMAT Py 2026-10-15: no kernel operation in the minimal native profile.
+#ifdef __USE_SPICE__
    // Gather neccessary ID's from GMAT
    Spacecraft  *theSc = (Spacecraft*)theObj;
    Integer     scNAIFId = theSc->GetIntegerParameter("NAIFId");
@@ -1666,6 +1683,9 @@ Real EphemManager::GetPhaseAngle(Real epoch,
    }
 
    return phaseAngle;
+#else
+   throw SubscriberException("SPICE kernel operations require the extended GMAT Py profile");
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -1679,6 +1699,8 @@ Real EphemManager::GetPhaseAngle(Real epoch,
 //---------------------------------------------------------------------------
 void EphemManager::CreateSPKFile()
 {
+// GMAT Py 2026-10-15: no kernel operation in the minimal native profile.
+#ifdef __USE_SPICE__
    #ifdef DEBUG_EPHEM_MANAGER_FILES
       MessageInterface::ShowMessage(
          "In EphemManager::RecordEphemerisData for SC %s, setting up ephemFile\n",
@@ -1746,6 +1768,9 @@ void EphemManager::CreateSPKFile()
    pub->Subscribe(ephemFile);
 
    ephemCount++;
+#else
+   throw SubscriberException("SPICE kernel operations require the extended GMAT Py profile");
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -1759,6 +1784,8 @@ void EphemManager::CreateSPKFile()
 //---------------------------------------------------------------------------
 void EphemManager::CreateCKFile()
 {
+// GMAT Py 2026-10-15: no kernel operation in the minimal native profile.
+#ifdef __USE_SPICE__
    #ifdef DEBUG_EPHEM_MANAGER_FILES
       MessageInterface::ShowMessage(
          "In EphemManager::RecordEphemerisData for SC %s, setting up ephemFile\n",
@@ -1824,6 +1851,9 @@ void EphemManager::CreateCKFile()
    pub->Subscribe(attitudeFile);
 
    ephemCount++;
+#else
+   throw SubscriberException("SPICE kernel operations require the extended GMAT Py profile");
+#endif
 }
 
 #ifdef __USE_SPICE__

@@ -25,9 +25,15 @@
 // Created: 2003/12/02
 //
 /**
- * Implements interpolation using the cubic spline algorithm described in 
- * Numerical Recipes in C, 2nd Ed., pp 113 ff
+ * Implements a natural cubic spline by solving the second-derivative
+ * continuity equations and evaluating each interval as a cubic polynomial.
  */
+// GMAT Py modification, 2026-10-01: independently replaced the inherited
+// Numerical Recipes-based BuildSplines and Estimate routines using the
+// mathematical equations documented below, under Apache-2.0. Public buffer,
+// descending-knot, natural-endpoint, and extrapolation behavior is retained.
+// Rebuild after every buffer load so Clear/refill cannot reuse stale curvature;
+// coincident knots now fail validation before any division by zero.
 //------------------------------------------------------------------------------
 
 
@@ -259,47 +265,32 @@ void CubicSplineInterpolator::CopyArrays(const CubicSplineInterpolator &i)
 /**
  * Uses the data in the ring buffer to build the cubic splines.
  * 
- * This method uses the procedures in Numerical Recipes in C to build the 
- * coefficients used to build the splines.  Basically, the spline derivation can
- * be written as a tri-diagonal matrix equation that can be inverted to find the 
- * coefficients for the splines, using boundary value data at the knots.  The
- * resulting equations contain 16 unknown coefficients, set by 14 constraints
- * and a choice of 2 additional conditions that are not forces by the
- * constraints at the knots.
- * 
- * The constraints on the spline equations are as follows:
- * 
- *   1. Each spline must match the dependent value at its starting and ending 
- *      knots.  (5 constraints)
- * 
- *   2. The first derivatives must be continuous at the internal knots.  
- *      (3 constraints)
- * 
- *   3. The first derivatives must be smooth at the internal knots.
- *      (3 constraints)
- * 
- *   4. The second derivatives must be continuous at the internal knots.
- *      (3 constraints) 
- * 
- * This implementation builds "natural" splines -- the 2 remaining free 
- * parameters in the derivation are determined by setting the second derivatives 
- * at the endpoints to 0.0.
+ * The new implementation follows directly from interpolation of the knot
+ * values and continuity of the first and second derivatives. If M[i] is the
+ * second derivative at knot i, h[i] = x[i+1]-x[i], and s[i] is the secant slope,
+ * each interior row is
+ *
+ *   h[i-1] M[i-1] + 2(h[i-1]+h[i]) M[i] + h[i] M[i+1]
+ *     = 6(s[i]-s[i-1]).
+ *
+ * The natural endpoint conditions set M[0] = M[4] = 0, leaving a three-row
+ * tridiagonal system. Gaussian elimination and back substitution solve that
+ * system independently for each dependent variable. No implementation from
+ * Numerical Recipes or another spline library was copied.
  * 
  * @return true on success, false on failure.
  */
 //------------------------------------------------------------------------------
 bool CubicSplineInterpolator::BuildSplines()
 {
-   Integer i, j, k;
-   Real    p, sig, u[4];
+   Integer i, j;
+   Real widths[4], diagonal[3], rhs[3];
     
    // Set x and y from the ring buffer
    LoadArrays();
 
-   // Only update the splines if the data has changed
-   if (x[4] == lastX)
-      return true;
-   lastX = x[4];
+   // Recompute the small three-row system. The final knot alone cannot identify
+   // a spline: Clear/refill can retain it while changing the other knots or y.
     
    // Check monotonicity -- the spline algorithm requires it.  I could throw an
    // exception here, but the calling code might prefer to drop back to an
@@ -310,45 +301,45 @@ bool CubicSplineInterpolator::BuildSplines()
    {
       if (dataIncreases)
       {
-         if (x[i] < x[i-1]) {
+         if (x[i] <= x[i-1]) {
             return false;
          }
       }
       else
       {
-         if (x[i] > x[i-1])
+         if (x[i] >= x[i-1])
          {
             return false;
          }
       }
    }
+   for (i = 0; i < 4; ++i)
+      widths[i] = x[i+1] - x[i];
     
    // Loop through the dependent variables
    for (j = 0; j < dimension; ++j)
    {
-      y2[0][j] = u[0] = 0.0;       // Natural spline constraints
-        
-      // Decomposition loop of the tridiagonal algorithm
-      for (i = 1; i < 4; ++i)
+      for (i = 0; i < 3; ++i)
       {
-         sig = (x[i] - x[i-1]) / (x[i+1] - x[i-1]);
-         p = sig * y2[i-1][j] + 2.0;
-         y2[i][j] = (sig - 1.0) / p;
-         u[i] = (y[i+1][j] - y[i][j]) / (x[i+1] - x[i]) -
-                (y[i][j] - y[i-1][j]) / (x[i] - x[i-1]);
-         u[i] = (6.0*u[i] / (x[i+1] - x[i-1]) - sig*u[i-1]) / p;
+         diagonal[i] = 2.0 * (widths[i] + widths[i+1]);
+         rhs[i] = 6.0 * ((y[i+2][j] - y[i+1][j]) / widths[i+1]
+            - (y[i+1][j] - y[i][j]) / widths[i]);
+         if (i > 0)
+         {
+            const Real factor = widths[i] / diagonal[i-1];
+            diagonal[i] -= factor * widths[i];
+            rhs[i] -= factor * rhs[i-1];
+         }
       }
-
-      // This implementation uses "natural" spline constraints, so the second
-      // derivatives vanish at the endpoint;
+      y2[0][j] = 0.0;
       y2[4][j] = 0.0;
-        
-      // Backsubstitution loop of the tridiagonal algorithm
-      for (k = 3; k >= 0; --k)
+      y2[3][j] = rhs[2] / diagonal[2];
+      for (i = 1; i >= 0; --i)
       {
-         y2[k][j] = y2[k][j] * y2[k+1][j] + u[k];
+         y2[i+1][j] = (rhs[i] - widths[i+1] * y2[i+2][j]) / diagonal[i];
       }
    }
+   lastX = x[4];
     
    return true;
 }
@@ -394,8 +385,9 @@ void CubicSplineInterpolator::LoadArrays(void)
  * Perform the estimation using the information from the splines.  
  * 
  * This method is invoked after calling BuildSplines(), using the input 
- * parameters from the Interpolate() method.  It matches the "splint" routine
- * found in Numerical Recipes in C, section 3.3.
+ * parameters from the Interpolate() method. Each interval is represented as
+ * a polynomial about its left knot. Its two values and two second derivatives
+ * determine the coefficients, which are evaluated with Horner's rule.
  * 
  * @param ind       The value of the independent parameter.
  * @param results   Data structure for the estimates.
@@ -406,7 +398,7 @@ void CubicSplineInterpolator::LoadArrays(void)
 bool CubicSplineInterpolator::Estimate(const Real ind, Real *results)
 {
    Integer i, kl = -1, kh;
-   Real h, a, b;
+   Real h, offset;
 
    // First find the spline we want -- for GMAT, this is more likely to be the
    // last one, so we'll start at the end and work backwards
@@ -442,15 +434,17 @@ bool CubicSplineInterpolator::Estimate(const Real ind, Real *results)
    if (h == 0)
       return false;       // Coincident points are not allowed
     
-   a = (x[kh] - ind) / h;
-   b = (ind - x[kl]) / h;
+   offset = ind - x[kl];
     
    // Finally, evaluate the spline!
    for (i = 0; i < dimension; ++i)
    {
-      results[i] = a * y[kl][i] + b * y[kh][i] +
-                   ((a*a*a - a) * y2[kl][i] + (b*b*b - b) * y2[kh][i]) *
-                   (h*h)/6.0;
+      const Real linear = (y[kh][i] - y[kl][i]) / h
+         - h * (2.0 * y2[kl][i] + y2[kh][i]) / 6.0;
+      const Real quadratic = y2[kl][i] / 2.0;
+      const Real cubic = (y2[kh][i] - y2[kl][i]) / (6.0 * h);
+      results[i] = y[kl][i] + offset *
+         (linear + offset * (quadratic + offset * cubic));
    }
     
    return true;
@@ -469,4 +463,3 @@ Interpolator* CubicSplineInterpolator::Clone() const
 {
    return (new CubicSplineInterpolator(*this));
 }
-

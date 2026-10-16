@@ -52,6 +52,8 @@
 #endif
 // forward reference for SolarSystem
 class SolarSystem;
+// GMAT Py 2026-10-15: pointer declaration also supports builds without SPICE.
+class SpiceOrbitKernelReader;
 
 // Add needed things to Gmat namespace
 namespace Gmat

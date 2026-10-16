@@ -1,4 +1,7 @@
 //$Id$
+// GMAT Py modification (2026-10-01): use the configured planetary SPK for
+// default DE405 initialization and the generic SPICE source, allowing renamed
+// or caller-selected kernels without hard-coded distribution filenames.
 //------------------------------------------------------------------------------
 //                                  SolarSystem
 //------------------------------------------------------------------------------
@@ -363,11 +366,13 @@ SolarSystem::SolarSystem(std::string withName) :
    // added to the startup file.
    std::string path = FileManager::Instance()->GetFullPathname(FileManager::PLANETARY_EPHEM_SPK_PATH);
 
-   theSPKKernelNames.push_back(path+"DE405AllPlanets.bsp");         // DE405
+   theSPKKernelNames.push_back(FileManager::Instance()->GetFullPathname(
+         FileManager::PLANETARY_SPK_FILE));  // DE405: configured fallback kernel
    theSPKKernelNames.push_back(path+"DE421AllPlanets.bsp");  // DE421
    theSPKKernelNames.push_back(path+"DE424AllPlanets.bsp");         // DE424
 //   theSPKKernelNames.push_back("PLANETARY_EPHEM_SPK_PATH/DE421AllPlanets.bsp");         // DE430
-   theSPKKernelNames.push_back(path+"DE421AllPlanets.bsp");  // SPICE
+   theSPKKernelNames.push_back(FileManager::Instance()->GetFullPathname(
+         FileManager::PLANETARY_SPK_FILE));  // SPICE: startup-file selection
 
    #ifdef DEBUG_SS_CREATE
    MessageInterface::ShowMessage
@@ -2458,6 +2463,11 @@ StringArray SolarSystem::GetValidModelList(Gmat::ModelType m,
 //------------------------------------------------------------------------------
 bool SolarSystem::SetSource(Gmat::PosVelSource pvSrc)
 {
+// GMAT Py 2026-10-15: fail before changing any model state in minimal builds.
+#ifndef __USE_SPICE__
+   if (pvSrc == Gmat::SPICE)
+      throw SolarSystemException("SPICE ephemerides require the extended GMAT Py profile");
+#endif
    #ifdef DEBUG_SS_PLANETARY_FILE
       MessageInterface::ShowMessage("SetSource::Setting Solar System ephem source to %d (%s)\n",
             (Integer) pvSrc, (Gmat::POS_VEL_SOURCE_STRINGS[pvSrc]).c_str());
@@ -2511,7 +2521,9 @@ bool SolarSystem::SetSource(Gmat::PosVelSource pvSrc)
    for (Integer ii = 0; ii < thePlanetarySourceTypesInUse.size(); ii++)
       MessageInterface::ShowMessage("   %s\n", thePlanetarySourceTypesInUse.at(ii).c_str());
 #endif
+#ifdef __USE_SPICE__
    SetSPKFile(theSPKKernelNames[pvSrc ]);
+#endif
 
    return true;
 }
@@ -4453,4 +4465,3 @@ void SolarSystem::WriteDeprecatedMessage(Integer id) const
       break;
    }
 }
-

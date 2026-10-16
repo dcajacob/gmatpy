@@ -1,3 +1,10 @@
+/* GMAT Py modification, 2026-10-01: replaced spline_ and splint_ with
+   independently authored cubic-spline routines derived from the continuity
+   and endpoint equations, under the project's Apache-2.0 license. The
+   inherited routines identified themselves as Numerical Recipes adaptations;
+   their implementation is no longer used. The atmospheric model is unchanged.
+*/
+
 /* msise90_sub.f -- translated by f2c (version 20100827).
    You must link the resulting object file with libf2c:
 	on Microsoft Windows system, link with libf2c.lib;
@@ -2553,55 +2560,74 @@ L50:
 /* Subroutine */ int spline_(real *x, real *y, integer *n, real *yp1, real *
 	ypn, real *y2)
 {
-    /* System generated locals */
-    integer i__1;
+    integer row;
+    double diagonal[101], rhs[101];
+    double left_width, right_width, lower, upper, previous_upper, factor;
+    int natural_left = *yp1 > 9.9e29f;
+    int natural_right = *ypn > 9.9e29f;
 
-    /* Local variables */
-    static integer i__, k;
-    static real p, u[100], qn, un, sig;
+    /* Independent derivation: if M[i] is the second derivative at a knot,
+       continuity of the first derivative gives the interior equation
 
-/*        CALCULATE 2ND DERIVATIVES OF CUBIC SPLINE INTERP FUNCTION */
-/*        ADAPTED FROM NUMERICAL RECIPES BY PRESS ET AL */
-/*        X,Y: ARRAYS OF TABULATED FUNCTION IN ASCENDING ORDER BY X */
-/*        N: SIZE OF ARRAYS X,Y */
-/*        YP1,YPN: SPECIFIED DERIVATIVES AT X(1) AND X(N); VALUES */
-/*                 >= 1E30 SIGNAL SIGNAL SECOND DERIVATIVE ZERO */
-/*        Y2: OUTPUT ARRAY OF SECOND DERIVATIVES */
-    /* Parameter adjustments */
-    --y2;
-    --y;
-    --x;
+       h[i-1] M[i-1] + 2(h[i-1]+h[i]) M[i] + h[i] M[i+1]
+         = 6 ((y[i+1]-y[i])/h[i] - (y[i]-y[i-1])/h[i-1]).
 
-    /* Function Body */
-    if (*yp1 > 9.9e29f) {
-	y2[1] = 0.f;
-	u[0] = 0.f;
-    } else {
-	y2[1] = -.5f;
-	u[0] = 3.f / (x[2] - x[1]) * ((y[2] - y[1]) / (x[2] - x[1]) - *yp1);
+       A natural endpoint sets M to zero; a specified first derivative
+       gives the two endpoint rows below. Solve this unscaled tridiagonal
+       system by Gaussian elimination, then back substitution. No source
+       from Numerical Recipes or another spline implementation was copied.
+       The 101-knot workspace preserves the inherited supported range
+       (MSISE uses at most five). C element zero represents Fortran X(1),
+       without forming a pointer before the start of an array.
+    */
+    if (*n < 2 || *n > 101) {
+        return 1;
     }
-    i__1 = *n - 1;
-    for (i__ = 2; i__ <= i__1; ++i__) {
-	sig = (x[i__] - x[i__ - 1]) / (x[i__ + 1] - x[i__ - 1]);
-	p = sig * y2[i__ - 1] + 2.f;
-	y2[i__] = (sig - 1.f) / p;
-	u[i__ - 1] = (((y[i__ + 1] - y[i__]) / (x[i__ + 1] - x[i__]) - (y[i__]
-		 - y[i__ - 1]) / (x[i__] - x[i__ - 1])) * 6.f / (x[i__ + 1] - 
-		x[i__ - 1]) - sig * u[i__ - 2]) / p;
-/* L11: */
+    for (row = 1; row < *n; ++row) {
+        if (x[row] <= x[row - 1]) {
+            return 1;
+        }
     }
-    if (*ypn > 9.9e29f) {
-	qn = 0.f;
-	un = 0.f;
-    } else {
-	qn = .5f;
-	un = 3.f / (x[*n] - x[*n - 1]) * (*ypn - (y[*n] - y[*n - 1]) / (x[*n] 
-		- x[*n - 1]));
+
+    previous_upper = 0.;
+    for (row = 0; row < *n; ++row) {
+        lower = 0.;
+        upper = 0.;
+        if (row == 0) {
+            right_width = (double)x[1] - x[0];
+            diagonal[row] = natural_left ? 1. : 2. * right_width;
+            rhs[row] = natural_left ? 0. : 6. *
+                (((double)y[1] - y[0]) / right_width - *yp1);
+            upper = natural_left ? 0. : right_width;
+        } else if (row == *n - 1) {
+            left_width = (double)x[row] - x[row - 1];
+            diagonal[row] = natural_right ? 1. : 2. * left_width;
+            rhs[row] = natural_right ? 0. : 6. *
+                (*ypn - ((double)y[row] - y[row - 1]) / left_width);
+            lower = natural_right ? 0. : left_width;
+        } else {
+            left_width = (double)x[row] - x[row - 1];
+            right_width = (double)x[row + 1] - x[row];
+            diagonal[row] = 2. * (left_width + right_width);
+            rhs[row] = 6. * (((double)y[row + 1] - y[row]) / right_width
+                - ((double)y[row] - y[row - 1]) / left_width);
+            lower = left_width;
+            upper = right_width;
+        }
+        if (row > 0) {
+            factor = lower / diagonal[row - 1];
+            diagonal[row] -= factor * previous_upper;
+            rhs[row] -= factor * rhs[row - 1];
+        }
+        previous_upper = upper;
     }
-    y2[*n] = (un - qn * u[*n - 2]) / (qn * y2[*n - 1] + 1.f);
-    for (k = *n - 1; k >= 1; --k) {
-	y2[k] = y2[k] * y2[k + 1] + u[k - 1];
-/* L12: */
+    rhs[*n - 1] /= diagonal[*n - 1];
+    for (row = *n - 2; row >= 0; --row) {
+        upper = row == 0 && natural_left ? 0. : (double)x[row + 1] - x[row];
+        rhs[row] = (rhs[row] - upper * rhs[row + 1]) / diagonal[row];
+    }
+    for (row = 0; row < *n; ++row) {
+        y2[row] = (real)rhs[row];
     }
     return 0;
 } /* spline_ */
@@ -2610,53 +2636,33 @@ L50:
 /* Subroutine */ int splint_(real *xa, real *ya, real *y2a, integer *n, real *
 	x, real *y)
 {
-    /* Builtin functions */
-    integer s_wsle(cilist *), do_lio(integer *, integer *, char *, ftnlen), 
-	    e_wsle(void);
+    integer interval;
+    double width, offset, linear, quadratic, cubic;
 
-    /* Local variables */
-    static real a, b, h__;
-    static integer k, khi, klo;
-
-    /* Fortran I/O blocks */
-    static cilist io___241 = { 0, 6, 0, 0, 0 };
-
-
-/*        CALCULATE CUBIC SPLINE INTERP VALUE */
-/*        ADAPTED FROM NUMBERICAL RECIPES BY PRESS ET AL. */
-/*        XA,YA: ARRAYS OF TABULATED FUNCTION IN ASCENDING ORDER BY X */
-/*        Y2A: ARRAY OF SECOND DERIVATIVES */
-/*        N: SIZE OF ARRAYS XA,YA,Y2A */
-/*        X: ABSCISSA FOR INTERPOLATION */
-/*        Y: OUTPUT VALUE */
-    /* Parameter adjustments */
-    --y2a;
-    --ya;
-    --xa;
-
-    /* Function Body */
-    klo = 1;
-    khi = *n;
-L1:
-    if (khi - klo > 1) {
-	k = (khi + klo) / 2;
-	if (xa[k] > *x) {
-	    khi = k;
-	} else {
-	    klo = k;
-	}
-	goto L1;
+    /* Independently derive each segment as a polynomial about its left
+       knot: p(t) = y[left] + linear*t + quadratic*t^2 + cubic*t^3.
+       The endpoint values and second derivatives uniquely determine the
+       coefficients. Horner evaluation also preserves extrapolation using
+       the first or last interval. This is new Apache-2.0 project code.
+    */
+    if (*n < 2) {
+        return 1;
     }
-    h__ = xa[khi] - xa[klo];
-    if (h__ == 0.f) {
-	s_wsle(&io___241);
-	do_lio(&c__9, &c__1, "BAD XA INPUT TO SPLINT", (ftnlen)22);
-	e_wsle();
+    interval = 0;
+    while (interval < *n - 2 && *x >= xa[interval + 1]) {
+        ++interval;
     }
-    a = (xa[khi] - *x) / h__;
-    b = (*x - xa[klo]) / h__;
-    *y = a * ya[klo] + b * ya[khi] + ((a * a * a - a) * y2a[klo] + (b * b * b 
-	    - b) * y2a[khi]) * h__ * h__ / 6.f;
+    width = (double)xa[interval + 1] - xa[interval];
+    if (width <= 0.) {
+        return 1;
+    }
+    offset = (double)*x - xa[interval];
+    linear = ((double)ya[interval + 1] - ya[interval]) / width
+        - width * (2. * y2a[interval] + y2a[interval + 1]) / 6.;
+    quadratic = y2a[interval] / 2.;
+    cubic = ((double)y2a[interval + 1] - y2a[interval]) / (6. * width);
+    *y = (real)(ya[interval] + offset *
+        (linear + offset * (quadratic + offset * cubic)));
     return 0;
 } /* splint_ */
 
@@ -2862,4 +2868,3 @@ L50:
 /*          TGN2(1) TGN1(2) */
 /*          TGN3(1) TGN2(2) */
 /*         MIDDLE ATMOSPHERE AVERAGES */
-

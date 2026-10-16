@@ -8,8 +8,11 @@ version = "0.2.0"
 description = "Standalone Python access to the GMAT astrodynamics engine"
 readme = "python/README.rst"
 requires-python = ">=3.10"
-license = "Apache-2.0"
-license-files = ["application/License.txt"]
+# Component terms include Apache, NAIF rules, BSD notices and factual data.
+# Omit the optional archive-wide SPDX expression; retain precise component
+# records rather than misdescribe this mixed distribution as Apache-only.
+license-files = ["application/License.txt", "python/gmatpy/NOTICE.txt",
+                 "python/gmatpy/licenses/*.txt"]
 
 [tool.scikit-build]
 minimum-version = "build-system.requires"
@@ -22,15 +25,32 @@ sdist.inclusion-mode = "explicit"
 sdist.include = ["CMakeLists.txt", "pyproject.toml", "python/**", "swig/**",
                  "src/CMakeLists.txt", "src/base/**", "src/gmatutil/**", "src/console/**",
                  "plugins/CMakeLists.txt", "depends/CMakeLists.txt", "depends/CMakeModules/**",
-                 "build/cmake_modules/**", "build/install/**",
+                 "build/cmake_modules/**", "build/install/CMakeLists.txt",
+                 "build/install/CMake_INSTALL_Setup.cmake",
                  "application/License.txt", "application/README.txt",
-                 "application/data/planetary_coeff/**", "application/data/time/**",
-                 "application/data/icrf/**", "application/data/atmosphere/earth/**",
-                 "application/data/gravity/earth/EGM96.cof", "application/data/gravity/earth/JGM3.cof",
+                 "application/data/atmosphere/earth/EarthExponentialAtmosphereData.txt",
+                 "application/data/gravity/earth/EGM96.cof",
                  "application/data/gravity/earth/JGM2.cof",
-                 "application/data/planetary_ephem/de/leDE1941.405",
-                 "application/data/planetary_ephem/spk/DE405AllPlanets.bsp"]
-sdist.exclude = ["**/__pycache__/**", "**/*.pyc"]
+                 "application/data/gravity/earth/JGM3.cof",
+                 "application/data/icrf/ICRF_ERFA_Table.txt",
+                 "application/data/planetary_coeff/NUTATION.DAT",
+                 "application/data/planetary_coeff/SPICEEarthCurrentKernel.bpc",
+                 "application/data/planetary_coeff/SPICEEarthPredictedKernel.bpc",
+                 "application/data/planetary_coeff/SPICELunaCurrentKernel.bpc",
+                 "application/data/planetary_coeff/SPICELunaFrameKernel.tf",
+                 "application/data/planetary_coeff/SPICEPlanetaryConstantsKernel.tpc",
+                 "application/data/planetary_coeff/earth_latest_high_prec.bpc",
+                 "application/data/planetary_coeff/eopc04_08.62-now",
+                 "application/data/planetary_ephem/de/gmatpy_de405_1941_2201.405",
+                 "application/data/planetary_ephem/spk/gmatpy_de405_all_planets.bsp",
+                 "application/data/time/SPICELeapSecondKernel.tls",
+                 "application/data/time/tai-utc.dat"]
+sdist.exclude = ["**/__pycache__/**", "**/*.pyc",
+                 "application/data/**/.gitignore",
+                 "src/base/solarsys/msise90_sub.for",
+                 "application/data/atmosphere/earth/SpaceWeather*.txt",
+                 "application/data/atmosphere/earth/SchattenPredict.txt",
+                 "application/data/atmosphere/earth/marini.dat"]
 
 [tool.pytest.ini_options]
 testpaths = ["python/tests"]

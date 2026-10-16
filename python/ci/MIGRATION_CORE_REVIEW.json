@@ -1,0 +1,567 @@
+{
+  "nasa_base": "9363e129be366520c6edb0b4079204ed60666007",
+  "legacy_source": "3c35d1bd3425ea1b9e53accc296ca5fbea593a6c",
+  "decisions": [
+    {
+      "path": "CMakeLists.txt",
+      "decision": "retain focused source",
+      "reason": "Retain headless updater/Xerces toggle, minimal SPICE selection and PATH preservation; omit Qt options/startup."
+    },
+    {
+      "path": "application/data/atmosphere/earth/EarthExponentialAtmosphereData.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "application/data/icrf/ICRF_ERFA_Table.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "application/data/planetary_coeff/NUTATION.DAT",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "application/data/planetary_coeff/earth_latest_high_prec.bpc",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "application/data/planetary_ephem/de/gmatpy_de405_1941_2201.405",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "application/data/planetary_ephem/spk/gmatpy_de405_all_planets.bsp",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "build/cmake_modules/GmatSwigConfig.cmake",
+      "decision": "retain focused source",
+      "reason": "Extension-only Python development discovery and Windows SWIG dependency whitespace."
+    },
+    {
+      "path": "plugins/CMakeLists.txt",
+      "decision": "exclude",
+      "reason": "Qt plugin startup target bookkeeping; all optional plugins disabled in GMAT Py."
+    },
+    {
+      "path": "pyproject.toml",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/CMakeLists.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/PROFILES.rst",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/README.rst",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/ci/README.md",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/ci/build_cspice.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/ci/check_states.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/ci/cspice-sources.json",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/ci/qualify.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/ci/reference-states.json",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/ci/requirements.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/ci/sample_states.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/examples/leo.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/examples/module.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/LICENSES.md",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/NOTICE.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/__init__.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/_native/__init__.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/_runtime.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/_validation.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/capabilities.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/CODE_MANIFEST.json",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/DATA_MANIFEST.json",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/ERFA.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/F2C.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/GMAT.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/GRAVITY-DATA.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/IERS-EOP.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/JPL-EPHEMERIS-NUMERIC.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/NAIF-CSPICE.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/SCIENTIFIC-DATA.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/licenses/SWIG.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/mission.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/propagation.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/gmatpy/utilities.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tests/test_artifact_tools.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tests/test_brent.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tests/test_distribution.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tests/test_finite_burn.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tests/test_mission.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tests/test_profiles.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tests/test_propagation.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tests/test_utilities.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tests/test_validation.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/build_wheel.sh",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/check_distribution.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/check_macos_wheel.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/check_wheel.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/check_windows_wheel.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/generate_coordinate_data.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/gmatpy_de405_all_planets.cmt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/rebuild_ephemeris.c",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/rebuild_native_de405.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/record_source.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "python/tools/verify_gravity_provenance.py",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "src/CMakeLists.txt",
+      "decision": "exclude",
+      "reason": "Qt target discovery only."
+    },
+    {
+      "path": "src/base/CMakeLists.txt",
+      "decision": "retain focused source",
+      "reason": "Optional kernel translation units and updater/Xerces exclusion."
+    },
+    {
+      "path": "src/base/asset/BodyFixedPoint.cpp",
+      "decision": "exclude",
+      "reason": "Unrelated location-editor parameter-label correction; ground-station plugin excluded."
+    },
+    {
+      "path": "src/base/command/BranchCommand.cpp",
+      "decision": "exclude",
+      "reason": "Qt debugger execution-observer callback."
+    },
+    {
+      "path": "src/base/command/CommandExecutionObserver.hpp",
+      "decision": "exclude",
+      "reason": "Qt debugger observer interface."
+    },
+    {
+      "path": "src/base/command/GmatCommand.cpp",
+      "decision": "exclude",
+      "reason": "Qt debugger observer registration."
+    },
+    {
+      "path": "src/base/command/GmatCommand.hpp",
+      "decision": "exclude",
+      "reason": "Qt debugger observer API."
+    },
+    {
+      "path": "src/base/command/SolverBranchCommand.cpp",
+      "decision": "exclude",
+      "reason": "Qt ground-track solver viewer collection."
+    },
+    {
+      "path": "src/base/coordsystem/AxisSystem.cpp",
+      "decision": "retain focused source",
+      "reason": "Explicit minimal-profile SPICE frame rejection."
+    },
+    {
+      "path": "src/base/event/EventLocator.cpp",
+      "decision": "exclude",
+      "reason": "Qt event-report error handling; event plugins excluded."
+    },
+    {
+      "path": "src/base/executive/Moderator.cpp",
+      "decision": "retain focused source",
+      "reason": "Updater disabled for packaged initialization; omit Qt UI-interpreter guard."
+    },
+    {
+      "path": "src/base/executive/Sandbox.cpp",
+      "decision": "exclude",
+      "reason": "Qt debugger dispatch hook."
+    },
+    {
+      "path": "src/base/forcemodel/DragForce.cpp",
+      "decision": "retain focused source",
+      "reason": "Only require caller weather files selected by the model; constant-flux operation."
+    },
+    {
+      "path": "src/base/function/GetEphemStates.cpp",
+      "decision": "retain focused source",
+      "reason": "Explicit minimal-profile kernel-reader rejection."
+    },
+    {
+      "path": "src/base/interpreter/Interpreter.cpp",
+      "decision": "exclude",
+      "reason": "Qt resource clear/polyhedron editing paths; no new Py implementation delta."
+    },
+    {
+      "path": "src/base/parameter/EquinoctialParameters.cpp",
+      "decision": "retain focused source",
+      "reason": "Native SMADot factory/type registration consistency."
+    },
+    {
+      "path": "src/base/parameter/OrbitData.cpp",
+      "decision": "retain focused source",
+      "reason": "Keplerian true-longitude rate when perturbing acceleration vanishes."
+    },
+    {
+      "path": "src/base/plugin/DynamicLibrary.cpp",
+      "decision": "exclude",
+      "reason": "OpenFrames/OSG plugin lifetime change; plugins excluded."
+    },
+    {
+      "path": "src/base/solarsys/CelestialBody.cpp",
+      "decision": "retain focused source",
+      "reason": "Kernel accessor compiles safely in minimal profile."
+    },
+    {
+      "path": "src/base/solarsys/CelestialBody.hpp",
+      "decision": "retain focused source",
+      "reason": "Forward declaration needed by minimal profile."
+    },
+    {
+      "path": "src/base/solarsys/DeFile.cpp",
+      "decision": "retain focused source",
+      "reason": "Copy fixed-width native DE405 binary padding by bounded byte copy."
+    },
+    {
+      "path": "src/base/solarsys/DeFile.hpp",
+      "decision": "retain focused source",
+      "reason": "Copy fixed-width DE405 labels/constants by bounded byte copy."
+    },
+    {
+      "path": "src/base/solarsys/SolarSystem.cpp",
+      "decision": "retain focused source",
+      "reason": "Configured regenerated SPK filename and minimal-profile source guard."
+    },
+    {
+      "path": "src/base/solarsys/msise90_sub.c",
+      "decision": "retain focused source",
+      "reason": "Independent equation-derived atmospheric spline replacement."
+    },
+    {
+      "path": "src/base/spice/SpiceInterface.cpp",
+      "decision": "retain focused source",
+      "reason": "Recover kernel pool/cache after unload failure; return errors instead of process abort on diagnostic path failures."
+    },
+    {
+      "path": "src/base/subscriber/AttitudeWriterCK.cpp",
+      "decision": "retain focused source",
+      "reason": "Explicit minimal-profile CK writer rejection."
+    },
+    {
+      "path": "src/base/subscriber/EphemManager.cpp",
+      "decision": "retain focused source",
+      "reason": "Explicit minimal-profile SPICE operation rejection."
+    },
+    {
+      "path": "src/base/subscriber/EphemManager.hpp",
+      "decision": "retain focused source",
+      "reason": "SPICE scalar typedefs for public signatures in both profiles."
+    },
+    {
+      "path": "src/base/subscriber/EphemWriterSPK.cpp",
+      "decision": "retain focused source",
+      "reason": "Explicit minimal-profile SPK writer rejection."
+    },
+    {
+      "path": "src/base/subscriber/EphemerisFile.cpp",
+      "decision": "retain focused source",
+      "reason": "Native output paths must not delete directories or accept unresolved locations."
+    },
+    {
+      "path": "src/base/subscriber/GroundTrack.cpp",
+      "decision": "exclude",
+      "reason": "Qt ground-track viewer lifecycle and display sampling."
+    },
+    {
+      "path": "src/base/subscriber/GroundTrack.hpp",
+      "decision": "exclude",
+      "reason": "Qt ground-track viewer state."
+    },
+    {
+      "path": "src/base/subscriber/GroundTrackPlot.cpp",
+      "decision": "exclude",
+      "reason": "Qt plot-provider display routing."
+    },
+    {
+      "path": "src/base/subscriber/OrbitPlot.cpp",
+      "decision": "exclude",
+      "reason": "Qt plot-provider display routing."
+    },
+    {
+      "path": "src/base/subscriber/OrbitPlot.hpp",
+      "decision": "exclude",
+      "reason": "Qt plot-provider display state."
+    },
+    {
+      "path": "src/base/subscriber/OrbitView.cpp",
+      "decision": "exclude",
+      "reason": "Qt viewpoint editor and plot-provider display routing."
+    },
+    {
+      "path": "src/gmatutil/util/FileManager.cpp",
+      "decision": "retain focused source",
+      "reason": "Stable startup path after caller cwd restoration and ownership/leak fixes; omit Qt snapshot/help-writing APIs."
+    },
+    {
+      "path": "src/gmatutil/util/FileManager.hpp",
+      "decision": "exclude",
+      "reason": "Qt startup-reload snapshot API; omitted with its implementation."
+    },
+    {
+      "path": "src/gmatutil/util/interpolator/BrentDekkerZero.cpp",
+      "decision": "retain focused source",
+      "reason": "Independent safeguarded solver replacement and Windows min/max macro isolation."
+    },
+    {
+      "path": "src/gmatutil/util/interpolator/BrentDekkerZero.hpp",
+      "decision": "retain focused source",
+      "reason": "Independent solver state/API contract."
+    },
+    {
+      "path": "src/gmatutil/util/interpolator/CubicSplineInterpolator.cpp",
+      "decision": "retain focused source",
+      "reason": "Independent natural spline derivation and validated state lifecycle."
+    },
+    {
+      "path": "src/gmatutil/util/interpolator/CubicSplineInterpolator.hpp",
+      "decision": "retain focused source",
+      "reason": "Natural spline storage for independent derivation."
+    },
+    {
+      "path": "src/gmatutil/util/interpolator/NotAKnotInterpolator.cpp",
+      "decision": "retain focused source",
+      "reason": "Independent not-a-knot system and boundary/extrapolation behavior."
+    },
+    {
+      "path": "swig/CMakeLists.txt",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "swig/PythonSwigUtil.swg",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    },
+    {
+      "path": "swig/gmat.swg",
+      "decision": "retain focused source",
+      "reason": "Intended Python package/build/tests/notices or curated data input."
+    }
+  ],
+  "removed_tip_inputs": [
+    "src/base/solarsys/msise90_sub.for",
+    "application/data/planetary_ephem/de/leDE1941.405",
+    "application/data/planetary_ephem/spk/DE405AllPlanets.bsp",
+    "application/data/atmosphere/earth/SchattenPredict.txt",
+    "application/data/atmosphere/earth/SpaceWeather-All-v1.2.txt",
+    "application/data/atmosphere/earth/SpaceWeather-v1.2.txt",
+    "application/data/atmosphere/earth/marini.dat",
+    "application/data/icrf/ICRF_Table.txt"
+  ],
+  "note": "Shared core reviewed individually; numerical replacement bytes retained from qualified reference. No Qt UI/debugger/viewer implementation carried."
+}

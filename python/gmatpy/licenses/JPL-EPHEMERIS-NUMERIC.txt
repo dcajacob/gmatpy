@@ -1,0 +1,57 @@
+GMAT Py native DE405 numerical ephemeris: provenance and reuse assessment
+======================================================================
+Prepared 2026-10-01 for the GMAT Py independent project.
+
+Component: data/planetary_ephem/de/gmatpy_de405_1941_2201.405
+Scientific model: NASA/JPL Solar System Dynamics DE405/LE405.
+Scientific citation: Standish, E.M. (1998), JPL Planetary and Lunar
+Ephemerides, DE405/LE405, JPL IOM 312.F-98-048.
+
+Authoritative numerical input:
+https://ssd.jpl.nasa.gov/ftp/eph/planets/Linux/de405/lnxp1600p2200.405
+SHA256: 7ec77287b6fddd3d7adabb87709ee5e926e3d1123fbae5d1485a42913cf175e7
+
+The GMAT Py utility python/tools/rebuild_native_de405.py selects the
+official DE405 records for JD 2430000.5 through 2525008.5 TDB
+(1941-01-06 through 2201-02-20). Every selected coefficient, numerical
+constant and active identifier remains bit-identical to the official
+scientific input. The utility independently creates factual fixed-width
+header labels and zero padding. No JPL reader/converter source code or
+authored explanatory prose is included in this native numerical file.
+
+Reuse basis: a narrow U.S. scientific numerical-data copyright assessment.
+The coefficients and constants are mechanical scientific model results,
+stored in the complete mechanically defined order required to evaluate
+the model. The selected interval and binary fields follow computational
+requirements. This assessment relies on the distinction between factual
+or mechanically calculated scientific values and copyrightable expression,
+including protection that may exist in an original creative compilation.
+
+Primary authorities:
+https://www.copyright.gov/help/faq/faq-protect.html
+https://www.copyright.gov/comp3/chap300/ch300-copyrightable-authorship.pdf
+  Sections 313.2, 313.3(A), 313.3(C) and 313.4(D), read together with compilation
+  guidance in Section 312.2.
+https://www.copyright.gov/title17/92chap1.html#102
+https://ssd.jpl.nasa.gov/planets/eph_export.html
+  Describes numerical integration, Chebyshev coefficient representation,
+  user conversion of ASCII numeric files and merging binary intervals.
+
+No specific JPL data license or public-domain declaration is asserted.
+JPL's Caltech contractor status is not treated as a blanket U.S. federal
+government-work exemption. Apache-2.0 covers the new GMAT Py rebuilding
+utility; the numerical input is identified by its separate reuse basis.
+
+JPL's general website FAQ says republication of its website information
+on another website needs permission:
+https://ssd.jpl.nasa.gov/faq.html
+It expressly discusses numerical parameters that may need later updates.
+That website statement does not identify a native ephemeris-specific
+license or expressly address redistribution of these mechanically
+generated numerical records. Applicable website contractual conditions
+accepted by a distributor must be considered separately by that owner.
+
+This recorded engineering and U.S. copyright assessment is not a legal
+guarantee for every jurisdiction or every use. Preserve scientific source
+identification and the component's provenance in derived distributions.
+GMAT Py is an independent repackaging; NASA/JPL do not endorse it.

@@ -25,9 +25,11 @@
 // Created: 2003/12/02
 //
 /**
- * Defines interpolation class using the cubic spline algorithm described in 
- * Numerical Recipes in C, 2nd Ed., pp 113 ff
+ * Defines natural cubic spline interpolation with continuous first and second
+ * derivatives, implemented by a second-derivative linear system.
  */
+// GMAT Py modification, 2026-10-01: updated the class documentation for the
+// independently authored Apache-2.0 spline implementation in the .cpp file.
 //------------------------------------------------------------------------------
 
 
@@ -57,7 +59,7 @@ protected:
    Real                        *y[5];
    /// Array of second derivatives used to evaluate the spline coefficients.
    Real                        *y2[5];     // Assumes 5-point splines
-   /// Value of the last point, to determine if the splines need updating
+   /// Value of the last successfully computed knot (retained class state).
    Real                        lastX;
 
    // Inherited methods that need some revision for cubic splines

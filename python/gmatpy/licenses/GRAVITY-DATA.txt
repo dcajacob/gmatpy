@@ -1,0 +1,82 @@
+Gravity numerical data: provenance and reuse assessment
+=======================================================
+
+This notice covers the normalized numerical fields in gravity/earth/EGM96.cof,
+JGM2.cof and JGM3.cof. It does not relicense provider papers, figures, software,
+or raw observational databases. No numerical values were changed for GMAT Py.
+
+EGM96
+-----
+All 65,338 Cnm/Snm pairs exactly match the official NGA archive member EGM96
+(degree/order 360), compared as Decimal values. Absent zonal Sn0 is zero.
+The current GMAT-format file, model GM, and reference radius are preserved.
+
+Official archive: https://earth-info.nga.mil/php/download.php?file=egm-96spherical
+Archive SHA256: 1f21ab8151c1b9fe25f483a4f6b78acdbf5306daf923725017b83d87a5f33472
+EGM96 member SHA256: 1e5e6c30343989b8e2eda0bb96bde06ef05981eec69934d6e44aace4f0d6a9d5
+Shipped EGM96.cof SHA256: 4735c9301e20ee8db09b6d0882a24671b327cd35ec5740ea497c8eeb43a39807
+
+NGA's public-information policy permits copying/distributing website information
+unless otherwise specified, and requests appropriate credits:
+https://www.nga.mil/resources/Privacy_Policy.html
+No contrary terms were found in the official archive README files. Applying
+this agency policy to the official earth-info.nga.mil download is an assessment
+of its scope, supported separately by the factual-data basis below.
+
+Credit NASA GSFC/NIMA (now NGA), their collaborators, and Lemoine et al.,
+NASA TP-1998-206861, The Development of the Joint NASA GSFC and the National
+Imagery and Mapping Agency (NIMA) Geopotential Model EGM96.
+Official model description: https://earth-info.nga.mil/index.php?dir=wgs84&action=wgs84
+Scientific history: https://cddis.nasa.gov/926/egm96/doc/S_1.HTML
+
+JGM2 and JGM3: GMAT legacy variants
+----------------------------------
+These complete degree/order 70 tables retain the coefficients distributed by
+GMAT, including inherited C20 variants. They are not exact, unmodified copies
+of the ICGEM files. Directly substituting the ICGEM tables changes propagation.
+
+JGM2: all 2,553 model rows match ICGEM except (2,0). Shipped C20 is
+-0.000484165390000000; ICGEM C20 is -0.000484165480, a +9e-11 difference.
+The dated July 13, 1995 JGM2F70 file in GMAT has the ICGEM C20 value. The
+reason/epoch of the active file's inherited change remains undocumented;
+its size is not the permanent-tide conversion. ICGEM's tiny nonzero S20 has
+no harmonic effect because the order-zero sine factor vanishes.
+Credit Nerem et al. (1994), Gravity Model Development for TOPEX/POSEIDON:
+Joint Gravity Models 1 and 2, https://doi.org/10.1029/94JC01376
+Source: https://icgem.gfz.de/getmodel/gfc/291f7d127f49fe3bcb4a633a06e8b50f461d4b13ff8e7f2046644a8148b57fc6/JGM2.gfc
+Source SHA256: 0779cf74f216d5b38c7a4c4a1a25d596b659605deb7731f00874c17e9ed3f5af
+Shipped JGM2.cof SHA256: abac32a233e8662885778018d02e41553a5b6e5e1ee7332d2f69c362423025d3
+
+JGM3: shipped C20 is -0.000484165374886470; ICGEM C20 is
+-0.000484169548456, a +4.173569530e-9 difference. IERS 2003 section 6.3
+identifies original JGM3 as zero-tide. GMAT's loader classifies the shipped
+value as tide-free. The difference has the sign and scale of permanent-tide
+removal, but the exact historical conversion parameters are unverified.
+IERS 2003 equation 12 with k20=0.3 gives +4.17423864e-9, not the exact
+shipped difference. Every other C/S agrees within half ICGEM's last published
+decimal unit (maximum absolute differences C: 3.70e-18; S: 4.60e-18).
+Credit Tapley et al. (1996), The Joint Gravity Model 3,
+https://doi.org/10.1029/96JB01645
+Source: https://icgem.gfz.de/getmodel/gfc/a3375e01a717ac162962138a5e94f10466b71aa4a130d7f7d5b18ab3d5f90c3d/JGM3.gfc
+Source SHA256: 2ec791eec795689291974dd3602b304029da93d3fea30096daa3b368fb231d03
+Shipped JGM3.cof SHA256: a622342e7c5421ee0b0f01f1b5cd38e6be87f1118fbd81b8c695e8c969603819
+Tide convention: https://iers-conventions.obspm.fr/archive/2003/chapter6/tn32_c6.pdf
+
+Factual-data assessment
+-----------------------
+The coefficient-only fields are computed scientific results in mechanical,
+complete degree/order tables. We assess their reuse under the U.S. factual-data
+exclusion, not a newly invented Apache/CC provider license. U.S. Copyright
+Office Compendium 300 sections 313.3(C), 313.4(D), and 312.2 distinguish facts
+and common-property tables from creative expression/compilation:
+https://www.copyright.gov/comp3/chap300/ch300-copyrightable-authorship.pdf
+17 USC 102(b)/103(b): https://www.copyright.gov/title17/92chap1.html
+Section 105 is additional support for official government contributions,
+but alone cannot cover contractor/university contributions to joint models.
+ICGEM's imprint defers third-party data rights; it is not a universal CC grant:
+https://icgem.gfz.de/imprint
+
+The remaining C20 questions concern scientific lineage. No per-file JGM reuse
+restriction was identified. This assessment is not a worldwide legal guarantee.
+python/tools/verify_gravity_provenance.py reproduces the numerical comparison
+against hash-pinned official source files without modifying any data.

@@ -1,6 +1,7 @@
 """Locate bundled scientific inputs and initialize GMAT without changing cwd."""
 
 from contextlib import contextmanager
+import atexit
 import os
 from pathlib import Path
 import tempfile
@@ -11,6 +12,18 @@ _thread = threading.local()
 _pid = os.getpid()
 _directory = None
 _engine = None
+
+
+def _cleanup_runtime(gmat, directory, process_id):
+    """Close the native log before Windows removes the owned runtime folder."""
+    if os.getpid() != process_id:
+        return
+    # Use the existing API to close engine.log and redirect later native
+    # shutdown messages to the OS null device. Keeping logging merely disabled
+    # leaves the file handle open on Windows.
+    if (Path(directory.name) / "engine.log").exists():
+        gmat.UseLogFile(os.path.abspath(os.devnull))
+    directory.cleanup()
 
 
 def check_process():
@@ -29,6 +42,9 @@ def engine():
     root = Path(__file__).resolve().parent
     data = root / "data"
     _directory = tempfile.TemporaryDirectory(prefix="gmatpy-")
+    # Register after TemporaryDirectory creates its weakref finalizer: atexit
+    # runs in reverse order, so the native log must close first.
+    atexit.register(_cleanup_runtime, gmat, _directory, _pid)
     output = Path(_directory.name)
     # FileManager validates even paths unused by headless propagation. Route those
     # to the private runtime directory rather than require a GMAT install layout.
@@ -50,8 +66,8 @@ def engine():
               "HELP_PATH OUTPUT_PATH").split()
     paths.update(dict.fromkeys(unused, output))
     files = {
-        "DE405_FILE": "planetary_ephem/de/leDE1941.405",
-        "PLANETARY_SPK_FILE": "planetary_ephem/spk/DE405AllPlanets.bsp",
+        "DE405_FILE": "planetary_ephem/de/gmatpy_de405_1941_2201.405",
+        "PLANETARY_SPK_FILE": "planetary_ephem/spk/gmatpy_de405_all_planets.bsp",
         "EOP_FILE": "planetary_coeff/eopc04_08.62-now",
         "NUTATION_COEFF_FILE": "planetary_coeff/NUTATION.DAT",
         "PLANETARY_PCK_FILE": "planetary_coeff/SPICEPlanetaryConstantsKernel.tpc",
@@ -65,11 +81,19 @@ def engine():
         "EGM96_FILE": "gravity/earth/EGM96.cof",
         "JGM2_FILE": "gravity/earth/JGM2.cof",
         "JGM3_FILE": "gravity/earth/JGM3.cof",
-        "CSSI_FLUX_FILE": "atmosphere/earth/SpaceWeather-All-v1.2.txt",
-        "SCHATTEN_FILE": "atmosphere/earth/SchattenPredict.txt",
         "EARTH_EXPONENTIAL_FILE": "atmosphere/earth/EarthExponentialAtmosphereData.txt",
-        "ICRF_FILE": "icrf/ICRF_Table.txt",
+        "ICRF_FILE": "icrf/ICRF_ERFA_Table.txt",
     }
+    unbundled_files = {}
+    from .capabilities import capabilities
+    if capabilities().profile == "minimal":
+        paths["PLANETARY_EPHEM_SPK_PATH"] = output
+        omitted = {"PLANETARY_SPK_FILE", "PLANETARY_PCK_FILE", "EARTH_LATEST_PCK_FILE",
+                   "EARTH_PCK_PREDICTED_FILE", "EARTH_PCK_CURRENT_FILE", "LUNA_PCK_CURRENT_FILE",
+                   "LUNA_FRAME_KERNEL_FILE", "LSK_FILE"}
+        unbundled_files = {key: output / ("unbundled-" + Path(value).name)
+                           for key, value in files.items() if key in omitted}
+        files = {key: value for key, value in files.items() if key not in omitted}
     missing = [str(data / value) for value in files.values() if not (data / value).is_file()]
     if missing:
         raise RuntimeError("GMAT scientific data missing: " + ", ".join(missing))
@@ -78,6 +102,13 @@ def engine():
              "WRITE_PERSONALIZATION_FILE = OFF", f"LOG_FILE = {output / 'engine.log'}"]
     lines += [f"{key} = {value.as_posix()}/" for key, value in paths.items()]
     lines += [f"{key} = {(data / value).as_posix()}" for key, value in files.items()]
+    lines += [f"{key} = {value.as_posix()}" for key, value in unbundled_files.items()]
+    # Optional weather datasets are deliberately absent from the distribution.
+    # GMAT requires configured names even for constant-flux drag, but only reads
+    # these files when a caller selects a file-based weather source. Native callers
+    # may set CSSISpaceWeatherFile/SchattenFile to their own licensed inputs.
+    lines += [f"CSSI_FLUX_FILE = {output / 'unbundled-space-weather.txt'}",
+              f"SCHATTEN_FILE = {output / 'unbundled-schatten.txt'}"]
     startup.write_text("\n".join(lines) + "\n", encoding="utf-8")
     gmat.FileManager.Instance().SetBinDirectory("startup.txt", str(output) + os.sep)
     gmat.EchoLogFile(False)

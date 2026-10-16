@@ -121,20 +121,23 @@ def propagate(
         return _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step_s)
 
 
-def _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step_s):
+def _make_setup(gmat, states, epoch, forces, properties, accuracy, max_step_s):
     from pathlib import Path
 
-    sat = gmat.Construct("Spacecraft", "GmatPySat")
-    sat.SetField("DateFormat", "UTCModJulian")
-    sat.SetField("Epoch", epoch)
-    sat.SetField("CoordinateSystem", "EarthMJ2000Eq")
-    sat.SetField("DisplayStateType", "Cartesian")
-    for key, value in zip(("X", "Y", "Z", "VX", "VY", "VZ"), state):
-        sat.SetField(key, value)
-    for key, value in (("DryMass", spacecraft.mass_kg), ("Cd", spacecraft.cd),
-                       ("Cr", spacecraft.cr), ("DragArea", spacecraft.drag_area_m2),
-                       ("SRPArea", spacecraft.srp_area_m2)):
-        sat.SetField(key, value)
+    satellites = {}
+    for index, (name, state) in enumerate(states.items()):
+        sat = gmat.Construct("Spacecraft", f"GmatPySat{index}")
+        sat.SetField("DateFormat", "UTCModJulian")
+        sat.SetField("Epoch", epoch)
+        sat.SetField("CoordinateSystem", "EarthMJ2000Eq")
+        sat.SetField("DisplayStateType", "Cartesian")
+        for key, value in zip(("X", "Y", "Z", "VX", "VY", "VZ"), state):
+            sat.SetField(key, value)
+        for key, value in (("DryMass", properties[name].mass_kg), ("Cd", properties[name].cd),
+                           ("Cr", properties[name].cr), ("DragArea", properties[name].drag_area_m2),
+                           ("SRPArea", properties[name].srp_area_m2)):
+            sat.SetField(key, value)
+        satellites[name] = sat
     fm = gmat.Construct("ForceModel", "GmatPyForces")
     fm.SetField("CentralBody", "Earth")
     if forces.degree == 0 and not forces.drag:
@@ -180,9 +183,16 @@ def _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step
     prop.SetField("MinStep", 0.0)
     prop.SetField("Accuracy", accuracy)
     gmat.Initialize()
-    prop.AddPropObject(sat)
+    for sat in satellites.values():
+        prop.AddPropObject(sat)
     prop.PrepareInternals()
     integrator = prop.GetPropagator()
+    return prop, integrator, satellites
+
+
+def _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step_s):
+    prop, integrator, satellites = _make_setup(
+        gmat, {"sat": state}, epoch, forces, {"sat": spacecraft}, accuracy, max_step_s)
     samples = []
     elapsed = 0.0
     for target in times:

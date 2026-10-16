@@ -6,18 +6,60 @@ task_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 python_bin="${GMAT_PY_PYTHON:-python3}"
 output_root="${GMAT_PY_WHEEL_DIR:-${task_root}/wheelhouse}"
 : "${CSPICE_DIR:?Set CSPICE_DIR to a PIC CSPICE include/ and lib/ tree}"
-parallelism="${CMAKE_BUILD_PARALLEL_LEVEL:-4}"
+parallelism="${CMAKE_BUILD_PARALLEL_LEVEL:-2}"
+profile="${GMAT_PY_PROFILE:-extended}"
+case "${profile}" in
+  minimal) build_tag=1minimal ;;
+  extended) build_tag=2extended ;;
+  *) echo "GMAT_PY_PROFILE must be minimal or extended" >&2; exit 2 ;;
+esac
 mkdir -p "${output_root}"
+output_root="$(cd -- "${output_root}" && pwd)"
 
 cd "${task_root}"
 export CMAKE_BUILD_PARALLEL_LEVEL="${parallelism}"
-"${python_bin}" -m build --wheel --no-isolation \
-  -Ccmake.define.CSPICE_DIR="${CSPICE_DIR}"
-# Check only this build's repaired output, even when old wheels remain nearby.
-repair_dir="$(mktemp -d "${output_root}/.repair-XXXXXXXX")"
-trap 'rm -rf -- "${repair_dir}"' EXIT
-"${python_bin}" -m auditwheel repair dist/gmatpy-0.2.0-*.whl -w "${repair_dir}"
-for wheel in "${repair_dir}"/gmatpy-0.2.0-*.whl; do
-  "${python_bin}" python/tools/check_wheel.py "${wheel}"
+# Artifact contents are always checked. Publication requires a separate
+# check_distribution.py --release run resolving the manifest's pending terms.
+build_dir="$(mktemp -d "${output_root}/.build-XXXXXXXX")"
+cleanup() {
+  status=$?
+  if [[ ${status} -eq 0 ]]; then
+    rm -rf -- "${build_dir}"
+  else
+    echo "Build failed; retained intermediate outputs: ${build_dir}" >&2
+  fi
+}
+trap cleanup EXIT
+# Both inputs and repaired outputs belong to this invocation. A stale wheel in
+# dist/ must never be repaired, tested or returned as the current candidate.
+"${python_bin}" -m build --wheel --no-isolation --outdir "${build_dir}/raw" \
+  -Ccmake.define.CSPICE_DIR="${CSPICE_DIR}" \
+  -Cbuild-dir="${GMAT_PY_BUILD_DIR:-${build_dir}/native}" \
+  -Ccmake.define.GMAT_PY_PROFILE="${profile}" \
+  -Cwheel.build-tag="${build_tag}"
+shopt -s nullglob
+wheels=("${build_dir}"/raw/*.whl)
+if [[ ${#wheels[@]} -ne 1 ]]; then
+  echo "Expected exactly one wheel from this build" >&2
+  exit 1
+fi
+provenance_args=()
+if [[ -f python/gmatpy/BUILD_PROVENANCE.json ]]; then
+  provenance_args=(--source-manifest python/gmatpy/BUILD_PROVENANCE.json)
+fi
+if [[ "${GMAT_PY_REPAIR:-1}" == 0 ]]; then
+  # Explicitly requested local Linux candidate; no manylinux compatibility claim.
+  "${python_bin}" python/tools/check_wheel.py "${wheels[0]}" "${provenance_args[@]}"
+  mv -- "${wheels[0]}" "${output_root}/"
+  exit 0
+fi
+"${python_bin}" -m auditwheel repair "${wheels[0]}" -w "${build_dir}/repaired"
+repaired=("${build_dir}"/repaired/*.whl)
+if [[ ${#repaired[@]} -ne 1 ]]; then
+  echo "Expected exactly one repaired wheel" >&2
+  exit 1
+fi
+for wheel in "${repaired[@]}"; do
+  "${python_bin}" python/tools/check_wheel.py "${wheel}" "${provenance_args[@]}"
   mv -- "${wheel}" "${output_root}/"
 done

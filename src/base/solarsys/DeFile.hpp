@@ -1,3 +1,7 @@
+// GMAT Py modification notice (2026-10-01):
+// This file has been modified from NASA GMAT commit
+// 9363e129be366520c6edb0b4079204ed60666007 and is distributed in GMAT Py.
+//
 //$Id$
 //------------------------------------------------------------------------------
 //                                  DeFile
@@ -213,17 +217,18 @@ protected:
             DENUM           = (long int) 0;
          #endif
       }
+      // DE labels and names are fixed-width binary fields, not C strings.
       recOneData(const recOneData& r)  // copy constructor
       {
          int i, j;
          for (i=0;i<3;i++)
          {
-            strcpy(label[i], r.label[i]);
+            memcpy(label[i], r.label[i], sizeof(label[i]));
             timeData[i]  = r.timeData[i];
             libratPtr[i] = r.libratPtr[i];
             for (j=0;j<12;j++) coeffPtr[j][i] = r.coeffPtr[j][i];
          }
-         for (i=0;i<400;i++)    strcpy(constName[i],r.constName[i]);
+         for (i=0;i<400;i++)    memcpy(constName[i], r.constName[i], sizeof(constName[i]));
          numConst        = r.numConst;
          AU              = r.AU;
          EMRAT           = r.EMRAT;
@@ -231,15 +236,16 @@ protected:
       }
       recOneData& operator=(const recOneData& r) 
       {
+         if (this == &r) return *this;
          int i, j;
          for (i=0;i<3;i++)
          {
-            strcpy(label[i], r.label[i]);
+            memcpy(label[i], r.label[i], sizeof(label[i]));
             timeData[i]  = r.timeData[i];
             libratPtr[i] = r.libratPtr[i];
             for (j=0;j<12;j++) coeffPtr[j][i] = r.coeffPtr[j][i];
          }
-         for (i=0;i<400;i++)    strcpy(constName[i],r.constName[i]);
+         for (i=0;i<400;i++)    memcpy(constName[i], r.constName[i], sizeof(constName[i]));
          numConst        = r.numConst;
          AU              = r.AU;
          EMRAT           = r.EMRAT;

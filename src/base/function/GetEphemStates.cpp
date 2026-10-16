@@ -641,6 +641,8 @@ void GetEphemStates::Copy(const GmatBase* orig)
 //------------------------------------------------------------------------------
 bool GetEphemStates::ReadSpiceEphemerisFile()
 {
+// GMAT Py 2026-10-15: omit kernel reader from minimal native builds.
+#ifdef __USE_SPICE__
    #ifdef DEBUG_READ_EPHEM
    MessageInterface::ShowMessage
       ("\nGetEphemStates::ReadSpiceEphemerisFile() entered, inEphemType='%s'\n", inEphemType.c_str());
@@ -837,6 +839,9 @@ bool GetEphemStates::ReadSpiceEphemerisFile()
    #endif
    
    return retval;
+#else
+   throw GmatBaseException("SPICE ephemeris reading requires the extended GMAT Py profile");
+#endif
 }
 
 

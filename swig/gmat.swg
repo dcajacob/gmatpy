@@ -1,3 +1,4 @@
+// GMAT Py modification, 2026-10-15: support isolated minimal/extended builds.
 // Common SWIG imports for GMAT
 %include "std_string.i"
 
@@ -276,8 +277,10 @@ DOWNCAST(NadirPointing,GmatBase)
 %include "NadirPointing.hpp"
 DOWNCAST(PrecessingSpinner,GmatBase)
 %include "PrecessingSpinner.hpp"
+#ifndef GMAT_PY_MINIMAL
 DOWNCAST(SpiceAttitude,GmatBase)
 %include "SpiceAttitude.hpp"
+#endif
 DOWNCAST(Spinner,GmatBase)
 %include "Spinner.hpp"
 
@@ -753,11 +756,13 @@ DOWNCAST(SolarPowerSystem,GmatBase)
 %include "SolarPowerSystem.hpp"
 
 //// SPICE accessors
+#ifndef GMAT_PY_MINIMAL
 %include "SpiceInterface.hpp"
 DOWNCAST(SpiceKernelReader,SpiceInterface)
 %include "SpiceKernelReader.hpp"
 DOWNCAST(SpiceOrbitKernelReader,SpiceInterface)
 %include "SpiceOrbitKernelReader.hpp"
+#endif
 
 DOWNCAST(EventLocator,GmatBase)
 %include "EventLocator.hpp"

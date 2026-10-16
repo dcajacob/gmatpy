@@ -3072,6 +3072,8 @@ void AxisSystem::RotationMatrixFromICRFToFK5(const A1Mjd & atEpoch)
  //---------------------------------------------------------------------------
 void AxisSystem::CalculateSpiceFrameRotationMatrix(const std::string spiceToFrame, const GmatTime &atEpoch)
 {
+// GMAT Py 2026-10-15: explicit failure instead of linking kernels in minimal builds.
+#ifdef __USE_SPICE__
    CelestialBody* origin;
    
    if (this->origin->IsOfType("CelestialBody"))
@@ -3088,6 +3090,9 @@ void AxisSystem::CalculateSpiceFrameRotationMatrix(const std::string spiceToFram
    RotationMatrixFromICRFToFK5(atEpoch.GetMjd());
    rotMatrix = icrfToFK5 * rotMatrix;
    rotDotMatrix = icrfToFK5 * (rotMatSpice.LowerLeft().Transpose());
+#else
+   throw CoordinateSystemException("SPICE frame rotations require the extended GMAT Py profile");
+#endif
 }
 
 

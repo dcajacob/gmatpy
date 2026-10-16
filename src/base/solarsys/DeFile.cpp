@@ -1,3 +1,7 @@
+// GMAT Py modification notice (2026-10-01):
+// This file has been modified from NASA GMAT commit
+// 9363e129be366520c6edb0b4079204ed60666007 and is distributed in GMAT Py.
+//
 //$Id$
 //------------------------------------------------------------------------------
 //                                  DeFile
@@ -160,9 +164,9 @@ DeFile::DeFile(const DeFile& def) :
 {
    /// data from JPL/JSC code (Hoffman) ephem_read.c
    H1.data        = (def.H1).data;
-   strcpy(H1.pad, (def.H1).pad);
+   memcpy(H1.pad, def.H1.pad, sizeof(H1.pad));
    H2.data        = (def.H2).data;
-   strcpy(H2.pad, (def.H2).pad);
+   memcpy(H2.pad, def.H2.pad, sizeof(H2.pad));
    R1             = def.R1;
 
    int i;
@@ -196,9 +200,9 @@ DeFile& DeFile::operator=(const DeFile& def)
 
    /// data from JPL/JSC code (Hoffman) ephem_read.c
    H1.data        = (def.H1).data;
-   strcpy(H1.pad, (def.H1).pad);
+   memcpy(H1.pad, def.H1.pad, sizeof(H1.pad));
    H2.data        = (def.H2).data;
-   strcpy(H2.pad, (def.H2).pad);
+   memcpy(H2.pad, def.H2.pad, sizeof(H2.pad));
    R1             = def.R1;
    Ephemeris_File = def.Ephemeris_File;
    int i;

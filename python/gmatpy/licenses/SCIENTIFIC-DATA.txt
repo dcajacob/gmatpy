@@ -1,0 +1,95 @@
+Scientific numerical data and model attribution
+
+This notice records the engineering basis and provenance of the specific
+numeric tables below. It does not claim an Apache-2.0 or public-domain
+license for all externally sourced scientific data. A mathematical model,
+its numerical constants, and its computed output are distinct from the
+copyrighted source code or explanatory prose used to implement or describe it.
+No IERS implementation code or book prose is distributed in these tables.
+
+Earth orientation: data/planetary_coeff/eopc04_08.62-now
+  Preserve the provider attribution and permission record in IERS-EOP.txt.
+  That file documents Christian Bizouard's 9 April 2017 permission for
+  unlimited copying and use of EOP files with reference attribution, as
+  archived at the exact public source URL:
+    https://lists.iana.org/hyperkitty/list/tz%40iana.org/message/DSTTJE5RC3PSYHPBVNR7J3FFDZMFH4TW/
+  The retained NASA/GMAT snapshot's numeric bytes are unchanged; its
+  late-2026 forecast rows are not relabeled as current final observations.
+
+The U.S. Copyright Office's primary guidance distinguishes procedures,
+methods, systems, and their underlying principles from the copyrightable
+expression describing them:
+  https://www.copyright.gov/circs/circ33.pdf
+  https://www.copyright.gov/title17/92chap1.html (Sections 102(b) and 105)
+
+Time: data/time/tai-utc.dat
+  The file is byte-identical to the U.S. Naval Observatory's authoritative
+  TAI-minus-UTC historical standard values retrieved on 2026-10-01:
+    https://maia.usno.navy.mil/ser7/tai-utc.dat
+  USNO is the U.S. Government service providing these time-standard data.
+  The file's numerical standard offsets/drifts are recorded as scientific
+  time-standard facts and official Government data; they are not relabeled
+  as Apache-2.0 source code. No book prose, illustrations, or unrelated
+  third-party compilation is copied. Attribution: U.S. Naval Observatory.
+  The table includes pre-1972 UTC drift segments and post-1972 leap seconds;
+  its latest effective change is 2017-01-01. No updates are downloaded.
+
+Nutation: data/planetary_coeff/NUTATION.DAT
+  This is a new numeric-only presentation of the two models implemented
+  by GMAT's coordinate transformations: 1980 (106 terms) and 1996 (263
+  terms). The unused 1950 and unsupported 2000 sections are not included.
+  All argument multipliers and numerical coefficients of both implemented
+  models are unchanged. Their deterministic order and headings are generated
+  independently by python/tools/generate_coordinate_data.py.
+
+  The 1980 values match ERFA 2.0.1 nut80.c exactly. Preserve the BSD-3-Clause
+  notice in ERFA.txt for this component. ERFA is derived with permission
+  from SOFA; this is an ERFA-derived table, not an official SOFA release.
+    https://github.com/liberfa/erfa/releases/tag/v2.0.1
+    https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/nut80.c
+
+  The 1996 values match all 263 luni-solar coefficient records in the
+  official IERS Conventions (1996) KSV_1996_3 numerical model listing.
+  Only its numerical argument multipliers and coefficient values are
+  transcribed. Neither the Fortran algorithm nor explanatory prose is
+  included. These functional mathematical model coefficients are the
+  scientific-data basis; this is not a claim that all IERS software is
+  freely relicensable. Attribution: IERS Conventions (1996), D. D. McCarthy
+  (ed.), IERS Technical Note 21, KSV_1996_3 model.
+    https://iers-conventions.obspm.fr/conventions_archive.php
+    https://iers-conventions.obspm.fr/archive/1996/1996IERSConventionsArchive.tar.gz
+
+ICRF: data/icrf/ICRF_ERFA_Table.txt
+  Independently regenerated numerical rotation-vector output using the
+  BSD-3-Clause ERFA 2.0.1 reference routines. Preserve ERFA.txt and identify
+  this table as a GMAT Py generated table, not an official ERFA/SOFA table.
+  It implements the documented transformation through a common terrestrial
+  frame between the IAU 1976/1980 FK5 and IAU 2006/2000A ICRF reductions.
+  The generator documents the A1/TAI/TT offsets, conventional common
+  Earth-rotation phase, radian vector units, signs, and historical
+  equation-of-equinoxes convention. No original NASA ICRF vector values
+  or external observed EOP values are inputs to this computation.
+    https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/c2i06a.c
+    https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/pnm80.c
+    https://iers-conventions.obspm.fr/content/chapter5/icc5.pdf
+  The 51,136 daily rows retain the old date range and fill gaps in its
+  sampling grid. This changes small scientific/model/interpolation errors,
+  as quantified in the distribution validation report. It is not a claim
+  of bit-identical results to the legacy table or perfect physical accuracy.
+
+Atmosphere: data/atmosphere/earth/EarthExponentialAtmosphereData.txt
+  Regenerated from the 28 refHeight/refDensity/scaleHeight constants in
+  NASA GMAT's Apache-2.0 ExponentialAtmosphere.cpp. All 84 numeric values
+  are unchanged, including GMAT's documented 350 km density correction.
+  Preserve GMAT.txt and the NASA/source attribution in NOTICE.txt.
+  Scientific attribution: the exponential model and standard atmospheric
+  constants discussed by Vallado and Wertz; no book prose or table artwork
+  is copied into this generated CSV. The U.S. Standard Atmosphere (1976)
+  is a related Government scientific reference, explicitly identified by
+  NASA NTRS as Government work with public use permitted. It is not asserted
+  to be a byte-identical source for every value in this particular table.
+    https://raw.githubusercontent.com/nasa/GMAT/9363e129be366520c6edb0b4079204ed60666007/src/base/solarsys/ExponentialAtmosphere.cpp
+    https://ntrs.nasa.gov/citations/19770009539
+
+Consult DATA_MANIFEST.json for exact identities, generator inputs, and
+scientific validation. No scientific-accuracy or legal guarantee is made.

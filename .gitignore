@@ -22,7 +22,6 @@ Release
 *.user
 /.settings/
 /KARI/
-*.md
 *~
 *.swp
 /temp/
@@ -72,3 +71,10 @@ __pycache__
 /.clangd
 /dist/
 /wheelhouse/
+
+# GMAT Py local build and qualification outputs
+/venv/
+/.venv/
+/build/gmatpy/
+/qualification-output/
+python/gmatpy/BUILD_PROVENANCE.json

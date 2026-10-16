@@ -34,6 +34,10 @@
 #define EphemManager_hpp
 
 #include "gmatdefs.hpp"
+// GMAT Py 2026-10-15: public signatures use SPICE scalar typedefs even without kernel support.
+extern "C" {
+#include "SpiceUsr.h"
+}
 #include "GmatBase.hpp"
 #include "CoordinateSystem.hpp"
 #include "SolarSystem.hpp"

@@ -1,3 +1,4 @@
+# GMAT Py modification, 2026-10-15: support isolated minimal/extended builds.
 # $Id$
 # 
 # GMAT: General Mission Analysis Tool.
@@ -33,6 +34,10 @@ endif()
 
 if(GMAT_USE_BOOST_VARIANT)
    SET(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DGMAT_USE_BOOST_VARIANT)
+endif()
+
+if(GMAT_PY_PROFILE STREQUAL "minimal")
+   list(APPEND CMAKE_SWIG_FLAGS -DGMAT_PY_MINIMAL)
 endif()
 
 if(_GMATAPI_GENERATE_PYTHON)

@@ -1,3 +1,7 @@
+// GMAT Py modification notice (2026-10-01):
+// This file has been modified from NASA GMAT commit
+// 9363e129be366520c6edb0b4079204ed60666007 and is distributed in GMAT Py.
+//
 //$Id$
 //------------------------------------------------------------------------------
 //                                  OrbitData
@@ -934,6 +938,10 @@ Rvector6 OrbitData::GetEquinState()
 Rvector6 OrbitData::GetEquinDot(Rvector3 &pos, Rvector3 &vel, Real rMag)
 {
    Rvector6 rateState(0.0,0.0,0.0,0.0,0.0,0.0);
+   // Keplerian motion still advances true longitude when perturbations vanish.
+   // h/r^2 is the instantaneous angular rate for circular and eccentric orbits.
+   rateState[5] = Cross(pos, vel).GetMagnitude() / (rMag * rMag) *
+         GmatMathConstants::DEG_PER_RAD;
 
    if (!ode)
    {

@@ -1,3 +1,5 @@
+// GMAT Py modification (2026-10-16): preserve initialized startup paths after
+// caller cwd restoration and release owned file entries when replacing/reloading.
 //$Id$
 //------------------------------------------------------------------------------
 //                            FileManager
@@ -1016,7 +1018,6 @@ std::string FileManager::GetFullStartupFilePath()
       return mStartupFileName;
    else
    {
-      mStartupFileDir = GmatFileUtil::GetCurrentWorkingDirectory() + mPathSeparator;
       return mStartupFileDir + mStartupFileName;
    }
 }
@@ -3404,6 +3405,7 @@ void FileManager::AddFileType(const std::string &type, const std::string &name)
    }
    else if (type.find("_FILE_ABS") != type.npos)
    {
+      delete mFileMap[type];
       mFileMap[type] = new FileInfo("", name);
    }
    else if (type.find("_FILE") != type.npos)
@@ -3420,6 +3422,7 @@ void FileManager::AddFileType(const std::string &type, const std::string &name)
       {
          std::string pathName = name.substr(0, pos);
          std::string fileName = name.substr(pos+1, name.npos);
+         delete mFileMap[type];
          mFileMap[type] = new FileInfo(pathName, fileName);
          
          #ifdef DEBUG_ADD_FILETYPE
@@ -3433,6 +3436,7 @@ void FileManager::AddFileType(const std::string &type, const std::string &name)
          std::string pathName = "CURRENT_PATH";
          mPathMap[pathName] = "./";
          std::string fileName = name;
+         delete mFileMap[type];
          mFileMap[type] = new FileInfo(pathName, fileName);
          
          #ifdef DEBUG_ADD_FILETYPE
@@ -3650,7 +3654,7 @@ void FileManager::RefreshFiles()
    mPluginList.clear();
 
    for (std::map<std::string, FileInfo*>::iterator iter = mFileMap.begin();
-        iter != mFileMap.begin(); ++iter)
+        iter != mFileMap.end(); ++iter)
       delete iter->second;
 
    mFileMap.clear();

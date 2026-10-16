@@ -115,24 +115,62 @@ written to a private temporary directory, never site-packages.
 Scientific inputs and limits
 ----------------------------
 
-The wheel includes gravity coefficients, DE405, orientation, time and atmosphere
-inputs from this checkout. They are snapshots and do not refresh automatically.
-DE405 covers 1941-01-06 to 2201-02-20; Earth-orientation observations end at
-2026-09-14. GMAT can extrapolate orientation outside observations with reduced
+The wheel includes gravity coefficients, DE405, orientation, time and the
+exponential-atmosphere table from this checkout. They are snapshots and do not
+refresh automatically. AGI/CSSI space-weather files, Schatten forecasts and the
+unused ``marini.dat`` table are deliberately excluded from wheels and source
+archives while their redistribution terms/provenance remain unresolved. The
+``propagate`` helper uses constant F10.7/F10.7A/Kp values and does not need these
+files. Advanced file-based weather models require caller-supplied licensed
+inputs via ``CSSISpaceWeatherFile``/``SchattenFile``; absent selected inputs raise
+an exception, with no automatic download or substitute predictions.
+Native DE405 covers 1941-01-06 to 2201-02-20; the inherited Earth-orientation
+snapshot ends at 2026-09-14 and includes predicted rows. GMAT can extrapolate
+orientation outside the snapshot with reduced
 fidelity. The legacy SVN updater and Xerces are excluded. A new data updater is
 deferred. Numerical regressions are provided, but this is not validated as an
-operational mission-analysis tool or an STK HPOP replacement. The convenience
-API does not yet expose maneuvers, estimation, STM or multi-spacecraft propagation.
+operational mission-analysis tool or an STK HPOP replacement. The extended convenience API exposes impulsive maneuvers, multi-spacecraft
+propagation, bounded SMA targeting and mission scripts. Finite burns use scripts.
+Estimation and STM helpers remain deferred.
 Other core facilities are accessible experimentally through ``native_session``.
+
+Licensing and distribution status
+--------------------------------
+
+GMAT and GMAT Py code use Apache-2.0; CSPICE and embedded f2c runtime components
+have their own notices. ``gmatpy/NOTICE.txt``, ``gmatpy/LICENSES.md`` and
+``gmatpy/licenses/`` are included in both wheel and source archive. The component
+manifests record source URLs, content hashes, applicable terms, numerical-data
+reuse assessments and scientific changes. They are an engineering inventory,
+not a worldwide legal guarantee. The optional archive-wide SPDX expression is
+omitted for this mixed distribution; component licenses remain attached.
+The responsible owner must record the product-specific export determination
+required by NAIF for a CSPICE-derived product. No designation is assigned by
+this package. Check an artifact::
+
+    python python/tools/check_distribution.py dist/gmatpy-0.2.0.tar.gz
+    python python/tools/check_distribution.py /path/to/gmatpy-0.2.0-*.whl --release
+
+The first command verifies contents, notices and exclusions. ``--release`` also
+fails on unresolved manifest review items, instead of presenting an unverified
+bundle as cleared. Upstream reference data remain in the Git checkout/history;
+the unreplaced historical ``msise90_sub.for`` source is also excluded from the
+source archive. Excluding these files from wheel/sdist does not clear publication
+of the entire repository. The explicit C/C++ spline adaptations have been
+replaced from mathematical equations, as has the entire Brent-Dekker solver.
+This targeted work is not an exhaustive audit of every inherited routine.
+Choose an independent project brand and use NASA/GMAT names to identify origin.
 
 Building and validation
 -----------------------
 
-Source builds currently support Linux. They require a C++17 compiler, CMake,
+Source builds support Linux and experimental native Windows x64/macOS
+qualification paths. They require a C++17 compiler, CMake,
 Ninja (or Make), CPython development headers and a PIC CSPICE archive.
-SWIG and scikit-build-core are Python build requirements. GMAT's existing
-``depends/configure.py`` can prepare CSPICE, or point ``CSPICE_DIR`` at an
-existing ``include/SpiceUsr.h`` / ``lib/cspice.a`` tree::
+SWIG and scikit-build-core are Python build requirements. Obtain the official
+NAIF CSPICE toolkit and compile its C library with position-independent code,
+or point ``CSPICE_DIR`` at an existing ``include/SpiceUsr.h`` /
+``lib/cspice.a`` tree. The source archive does not bundle CSPICE or its downloader::
 
     python -m pip install build 'scikit-build-core>=1.0' 'swig>=4.2,<5' auditwheel patchelf ninja
     CSPICE_DIR=/path/to/cspice bash python/tools/build_wheel.sh
@@ -140,9 +178,66 @@ existing ``include/SpiceUsr.h`` / ``lib/cspice.a`` tree::
 ``GMAT_PY_PYTHON`` selects the interpreter and ``GMAT_PY_WHEEL_DIR`` the repaired
 wheel output directory. The helper builds and repairs the wheel. Building in an
 older manylinux image is necessary for portable Linux wheels; repair cannot
-lower a compiler's glibc requirements. Direct ``python -m build --wheel`` builds
+lower a compiler's glibc requirements. For a local host-specific candidate, set
+``GMAT_PY_REPAIR=0`` to retain the checked ``linux_x86_64`` wheel without a
+manylinux claim. Failed builds retain their intermediate directory for diagnosis
+and recovery. Direct ``python -m build --wheel`` builds
 need ``-Ccmake.define.CSPICE_DIR=/path/to/cspice``. Normal GMAT builds retain the
 legacy updater by default. Wheels omit duplicate unversioned linker aliases.
+
+Experimental Windows x64 qualification
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Windows build path is explicitly gated while platform qualification is
+recorded. It requires an existing x64 MSVC C++17 toolchain/SDK, CMake/Ninja,
+CPython development files, SWIG and the matching Windows CSPICE toolkit headers
+and ``lib/cspice.lib``. An x86_64 Linux archive or Windows x64 archive cannot be
+substituted for an ARM64 dependency. Use an x64 Developer Command Prompt and an
+isolated Python build environment::
+
+    python -m build --wheel --no-isolation ^
+        -Ccmake.define.GMAT_PY_EXPERIMENTAL_WINDOWS=ON ^
+        -Ccmake.define.CSPICE_DIR=C:/path/to/cspice ^
+        -Ccmake.define.GMAT_PY_PROFILE=extended -Cwheel.build-tag=2extended
+
+For minimal use ``GMAT_PY_PROFILE=minimal`` and ``wheel.build-tag=1minimal``.
+Both profiles still require the platform-native CSPICE/f2c dependency. Windows
+ARM64 and macOS remain gated; passing Windows x64 tests does not qualify them.
+The Bash/auditwheel helper and ELF checker are Linux tools. From the existing
+MSVC developer environment, use ``python/tools/check_windows_wheel.py`` for PE
+architecture, engine DLL and imported-library checks. Install the wheel in a
+fresh environment and run the package tests with no GMAT checkout/compiler/Qt
+folders on PATH. Record the required Microsoft runtime dependencies and actual
+CSPICE library/header hashes. The source and owner-dependent publication checks
+apply to Windows candidates too.
+
+Identifiable local candidates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use an isolated copy of the intended source inputs, retaining the original Git
+revision, a full working-tree file/hash manifest and the patch layered on that
+revision. A commit ID alone does not identify an uncommitted remediation tree.
+Build an initial source archive, then embed its source inventory::
+
+    python -m build --sdist --no-isolation --outdir /path/to/seed
+    python python/tools/record_source.py /path/to/seed/gmatpy-0.2.0.tar.gz \
+        --revision <full-git-commit> --working-tree-sha256 <manifest-sha256> \
+        --output python/gmatpy/BUILD_PROVENANCE.json
+    python -m build --sdist --no-isolation --outdir /path/to/candidate
+    python python/tools/check_distribution.py /path/to/candidate/gmatpy-0.2.0.tar.gz \
+        --source-manifest python/gmatpy/BUILD_PROVENANCE.json
+
+Rebuild the initial archive/manifest after any source edit. Build the wheel from
+the verified final source archive in a new directory. Pass the same manifest to
+``check_wheel.py --source-manifest`` and record final archive/wheel SHA-256 hashes,
+dependency hashes, tool versions, exact commands and new test logs. The source
+digest excludes only generated ``PKG-INFO`` and the provenance file itself.
+This binds the packaged inputs and copied wheel files; native correspondence
+also relies on the recorded isolated build. It is not a bit-for-bit reproducible
+native-build or dependency source-provenance claim. Set ``SOURCE_DATE_EPOCH`` for
+repeatable archive timestamps. The wheel helper uses fresh raw, native-build and
+repair directories per invocation, so old wheels in ``dist/`` cannot be selected.
+The owner-dependent ``--release`` hold remains separate from candidate identity.
 
 Install the repaired wheel in a fresh environment and run::
 
@@ -151,6 +246,16 @@ Install the repaired wheel in a fresh environment and run::
 
 ``python/tools/check_wheel.py`` checks runtime dependency resolution, relocatable
 library paths, no duplicate aliases and no GUI/Xerces/updater implementation.
+It also checks distribution notices, inventory hashes and dataset exclusions.
 Tests cover independent analytic propagation and element calculations, native
 GMAT comparison, coordinate round trips and rotating velocity, time offsets,
 ephemeris origins, native session lifetime/reentry, validation and concurrency.
+
+Build profiles and expanded mission workflows
+---------------------------------------------
+
+See ``python/PROFILES.rst`` for the minimal/extended wheel boundary, TLE Tailor
+contract, supported impulse/multi-spacecraft/targeting/script workflows and
+explicit remaining coverage. ``gmatpy.capabilities()`` reports the installed
+profile. Minimal and extended are alternative builds of the same distribution;
+Python extras do not change its native contents. The default remains extended.

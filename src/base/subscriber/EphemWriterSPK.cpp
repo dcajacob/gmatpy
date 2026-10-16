@@ -556,6 +556,8 @@ void EphemWriterSPK::StartNewSegment(const std::string &comments,
                                      bool saveEpochInfo, bool writeAfterData,
                                      bool ignoreBlankComments)
 {
+// GMAT Py 2026-10-15: no SPK writer implementation in minimal builds.
+#ifdef __USE_SPICE__
    #ifdef DEBUG_EPHEMFILE_RESTART
    MessageInterface::ShowMessage
       ("===== EphemWriterSPK::StartNewSegment() entered\n   comments='%s'\n   "
@@ -622,6 +624,9 @@ void EphemWriterSPK::StartNewSegment(const std::string &comments,
    MessageInterface::ShowMessage
       ("===== EphemWriterSPK::StartNewSegment() leaving\n");
    #endif
+#else
+   throw SubscriberException("SPK writing requires the extended GMAT Py profile");
+#endif
 }
 
 
@@ -694,6 +699,8 @@ void EphemWriterSPK::FinishUpWriting()
 //------------------------------------------------------------------------------
 void EphemWriterSPK::FinishUpWritingSPK()
 {
+// GMAT Py 2026-10-15: no SPK writer implementation in minimal builds.
+#ifdef __USE_SPICE__
    #ifdef DEBUG_EPHEMFILE_FINISH
    MessageInterface::ShowMessage
       ("EphemWriterSPK::FinishUpWritingSPK) entered, canFinalize=%d\n", canFinalize);
@@ -765,6 +772,9 @@ void EphemWriterSPK::FinishUpWritingSPK()
    #ifdef DEBUG_EPHEMFILE_FINISH
    MessageInterface::ShowMessage("EphemWriterSPK::FinishUpWritingSPK() leaving\n");
    #endif
+#else
+   throw SubscriberException("SPK writing requires the extended GMAT Py profile");
+#endif
 }
 
 

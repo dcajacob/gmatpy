@@ -1,12 +1,39 @@
 gmatpy embeds General Mission Analysis Tool (GMAT) R2026a.
 Copyright (c) 2002-2026 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
-GMAT is licensed under Apache License 2.0; see licenses/GMAT.txt.
+GMAT is licensed under Apache License 2.0. The wheel includes licenses/GMAT.txt;
+the source archive also includes application/License.txt at its root.
 
 GMAT source: https://github.com/nasa/GMAT
+Source baseline: 9363e129be366520c6edb0b4079204ed60666007 (R2026a development tree).
+This independent GMAT Py adaptation changes packaging, engine initialization,
+bindings and selected numerical routines. Changed inherited source files carry
+modification notices. No endorsement by NASA, JPL or other providers is implied.
+
+Applicable retained source credits include Thinking Systems, Inc., Schafer Corp.,
+and Emergent Space Technologies, Inc.; their original notices remain in source.
+
 GMAT incorporates NASA/JPL NAIF CSPICE; its code is statically linked into
-the engine. Scientific data are the files distributed with this GMAT source
-snapshot (EGM96, JGM3, DE405, Earth orientation, time and atmosphere inputs).
+the engine. See licenses/NAIF-CSPICE.txt for the separate terms and disclaimer,
+and licenses/F2C.txt for embedded Netlib-origin runtime notices. SWIG generated
+wrapper support is covered by licenses/SWIG.txt, not by SWIG's tool GPL license.
+
+Scientific inputs have distinct sources and terms. Apache-2.0 describes GMAT
+and project code, not a blanket license for CSPICE or third-party data. The
+optional archive-wide SPDX expression is omitted for this mixed distribution.
+See LICENSES.md, licenses/CODE_MANIFEST.json and licenses/DATA_MANIFEST.json for exact
+hashes, provenance evidence, scientific changes, exclusions and owner release actions.
+Unmodified NAIF kernels retain their embedded descriptions and provider notices.
+
+Optional AGI/CSSI weather files, Schatten predictions and marini.dat are excluded
+from the wheel and source archive. Their exclusion does not change the constants
+used by the propagation convenience API. File-based weather requires user inputs.
 
 Native platform libraries (glibc and the C++ runtime) are supplied by the
 host operating system. The legacy SVN data updater and Xerces are excluded.
+
+Gravity numerical-data credits and reuse assessments: licenses/GRAVITY-DATA.txt.
+Native DE405 scientific source and independent reconstruction:
+licenses/JPL-EPHEMERIS-NUMERIC.txt. ERFA-based coordinate regeneration preserves
+its BSD notice in licenses/ERFA.txt. Original model citations and separate data
+reuse bases remain attached; no new Apache-only license is asserted for them.

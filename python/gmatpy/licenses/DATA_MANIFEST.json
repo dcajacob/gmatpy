@@ -1,0 +1,790 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-01",
+  "project": "GMAT Py",
+  "package_version": "0.2.0",
+  "inspected_source_commit": "3c35d1bd3425ea1b9e53accc296ca5fbea593a6c",
+  "scope": "Exact selected wheel/sdist input inventory after targeted provenance remediation; terms and U.S. numerical-data assessments are component-specific, not a blanket license or legal certification.",
+  "status_definitions": {
+    "excluded": "Omitted from wheel and sdist; caller-provided optional inputs follow provider terms.",
+    "verified_unmodified_naif": "Bytes match authoritative NAIF kernel; unchanged-kernel redistribution rules apply.",
+    "licensing_verified": "Authoritative source and stated applicable reuse terms documented.",
+    "documented_reuse_basis": "Scientific/mechanical numeric data with a documented U.S. factual-data assessment; no invented provider license or worldwide guarantee."
+  },
+  "release_preflight": {
+    "public_release_allowed": false,
+    "blocking_statuses": [
+      "Any included status outside verified_unmodified_naif, licensing_verified or documented_reuse_basis"
+    ],
+    "excluded_files_must_be_absent": true,
+    "included_file_sha256_must_match": true,
+    "test_builds_allowed": true,
+    "legal_guarantee": false,
+    "human_action": "Owner must adopt a product-specific export designation for CSPICE-derived release; see CODE_MANIFEST.json."
+  },
+  "packaging_notes": [
+    "Explicit 17-file data allowlist; no recursive data installation.",
+    "No automatic data refresh or download; preserve coverage/version limits and scientific change notes.",
+    "Excluded optional weather/troposphere inputs require caller paths only when selected.",
+    "Release preflight checks bytes/notices and the recorded owner decision; it does not make a legal determination."
+  ],
+  "files": [
+    {
+      "path": "atmosphere/earth/EarthExponentialAtmosphereData.txt",
+      "sha256": "f6eae050b789500c9b0280033be585e2e70b9bf1d3e0db0673dc126350050a6f",
+      "size_bytes": 606,
+      "status": "documented_reuse_basis",
+      "license_file": "SCIENTIFIC-DATA.txt",
+      "provider": "NASA/GMAT Apache-2.0 ExponentialAtmosphere.cpp constants",
+      "role": "Required installed default exponential-atmosphere numerical parameters",
+      "notes": "Regenerated CSV from 28 sets of refHeight/refDensity/scaleHeight assignments in Apache-2.0 GMAT source. All 84 numeric values unchanged, including the 350 km correction. Preserve NASA/source and scientific Vallado/Wertz attribution; no book prose/table artwork copied. Related US Standard Atmosphere 1976 public-use reference is not claimed to exactly generate every value.",
+      "source_urls": [
+        "https://raw.githubusercontent.com/nasa/GMAT/9363e129be366520c6edb0b4079204ed60666007/src/base/solarsys/ExponentialAtmosphere.cpp",
+        "https://ntrs.nasa.gov/citations/19770009539",
+        "https://www.copyright.gov/circs/circ33.pdf"
+      ],
+      "evidence": [
+        {
+          "source_path": "src/base/solarsys/ExponentialAtmosphere.cpp",
+          "source_sha256": "e0aacfbaa27c951f05680a69ac88ce3ee49687ead35d226e302233be1e1b7f13",
+          "values_verified": 84,
+          "all_values_unchanged": true
+        },
+        {
+          "url": "https://ntrs.nasa.gov/api/citations/19770009539",
+          "download_sha256": "76ce119371ca0263d774ea10f6d728136da0d4be22edcf8f12851f82b61b71f5",
+          "copyright_determination": "GOV_PUBLIC_USE_PERMITTED",
+          "exact_table_identity_claimed": false
+        }
+      ],
+      "source_hash_verified": true,
+      "redistribution_basis": "Apache source-constant lineage and functional scientific model coefficients; preserve GMAT and SCIENTIFIC-DATA notices",
+      "numeric_change": false,
+      "generator": "python/tools/generate_coordinate_data.py",
+      "license_file_sha256": "2e7e4bdd484e714c7805f2a161aee7271c94949237ca00f24ce9575877f2c2a9"
+    },
+    {
+      "path": "atmosphere/earth/SchattenPredict.txt",
+      "sha256": "89ad34445419440914370a38b4108316c3637539611f46a501cffd491c2fa798",
+      "status": "excluded",
+      "source_urls": [
+        "https://etd.gsfc.nasa.gov/capabilities/flight-dynamics-facility/data-resources/",
+        "https://iswa.gsfc.nasa.gov/iswa_data_tree/model/solar/FDF/SchattenSolarFluxPrediction/2026/03/sol2026-03-15T000000.txt",
+        "https://iswa.gsfc.nasa.gov/iswa_data_tree/model/solar/FDF/SchattenSolarFluxPrediction/schatten_files_read_me.txt"
+      ],
+      "license_file": null,
+      "notes": "General-use availability verified; exact redistribution grant not verified Do not bundle this file in wheel or sdist. Document how users can supply optional data and that provider terms remain their responsibility.",
+      "size_bytes": 25424,
+      "provider": "NASA FDF/CCMC-hosted Schatten predictions, matches initial March2026 rows",
+      "role": "Optional scientific data excluded from wheel and sdist",
+      "source_hash_verified": false,
+      "evidence": [
+        {
+          "url": "https://etd.gsfc.nasa.gov/capabilities/flight-dynamics-facility/data-resources/",
+          "summary": "General-use availability verified; exact redistribution grant not verified"
+        },
+        {
+          "url": "https://iswa.gsfc.nasa.gov/iswa_data_tree/model/solar/FDF/SchattenSolarFluxPrediction/2026/03/sol2026-03-15T000000.txt",
+          "summary": "General-use availability verified; exact redistribution grant not verified"
+        },
+        {
+          "url": "https://iswa.gsfc.nasa.gov/iswa_data_tree/model/solar/FDF/SchattenSolarFluxPrediction/schatten_files_read_me.txt",
+          "summary": "General-use availability verified; exact redistribution grant not verified"
+        }
+      ]
+    },
+    {
+      "path": "atmosphere/earth/SpaceWeather-All-v1.2.txt",
+      "sha256": "47aef46938f4b639965cd73d9406c9580f4042fbd938467b40a26ff0d4b354cf",
+      "status": "excluded",
+      "source_urls": [
+        "https://help.agi.com/stk/Content/stk/tools-dataupdate.htm",
+        "https://kp.gfz.de/app/format/Kp_ap_Ap_SN_F107_format.txt",
+        "https://www.sidc.be/SILSO/infosndtot"
+      ],
+      "license_file": null,
+      "notes": "Potential CC BY-NC4 sunspot-number component; exact snapshot permission unresolved Do not bundle this file in wheel or sdist. Document how users can supply optional data and that provider terms remain their responsibility.",
+      "size_bytes": 3460582,
+      "provider": "Analytical Graphics Inc./CSSI weather compilation dated2025-03-21",
+      "role": "Optional scientific data excluded from wheel and sdist",
+      "source_hash_verified": false,
+      "evidence": [
+        {
+          "url": "https://help.agi.com/stk/Content/stk/tools-dataupdate.htm",
+          "summary": "Potential CC BY-NC4 sunspot-number component; exact snapshot permission unresolved"
+        },
+        {
+          "url": "https://kp.gfz.de/app/format/Kp_ap_Ap_SN_F107_format.txt",
+          "summary": "Potential CC BY-NC4 sunspot-number component; exact snapshot permission unresolved"
+        },
+        {
+          "url": "https://www.sidc.be/SILSO/infosndtot",
+          "summary": "Potential CC BY-NC4 sunspot-number component; exact snapshot permission unresolved"
+        }
+      ]
+    },
+    {
+      "path": "atmosphere/earth/SpaceWeather-v1.2.txt",
+      "sha256": "e7e11c8ca81b80cde0b7028620f75b2336f33f52e1cbf67294a944593ca5dc2f",
+      "status": "excluded",
+      "source_urls": [
+        "https://help.agi.com/stk/Content/stk/tools-dataupdate.htm",
+        "https://kp.gfz.de/app/format/Kp_ap_Ap_SN_F107_format.txt",
+        "https://www.sidc.be/SILSO/infosndtot"
+      ],
+      "license_file": null,
+      "notes": "Potential CC BY-NC4 sunspot-number component; exact snapshot permission unresolved Do not bundle this file in wheel or sdist. Document how users can supply optional data and that provider terms remain their responsibility.",
+      "size_bytes": 482034,
+      "provider": "Analytical Graphics Inc./CSSI weather compilation dated2025-03-21",
+      "role": "Optional scientific data excluded from wheel and sdist",
+      "source_hash_verified": false,
+      "evidence": [
+        {
+          "url": "https://help.agi.com/stk/Content/stk/tools-dataupdate.htm",
+          "summary": "Potential CC BY-NC4 sunspot-number component; exact snapshot permission unresolved"
+        },
+        {
+          "url": "https://kp.gfz.de/app/format/Kp_ap_Ap_SN_F107_format.txt",
+          "summary": "Potential CC BY-NC4 sunspot-number component; exact snapshot permission unresolved"
+        },
+        {
+          "url": "https://www.sidc.be/SILSO/infosndtot",
+          "summary": "Potential CC BY-NC4 sunspot-number component; exact snapshot permission unresolved"
+        }
+      ]
+    },
+    {
+      "path": "atmosphere/earth/marini.dat",
+      "sha256": "5d8ef7627935fb752f1255a4e66453d3aeb90e1f3cb2b285c24eafec00360e70",
+      "status": "excluded",
+      "source_urls": [],
+      "license_file": null,
+      "notes": "Provider/redistribution grant unresolved; unrelated to convenience propagation Do not bundle this file in wheel or sdist. Document how users can supply optional data and that provider terms remain their responsibility.",
+      "size_bytes": 5669,
+      "provider": "GMAT Marini troposphere refractivity data; no file provenance header",
+      "role": "Optional scientific data excluded from wheel and sdist",
+      "source_hash_verified": false,
+      "evidence": []
+    },
+    {
+      "path": "gravity/earth/EGM96.cof",
+      "sha256": "4735c9301e20ee8db09b6d0882a24671b327cd35ec5740ea497c8eeb43a39807",
+      "status": "licensing_verified",
+      "source_urls": [
+        "https://earth-info.nga.mil/php/download.php?file=egm-96spherical",
+        "https://www.nga.mil/resources/Privacy_Policy.html"
+      ],
+      "license_file": "GRAVITY-DATA.txt",
+      "notes": "65,338 coefficient pairs exactly match NGA. NGA public-information copying/distribution policy applied to official archive; no contrary archive terms found. Preserve NASA/NIMA/NGA/model citation. Application to this agency subdomain is documented assessment, also supported by numeric-data basis.",
+      "size_bytes": 3913244,
+      "provider": "NIMA/NASA EGM96 model; GMAT .cof formatting",
+      "role": "Required gravity model",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "summary": "Hash-pinned numerical comparison reproduced by python/tools/verify_gravity_provenance.py; all coefficients retained unchanged."
+        }
+      ],
+      "source_numeric_comparison": {
+        "model": "EGM96",
+        "local_sha256": "4735c9301e20ee8db09b6d0882a24671b327cd35ec5740ea497c8eeb43a39807",
+        "source_sha256": "1e5e6c30343989b8e2eda0bb96bde06ef05981eec69934d6e44aace4f0d6a9d5",
+        "rows": 65338,
+        "non_C20_max_abs_C_delta": "0",
+        "non_C20_max_abs_S_delta": "0",
+        "comparison_passed": true,
+        "failures": []
+      },
+      "license_file_sha256": "9218fab9ed445fb81b44eba253a5b880040b83f01053e131478a4f951181b48f"
+    },
+    {
+      "path": "gravity/earth/JGM2.cof",
+      "sha256": "abac32a233e8662885778018d02e41553a5b6e5e1ee7332d2f69c362423025d3",
+      "status": "documented_reuse_basis",
+      "source_urls": [
+        "https://icgem.gfz.de/tom_longtime",
+        "https://icgem.gfz.de/imprint",
+        "https://www.copyright.gov/comp3/chap300/ch300-copyrightable-authorship.pdf",
+        "https://www.copyright.gov/title17/92chap1.html"
+      ],
+      "license_file": "GRAVITY-DATA.txt",
+      "notes": "Complete mechanical scientific coefficient table reused on documented U.S. factual-data basis, not an Apache/CC grant or wholesale government public-domain claim. Retained GMAT legacy C20 variant; its exact historical conversion remains a scientific lineage limitation, not represented as proven.",
+      "size_bytes": 152234,
+      "provider": "JGM2 original model, retained GMAT legacy coefficient variant",
+      "role": "Raw API alternative gravity model",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "summary": "Hash-pinned numerical comparison reproduced by python/tools/verify_gravity_provenance.py; all coefficients retained unchanged."
+        }
+      ],
+      "source_numeric_comparison": {
+        "model": "JGM2",
+        "local_sha256": "abac32a233e8662885778018d02e41553a5b6e5e1ee7332d2f69c362423025d3",
+        "source_sha256": "0779cf74f216d5b38c7a4c4a1a25d596b659605deb7731f00874c17e9ed3f5af",
+        "rows": 2553,
+        "non_C20_max_abs_C_delta": "0",
+        "non_C20_max_abs_S_delta": "0",
+        "comparison_passed": true,
+        "failures": [],
+        "legacy_C20_delta": "9e-11",
+        "scientific_lineage": "Inherited GMAT variant; exact historical C20 transformation unverified"
+      },
+      "license_file_sha256": "9218fab9ed445fb81b44eba253a5b880040b83f01053e131478a4f951181b48f"
+    },
+    {
+      "path": "gravity/earth/JGM3.cof",
+      "sha256": "a622342e7c5421ee0b0f01f1b5cd38e6be87f1118fbd81b8c695e8c969603819",
+      "status": "documented_reuse_basis",
+      "source_urls": [
+        "https://icgem.gfz.de/tom_longtime",
+        "https://icgem.gfz.de/imprint",
+        "https://www.copyright.gov/comp3/chap300/ch300-copyrightable-authorship.pdf",
+        "https://www.copyright.gov/title17/92chap1.html"
+      ],
+      "license_file": "GRAVITY-DATA.txt",
+      "notes": "Complete mechanical scientific coefficient table reused on documented U.S. factual-data basis, not an Apache/CC grant or wholesale government public-domain claim. Retained GMAT legacy C20 variant; its exact historical conversion remains a scientific lineage limitation, not represented as proven.",
+      "size_bytes": 152234,
+      "provider": "JGM3 original model, retained GMAT legacy coefficient variant",
+      "role": "Convenience/raw API alternative gravity model",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "summary": "Hash-pinned numerical comparison reproduced by python/tools/verify_gravity_provenance.py; all coefficients retained unchanged."
+        }
+      ],
+      "source_numeric_comparison": {
+        "model": "JGM3",
+        "local_sha256": "a622342e7c5421ee0b0f01f1b5cd38e6be87f1118fbd81b8c695e8c969603819",
+        "source_sha256": "2ec791eec795689291974dd3602b304029da93d3fea30096daa3b368fb231d03",
+        "rows": 2553,
+        "non_C20_max_abs_C_delta": "3.70E-18",
+        "non_C20_max_abs_S_delta": "4.60E-18",
+        "comparison_passed": true,
+        "failures": [],
+        "legacy_C20_delta": "4.173569530e-9",
+        "scientific_lineage": "Inherited GMAT variant; exact historical C20 transformation unverified",
+        "IERS_2003_k20_0_3_correction": "4.174238640E-9",
+        "IERS_2003_is_exact_reconstruction": false
+      },
+      "license_file_sha256": "9218fab9ed445fb81b44eba253a5b880040b83f01053e131478a4f951181b48f"
+    },
+    {
+      "path": "icrf/ICRF_Table.txt",
+      "sha256": "e6b3969a7961c56cacd37a3daa2a98d1d7d765e8605699d5151db2a5bde44547",
+      "size_bytes": 4114186,
+      "status": "excluded",
+      "license_file": null,
+      "provider": "Legacy NASA/GMAT ICRF numerical rotation-vector output",
+      "role": "Replaced legacy table omitted from artifacts",
+      "notes": "Legacy table remains in the working Git tree for review and is excluded from packaged artifacts. The reproducible ICRF_ERFA_Table.txt replaces it. No claim is made here about an unidentified historical generator.",
+      "source_urls": [],
+      "evidence": [],
+      "source_hash_verified": false
+    },
+    {
+      "path": "planetary_coeff/NUTATION.DAT",
+      "sha256": "b7166e8ce08ae0a2f540c746dbef6569aa25ddf190cd44cb40090d9e8d27e4c9",
+      "size_bytes": 9650,
+      "status": "documented_reuse_basis",
+      "license_file": "SCIENTIFIC-DATA.txt",
+      "provider": "ERFA 2.0.1 (BSD-3-Clause) IAU 1980 and IERS Conventions (1996) KSV_1996_3 coefficients",
+      "role": "Implemented GMAT 1980 and 1996 nutation models",
+      "notes": "Regenerated the two implemented models: IAU1980 (106 terms) and IAU1996 (263 terms), retaining every argument/coefficient value with deterministic order/independent headings. ERFA BSD notice applies to 1980 source-derived values. 1996 numerical model coefficients only, no Fortran algorithm/prose, with U.S. mathematical-data reuse assessment. Unused 1950/unsupported 2000 sections omitted; actual native readers verified 106/263 terms.",
+      "source_urls": [
+        "https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/nut80.c",
+        "https://iers-conventions.obspm.fr/archive/1996/1996IERSConventionsArchive.tar.gz",
+        "https://www.copyright.gov/circs/circ33.pdf"
+      ],
+      "evidence": [
+        {
+          "url": "https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/nut80.c",
+          "source_sha256": "08c6fda7949eaa04c64c38e52e62183f32bbbe89c1ab2ece564c545c01532ae7",
+          "argument_sets": 106,
+          "amplitude_drift_coefficients": 424,
+          "exact_values_unchanged": true,
+          "license_file": "ERFA.txt"
+        },
+        {
+          "archive_url": "https://iers-conventions.obspm.fr/archive/1996/1996IERSConventionsArchive.tar.gz",
+          "archive_sha256": "451cea24b2b3cb553a09830635d34e2a4115aa2a202e595a903bce7a85e0ee82",
+          "member": "chapter5/ksv_1996_3.f",
+          "member_sha256": "914597b5bf658667b02ba8de444a61504117f014186d2d1f8ea31efa59810e36",
+          "argument_sets": 263,
+          "coefficients": 1578,
+          "exact_values_unchanged": true,
+          "scope": "Numerical coefficients only; no implementation code or explanatory prose"
+        }
+      ],
+      "source_hash_verified": true,
+      "redistribution_basis": "BSD-3-Clause for ERFA-derived 1980 values and documented scientific coefficient reuse for 1996",
+      "numeric_change": false,
+      "presentation_and_summation_order_changed": true,
+      "additional_notice_files": [
+        "ERFA.txt"
+      ],
+      "generator": "python/tools/generate_coordinate_data.py",
+      "license_file_sha256": "2e7e4bdd484e714c7805f2a161aee7271c94949237ca00f24ce9575877f2c2a9",
+      "additional_notice_sha256": {
+        "ERFA.txt": "b1858f9a263f22c438a455a32945da51a31a0ae25a21055da13bb7ed57cc3b51"
+      }
+    },
+    {
+      "path": "planetary_coeff/SPICEEarthCurrentKernel.bpc",
+      "sha256": "6d899c83542e32dfd77f3b3b79383db88860adca59adf60f4823780760589a52",
+      "status": "verified_unmodified_naif",
+      "source_urls": [
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/a_old_versions/earth_620120_250826.bpc",
+        "https://naif.jpl.nasa.gov/naif/rules.html"
+      ],
+      "license_file": "NAIF-CSPICE.txt",
+      "notes": "Preserve unchanged kernel bytes and embedded/allied provider attribution. If kernel is modified, apply NAIF rules for last-modifier attribution, filename, metadata and validation.",
+      "size_bytes": 12094464,
+      "provider": "NASA/JPL NAIF",
+      "role": "GMAT scientific SPICE data",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/a_old_versions/earth_620120_250826.bpc",
+          "summary": "Downloaded in memory2026-10-01 and compared byte-for-byte; identical."
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/naif/rules.html",
+          "summary": "Unmodified NAIF-distributed kernels may be redistributed; commercial SPICE component use allowed. This is not an Apache2 license."
+        }
+      ],
+      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7"
+    },
+    {
+      "path": "planetary_coeff/SPICEEarthPredictedKernel.bpc",
+      "sha256": "f5ed4d1f460dbcf40bf24f657ab9021718048e18fb723093bfd229066b4e3a49",
+      "status": "verified_unmodified_naif",
+      "source_urls": [
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/a_old_versions/earth_2025_250826_2125_predict.bpc",
+        "https://naif.jpl.nasa.gov/naif/rules.html"
+      ],
+      "license_file": "NAIF-CSPICE.txt",
+      "notes": "Preserve unchanged kernel bytes and embedded/allied provider attribution. If kernel is modified, apply NAIF rules for last-modifier attribution, filename, metadata and validation.",
+      "size_bytes": 19179520,
+      "provider": "NASA/JPL NAIF",
+      "role": "GMAT scientific SPICE data",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/a_old_versions/earth_2025_250826_2125_predict.bpc",
+          "summary": "Downloaded in memory2026-10-01 and compared byte-for-byte; identical."
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/naif/rules.html",
+          "summary": "Unmodified NAIF-distributed kernels may be redistributed; commercial SPICE component use allowed. This is not an Apache2 license."
+        }
+      ],
+      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7"
+    },
+    {
+      "path": "planetary_coeff/SPICELunaCurrentKernel.bpc",
+      "sha256": "656f90616403d75a75f0cd6c8830fc5b44f8cb4facb5ccb8915e752b397520cf",
+      "status": "verified_unmodified_naif",
+      "source_urls": [
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/moon_pa_de421_1900-2050.bpc",
+        "https://naif.jpl.nasa.gov/naif/rules.html"
+      ],
+      "license_file": "NAIF-CSPICE.txt",
+      "notes": "Preserve unchanged kernel bytes and embedded/allied provider attribution. If kernel is modified, apply NAIF rules for last-modifier attribution, filename, metadata and validation.",
+      "size_bytes": 1770496,
+      "provider": "NASA/JPL NAIF",
+      "role": "GMAT scientific SPICE data",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/moon_pa_de421_1900-2050.bpc",
+          "summary": "Downloaded in memory2026-10-01 and compared byte-for-byte; identical."
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/naif/rules.html",
+          "summary": "Unmodified NAIF-distributed kernels may be redistributed; commercial SPICE component use allowed. This is not an Apache2 license."
+        }
+      ],
+      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7"
+    },
+    {
+      "path": "planetary_coeff/SPICELunaFrameKernel.tf",
+      "sha256": "78732477b96f9863e7b0d65bcee3c22b8707ca5ed0db56d1173319cb2e8c7993",
+      "status": "verified_unmodified_naif",
+      "source_urls": [
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/satellites/moon_080317.tf",
+        "https://naif.jpl.nasa.gov/naif/rules.html"
+      ],
+      "license_file": "NAIF-CSPICE.txt",
+      "notes": "Preserve unchanged kernel bytes and embedded/allied provider attribution. If kernel is modified, apply NAIF rules for last-modifier attribution, filename, metadata and validation.",
+      "size_bytes": 21437,
+      "provider": "NASA/JPL NAIF",
+      "role": "GMAT scientific SPICE data",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/satellites/moon_080317.tf",
+          "summary": "Downloaded in memory2026-10-01 and compared byte-for-byte; identical."
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/naif/rules.html",
+          "summary": "Unmodified NAIF-distributed kernels may be redistributed; commercial SPICE component use allowed. This is not an Apache2 license."
+        }
+      ],
+      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7"
+    },
+    {
+      "path": "planetary_coeff/SPICEPlanetaryConstantsKernel.tpc",
+      "sha256": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+      "status": "verified_unmodified_naif",
+      "source_urls": [
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+        "https://naif.jpl.nasa.gov/naif/rules.html"
+      ],
+      "license_file": "NAIF-CSPICE.txt",
+      "notes": "Preserve unchanged kernel bytes and embedded/allied provider attribution. If kernel is modified, apply NAIF rules for last-modifier attribution, filename, metadata and validation.",
+      "size_bytes": 131226,
+      "provider": "NASA/JPL NAIF",
+      "role": "GMAT scientific SPICE data",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00011.tpc",
+          "summary": "Downloaded in memory2026-10-01 and compared byte-for-byte; identical."
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/naif/rules.html",
+          "summary": "Unmodified NAIF-distributed kernels may be redistributed; commercial SPICE component use allowed. This is not an Apache2 license."
+        }
+      ],
+      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7"
+    },
+    {
+      "path": "planetary_coeff/earth_latest_high_prec.bpc",
+      "sha256": "e359d1a6c02a412f22377f4598c0139adb8f2ae4d03f299d4bbe1a0de471ffd1",
+      "status": "verified_unmodified_naif",
+      "source_urls": [
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/earth_000101_261227_260930.bpc",
+        "https://naif.jpl.nasa.gov/naif/rules.html"
+      ],
+      "license_file": "NAIF-CSPICE.txt",
+      "notes": "Unchanged official 2026-09-30 dated Earth kernel under local runtime alias. Replaces prior March snapshot; coverage extends through 2026-12-27. 302 common-coverage ITRF93 rotations differ up to 2.3618222974917546e-6 rad in sampled former prediction interval. Preserve embedded NAIF producer metadata.",
+      "size_bytes": 5140480,
+      "provider": "NASA/JPL NAIF identified by embedded DAF comments",
+      "role": "Earth orientation kernel",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "summary": "Source SHA matches all output bytes; replacement extends coverage, validated across 302 epochs."
+        }
+      ],
+      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7"
+    },
+    {
+      "path": "planetary_coeff/eopc04_08.62-now",
+      "sha256": "52c95d6871066e892463328424ca34f5e9cedde92c747465a40f7cd0ecd86ed3",
+      "size_bytes": 3687646,
+      "status": "licensing_verified",
+      "license_file": "IERS-EOP.txt",
+      "provider": "IERS EOP Product Centre, Observatoire de Paris/SYRTE",
+      "role": "Required Earth-orientation snapshot with final and predicted rows",
+      "notes": "Provider Christian Bizouard gave unrestricted copying/use permission for this and other EOP files with reference attribution in 2017. Preserve original header and IERS-EOP notice. Numeric bytes unchanged; 1962-01-01..2026-09-14 snapshot includes forecast/error-sentinel rows, not current final observations. Current authoritative IAU1980 columns agree historically but revised/predicted late-2026 rows differ; this is a documented legacy scientific snapshot.",
+      "source_urls": [
+        "https://hpiers.obspm.fr/eop-pc/index.php?index=C04&lang=en",
+        "https://hpiers.obspm.fr/iers/eop/eopc04/readme",
+        "https://lists.iana.org/hyperkitty/list/tz%40iana.org/message/DSTTJE5RC3PSYHPBVNR7J3FFDZMFH4TW/"
+      ],
+      "evidence": [
+        {
+          "url": "https://lists.iana.org/hyperkitty/list/tz%40iana.org/message/DSTTJE5RC3PSYHPBVNR7J3FFDZMFH4TW/attachment/2/attachment.html",
+          "download_sha256": "e5f8ae1dd9f06006a1d9f5ea5b7822ab8c8573a4b7ff410bd3f3ab0727a0996e",
+          "date": "2017-04-09",
+          "statement": "Unlimited copying and use of this and other EOP files with reference attribution",
+          "current_file_names_same_provider_contact": true
+        }
+      ],
+      "source_hash_verified": false,
+      "redistribution_basis": "Recorded permission from the same provider covering EOP files generally, with attribution",
+      "numeric_change": false,
+      "license_file_sha256": "c912feb8dff85d641754253c6e31b25d701ec54e3478ffefe5cffdfd268990a5"
+    },
+    {
+      "path": "planetary_ephem/de/gmatpy_de405_1941_2201.405",
+      "sha256": "0721a78991a15ccaa299b513ab10e91cc46973f6555799b9cf23ab55ca4eae9d",
+      "status": "documented_reuse_basis",
+      "source_urls": [
+        "https://ssd.jpl.nasa.gov/ftp/eph/planets/Linux/de405/lnxp1600p2200.405",
+        "https://ssd.jpl.nasa.gov/planets/eph_export.html",
+        "https://www.copyright.gov/comp3/chap300/ch300-copyrightable-authorship.pdf"
+      ],
+      "license_file": "JPL-EPHEMERIS-NUMERIC.txt",
+      "notes": "All 24,179,536 coefficient bytes, 156 numerical constants, pointers and active identifiers retain official values for JD 2430000.5..2525008.5 TDB. New independent factual header/zero padding. 1,353 GMAT states exactly match; libration coefficients preserved. U.S. mechanical scientific-data assessment, not claimed JPL license/Caltech public-domain designation; generic website FAQ and any accepted contractual conditions remain separate.",
+      "size_bytes": 24195824,
+      "provider": "NASA/JPL SSD DE405/LE405 scientific model; independently formatted GMAT Py numeric file",
+      "role": "Required native DE405 ephemeris",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "summary": "Hash-pinned reconstruction utility shipped; all native data records exact; 11 bodies at 123 epochs validated."
+        }
+      ],
+      "original_component": {
+        "path": "planetary_ephem/de/leDE1941.405",
+        "sha256": "f8695149bc54be449788f4d6007d1f6a7053f5be16eae60229dc89c661f6fe4d"
+      },
+      "reconstruction": {
+        "source_url": "https://ssd.jpl.nasa.gov/ftp/eph/planets/Linux/de405/lnxp1600p2200.405",
+        "source_sha256": "7ec77287b6fddd3d7adabb87709ee5e926e3d1123fbae5d1485a42913cf175e7",
+        "output_filename": "gmatpy_de405_1941_2201.405",
+        "output_sha256": "0721a78991a15ccaa299b513ab10e91cc46973f6555799b9cf23ab55ca4eae9d",
+        "size_bytes": 24195824,
+        "record_size_bytes": 8144,
+        "official_subset_record_offset": 3893,
+        "range_jd_tdb": [
+          2430000.5,
+          2525008.5
+        ],
+        "number_of_constants": 156,
+        "coefficient_bytes": 24179536,
+        "method": "Retain every numeric constant, pointer and selected coefficient bit; independently format header labels and zero padding.",
+        "last_modifier": "GMAT Py maintainers, independent GMAT Py project; 2026-10-01",
+        "scientific_origin": "NASA/JPL Solar System Dynamics DE405/LE405; Standish (1998), JPL IOM 312.F-98-048",
+        "copyright_assessment": "Mechanical scientific numeric data; no claim of provider public-domain designation or provider license."
+      },
+      "license_file_sha256": "8a7d10c7b7ace58746d610dbcae38c053c0d08e9c4362ff83574e9a3f3ac47d8"
+    },
+    {
+      "path": "planetary_ephem/spk/gmatpy_de405_all_planets.bsp",
+      "sha256": "2e2dac29a372cb7ba13b57592eb927b17f43d7207dc3d2e7a2710d1a65151049",
+      "status": "licensing_verified",
+      "source_urls": [
+        "https://naif.jpl.nasa.gov/naif/rules.html",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de405.bsp",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup230l.bsp",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/sat132.bsp",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura063.bsp",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/nep057.bsp",
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/plu006-5.bsp"
+      ],
+      "license_file": "NAIF-CSPICE.txt",
+      "notes": "Reconstructed from six authoritative NAIF kernels with original 20 selected target/center/frame/type/coverage descriptors. Changed filename, own producer/institution/date/source hashes/method embedded; original producers identified only as scientific source lineage. 860 states exactly match. Source utility and comment file shipped; NAIF modified-kernel rules apply.",
+      "size_bytes": 19434496,
+      "provider": "GMAT Py maintainers, independent GMAT Py project (last modifier); NAIF original source models",
+      "role": "SPICE ephemeris for raw/native API initialization",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "summary": "Source hash-pinned SPKSUB reconstruction; 860 deterministic states, zero position/velocity difference."
+        }
+      ],
+      "local_evidence": "application/data/planetary_ephem/spk/Readme-DE405AllPlanets.txt and binary DAF comment area",
+      "original_component": {
+        "path": "planetary_ephem/spk/DE405AllPlanets.bsp",
+        "sha256": "d047c43e67b32aa842fe3c0014ae174ad6c2f1f73382bd4f46d98fe7a05be953"
+      },
+      "source_inputs": [
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/a_old_versions/de405.bsp",
+          "sha256": "30a7113793ee5b6bf1e5546c6dfc21d9682d9ffabfe9b17b4bab27ba2ac75c89"
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup230l.bsp",
+          "sha256": "d29dc525f638c4a7ad2e1dfdf24c882611aad6bf91230dd9003dc0eef1bf67b6"
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/sat132.bsp",
+          "sha256": "a000f5f497e56ceead2d6fdc780d5799fcc0f6296ac9c9a3b71a4f3d3ca1278d"
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura063.bsp",
+          "sha256": "41bdbb403ea4be41f2636adefa9f46095946174c5dffd6be44f48cdc86033941"
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/nep057.bsp",
+          "sha256": "110df4931b8fc882f40fba77fae3cb5aa65014c90d9ef0924d75d4091715df12"
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/plu006-5.bsp",
+          "sha256": "41433cd6ebacfe7f67e32dbd4bc73fbf3fcbbc21d0c275b08ff108856a7bcdc4"
+        }
+      ],
+      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7"
+    },
+    {
+      "path": "time/SPICELeapSecondKernel.tls",
+      "sha256": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b",
+      "status": "verified_unmodified_naif",
+      "source_urls": [
+        "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
+        "https://naif.jpl.nasa.gov/naif/rules.html"
+      ],
+      "license_file": "NAIF-CSPICE.txt",
+      "notes": "Preserve unchanged kernel bytes and embedded/allied provider attribution. If kernel is modified, apply NAIF rules for last-modifier attribution, filename, metadata and validation.",
+      "size_bytes": 5257,
+      "provider": "NASA/JPL NAIF",
+      "role": "GMAT scientific SPICE data",
+      "source_hash_verified": true,
+      "evidence": [
+        {
+          "url": "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
+          "summary": "Downloaded in memory2026-10-01 and compared byte-for-byte; identical."
+        },
+        {
+          "url": "https://naif.jpl.nasa.gov/naif/rules.html",
+          "summary": "Unmodified NAIF-distributed kernels may be redistributed; commercial SPICE component use allowed. This is not an Apache2 license."
+        }
+      ],
+      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7"
+    },
+    {
+      "path": "time/tai-utc.dat",
+      "sha256": "3524e1ae34d67e858873a89e59983bbc5bd100221da898e796c1b36036a310c3",
+      "size_bytes": 3321,
+      "status": "documented_reuse_basis",
+      "license_file": "SCIENTIFIC-DATA.txt",
+      "provider": "U.S. Naval Observatory (USNO)",
+      "role": "Required historical time-scale offset, drift, and leap-second values",
+      "notes": "Byte-identical official USNO download; official Government time-standard numeric facts, not Apache source code. 41 records including 13 pre-1972 drift segments; latest effective leap-second entry 2017-01-01. No automatic updates.",
+      "source_urls": [
+        "https://maia.usno.navy.mil/ser7/tai-utc.dat",
+        "https://www.copyright.gov/title17/92chap1.html"
+      ],
+      "evidence": [
+        {
+          "url": "https://maia.usno.navy.mil/ser7/tai-utc.dat",
+          "download_sha256": "3524e1ae34d67e858873a89e59983bbc5bd100221da898e796c1b36036a310c3",
+          "byte_identical": true
+        }
+      ],
+      "source_hash_verified": true,
+      "redistribution_basis": "Official Government scientific time-standard facts; 17 USC 102(b) and 105 as applicable",
+      "numeric_change": false,
+      "license_file_sha256": "2e7e4bdd484e714c7805f2a161aee7271c94949237ca00f24ce9575877f2c2a9"
+    },
+    {
+      "path": "icrf/ICRF_ERFA_Table.txt",
+      "sha256": "23571b81ce50ba714013185f87b6fbeac22b4492f05902b8904e8a43588626bb",
+      "size_bytes": 4556308,
+      "status": "licensing_verified",
+      "license_file": "ERFA.txt",
+      "provider": "GMAT Py generated numerical output from BSD-3-Clause ERFA 2.0.1",
+      "role": "Required native MJ2000Eq/FK5 to ICRF rotation vectors",
+      "notes": "Independently generated from ERFA 2.0.1, with no legacy vector/EOP input. 51,136 daily rows preserve original endpoints and fill 2,073 missing days. A1MJD=JD-2430000; TT=A1+(32.184-0.0343817) seconds; reference common Earth-rotation phase UT1=TAI; radian passive FK5-to-ICRF vectors. Node changes <=0.349 mas. At 4,098 sampled dates new interpolation differs from direct ERFA calculation <=0.000852 mas; old-vs-new difference reaches 11.99 mas. 327 actual native conversion comparisons/roundtrips verified. Generated data are not official SOFA releases.",
+      "source_urls": [
+        "https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/c2i06a.c",
+        "https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/pnm80.c",
+        "https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/era00.c",
+        "https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/gmst82.c",
+        "https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/rm2v.c",
+        "https://iers-conventions.obspm.fr/content/chapter5/icc5.pdf"
+      ],
+      "evidence": [
+        {
+          "archive_url": "https://codeload.github.com/liberfa/erfa/tar.gz/refs/tags/v2.0.1",
+          "archive_sha256": "d5469fbd0b212b3c7270c1da15c9bd82f37da9218fc89627f98283d27b416cbf",
+          "upstream_commit": "9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3",
+          "license_sha256": "b1858f9a263f22c438a455a32945da51a31a0ae25a21055da13bb7ed57cc3b51",
+          "runtime_erfa_library_shipped": false
+        }
+      ],
+      "source_hash_verified": true,
+      "numeric_change": true,
+      "generator": "python/tools/generate_coordinate_data.py",
+      "additional_notice_files": [
+        "SCIENTIFIC-DATA.txt"
+      ],
+      "scientific_validation": {
+        "old_rows": 49063,
+        "new_rows": 51136,
+        "old_range_a1_mjd": [
+          6935.000000397937,
+          58070.00000039794
+        ],
+        "new_range_a1_mjd": [
+          6935.000000397937,
+          58070.00000039794
+        ],
+        "all_old_days_retained": true,
+        "new_min_rotation_vector_norm_radian": 2.014063115347371e-09,
+        "max_node_rotation_vector_delta_radian": 1.6920540901392836e-09,
+        "max_node_rotation_vector_delta_milliarcsecond": 0.34901120906218625,
+        "max_node_matrix_element_delta": 1.690974105278962e-09,
+        "interpolation_comparison_epochs": 4098,
+        "max_interpolated_rotation_vector_delta_radian": 5.812749727587518e-08,
+        "max_interpolated_rotation_vector_delta_milliarcsecond": 11.989656963237016,
+        "conservative_position_difference_bounds_meters": {
+          "7000": 0.4068924809311262,
+          "42164": 2.4508877951400008,
+          "149597870.7": 8695.749821590976
+        },
+        "conservative_velocity_difference_bounds_mm_per_second": {
+          "7.5": 0.4359562295690638,
+          "29.78": 1.7310368688755629
+        }
+      },
+      "native_validation": {
+        "cases": 327,
+        "maximum_case": {
+          "epoch": "1989-01-06T10:29:07Z",
+          "input": [
+            149597870.7,
+            0.0,
+            0.0,
+            0.0,
+            29.78,
+            0.0
+          ],
+          "position_difference_m": 6319.769470677092,
+          "velocity_difference_mm_s": 1.2593043336077236
+        },
+        "by_state_radius": [
+          {
+            "radius_km": 7000,
+            "cases": 109,
+            "max_position_difference_m": 0.2961274892029728,
+            "max_velocity_difference_mm_s": 0.31765106914551106
+          },
+          {
+            "radius_km": 42164,
+            "cases": 109,
+            "max_position_difference_m": 1.7812202721521018,
+            "max_velocity_difference_mm_s": 0.13001534936569195
+          },
+          {
+            "radius_km": 149597870.7,
+            "cases": 109,
+            "max_position_difference_m": 6319.769470677092,
+            "max_velocity_difference_mm_s": 1.2593043336077236
+          }
+        ],
+        "max_round_trip_component_error_km": 5.960464477539063e-08
+      },
+      "license_file_sha256": "b1858f9a263f22c438a455a32945da51a31a0ae25a21055da13bb7ed57cc3b51",
+      "additional_notice_sha256": {
+        "SCIENTIFIC-DATA.txt": "2e7e4bdd484e714c7805f2a161aee7271c94949237ca00f24ce9575877f2c2a9"
+      }
+    }
+  ],
+  "generators": [
+    {
+      "path": "python/tools/generate_coordinate_data.py",
+      "sha256": "ad8fa8d94e08d6c4e2923847829460a9088349727634d56c3c5822b3c8f406fe"
+    },
+    {
+      "path": "python/tools/rebuild_native_de405.py",
+      "sha256": "b07e39fac82bdaf5b521b13ad1c48bf65b452690ecefb68e3e38a09705c92283"
+    },
+    {
+      "path": "python/tools/rebuild_ephemeris.c",
+      "sha256": "5471da977c1fe59c67090ed283c1bb1264837150d863de9862231f42a1d5770e"
+    },
+    {
+      "path": "python/tools/gmatpy_de405_all_planets.cmt",
+      "sha256": "33c5037a67210a113e023d527e33fef5bc8008f9b4f79b153eb5fdaf85babb6f"
+    },
+    {
+      "path": "python/tools/verify_gravity_provenance.py",
+      "sha256": "848952ae024fa385a6144b3ba7b5f2d31db0b95fb8c12922571aaad6a39c629a"
+    }
+  ]
+}

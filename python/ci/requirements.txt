@@ -1,0 +1,14 @@
+build==1.4.0
+scikit-build-core==1.0.3
+swig==4.5.1
+packaging==26.0
+pathspec==1.1.1
+pyproject-hooks==1.2.0
+pytest==9.1.1
+iniconfig==2.3.1
+pluggy==1.6.0
+pygments==2.19.2
+auditwheel==6.8.2; sys_platform == 'linux'
+pyelftools==0.33; sys_platform == 'linux'
+patchelf==0.19.1.0; sys_platform == 'linux'
+delocate==0.13.0; sys_platform == 'darwin'

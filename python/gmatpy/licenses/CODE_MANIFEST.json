@@ -1,0 +1,279 @@
+{
+  "schema_version": 1,
+  "manifest_kind": "code_licenses_and_provenance",
+  "reviewed_at": "2026-10-01",
+  "package": {
+    "name": "gmatpy",
+    "version": "0.2.0",
+    "display_name": "GMAT Py"
+  },
+  "scope": {
+    "build": "Standalone headless GMAT Py build configured in python/CMakeLists.txt.",
+    "data_manifest": "DATA_MANIFEST.json",
+    "limitation": "Code provenance and terms recorded here do not establish clearance for scientific data, every inherited numerical routine, or future build configurations."
+  },
+  "components": [
+    {
+      "id": "gmat",
+      "name": "General Mission Analysis Tool",
+      "version": "R2026a development snapshot",
+      "license_expression": "Apache-2.0",
+      "license_file": "GMAT.txt",
+      "distribution": [
+        "source",
+        "compiled_native_engine"
+      ],
+      "source": {
+        "repository": "https://github.com/nasa/GMAT",
+        "baseline_commit": "9363e129be366520c6edb0b4079204ed60666007"
+      },
+      "copyright": "Copyright (c) 2002-2026 United States Government as represented by the Administrator of the National Aeronautics and Space Administration.",
+      "modification_notice_date": "2026-10-01",
+      "obligations": [
+        "Include Apache license.",
+        "Retain applicable source notices and upstream NOTICE attribution.",
+        "Mark modified inherited files.",
+        "Do not imply NASA endorsement or trademark permission."
+      ],
+      "verification": "Core license verified against local application/License.txt and official NASA R2026a source; numerical provenance exceptions require their own review.",
+      "primary_sources": [
+        "https://github.com/nasa/GMAT/blob/R2026a/License.txt",
+        "https://github.com/nasa/GMAT/blob/R2026a/application/README.txt",
+        "https://www.apache.org/licenses/LICENSE-2.0"
+      ],
+      "license_file_sha256": "b9ea20f6e648554b46334d2322b9c237657febc746d862f52e47ea1bfacb87be"
+    },
+    {
+      "id": "cspice",
+      "name": "NASA/JPL NAIF CSPICE",
+      "version": "N0067",
+      "license_expression": "LicenseRef-NAIF-SPICE",
+      "license_file": "NAIF-CSPICE.txt",
+      "distribution": [
+        "statically_linked_native_modules"
+      ],
+      "primary_sources": [
+        "https://naif.jpl.nasa.gov/naif/rules.html",
+        "https://naif.jpl.nasa.gov/pub/naif/toolkit/C/PC_Linux_GCC_64bit/packages/cspice.tar.Z",
+        "https://naif.jpl.nasa.gov/naif/toolkit_C_PC_Linux_GCC_64bit.html"
+      ],
+      "official_source_archive_sha256": "60a95b51a6472f1afe7e40d77ebdee43c12bb5b8823676ccc74692ddfede06ce",
+      "official_rules_html_sha256": "ae85f851646e7c4f0a762db852907bc090a2ab50c815eb2a6cd8639e96b7e047",
+      "reference_library": {
+        "path": "$CSPICE_DIR/lib/cspice.a",
+        "sha256": "08c97b49051e112eb4e36a0fc4d2bf9b4e84ab45813621db3943194372cd91cd",
+        "version_evidence": "Reference archive reports N0067; includes the identified f2c runtime members."
+      },
+      "verification": "Official N0067 sources and reference compiled archive inspected. The reference archive differs from the official precompiled library; this is not proof of exact source-to-binary correspondence. Recheck the dependency artifact used for each release build.",
+      "obligations": [
+        "Keep the separate NAIF terms and disclaimer with redistributed modules.",
+        "Mark any modifications to SPICE source headers.",
+        "Observe separate kernel/data terms.",
+        "Do not mirror the entire unmodified toolkit without NAIF written clearance.",
+        "Resolve applicability of the rules concerning a derived product export designation before publication."
+      ],
+      "license_file_sha256": "6185277ef40b5009c9a8371246e3c4af80f8934d834ae6e917ec25ecae9822d7",
+      "windows_x64_reference_library": {
+        "path": "$CSPICE_DIR/lib/cspice.lib",
+        "sha256": "114dc34aea8533bcdd452997b9096219c3697234a00dfe59a4ba1d87731a9650",
+        "platform_header": "CSPICE_PC_64BIT_MS",
+        "SpiceZpl_h_sha256": "3815f7ad4157dcc1cfebee910ccd339882ec742ff8ecb3e2fcbe54b8ed4e757f",
+        "f2c_h_sha256": "8a087dfa7cb27b177cbb87d57e338211fdae76fb24f075ce356d27e83944fdbf",
+        "verification": "Existing Windows test dependency inventoried 2026-10-15; x64 COFF archive headers and linked tkvrsn_c TOOLKIT probe reporting CSPICE_N0067 verified. Reference-source binary equivalence is not established."
+      }
+    },
+    {
+      "id": "f2c-runtime",
+      "name": "Netlib f2c runtime implementations embedded in CSPICE",
+      "version": "CSPICE N0067 runtime snapshot; Netlib runtime comparison retrieved 2026-10-01",
+      "license_expression": "LicenseRef-Netlib-f2c",
+      "license_file": "F2C.txt",
+      "distribution": [
+        "runtime_code_via_statically_linked_cspice"
+      ],
+      "primary_sources": [
+        "https://www.netlib.org/f2c/",
+        "https://www.netlib.org/f2c/libf2c.zip",
+        "https://www.netlib.org/f2c/src/Notice",
+        "https://naif.jpl.nasa.gov/pub/naif/toolkit/C/PC_Linux_GCC_64bit/packages/cspice.tar.Z"
+      ],
+      "netlib_runtime_archive_sha256": "cc84253b47b5c036aa1d529332a6c218a39ff71c76974296262b03776f822695",
+      "netlib_notice_sha256": "44561c447e91203ddc747beeca5cc2794d95ee982c17c578670e4f0408bc3904",
+      "evidence": [
+        {
+          "source": "cspice/src/cspice/d_sign.c",
+          "source_sha256": "09c0ae83bb8357d2dd49bab46b7134c94c44387abe14c92c1bb02780122b2136",
+          "reference_archive_member": "d_sign.o",
+          "reference_member_sha256": "2ab2df8c4d080acb5e646761308336eb7ad261f4f19048250996a9167afd4493",
+          "defined_symbol": "d_sign",
+          "netlib_source_sha256": "1da996a23668e4d5ec7f12b967415628243bb790b1ac6b1096ef8d94447e1dea",
+          "comparison": "Same implementation; current Netlib adds C++ linkage guards."
+        },
+        {
+          "source": "cspice/src/cspice/pow_dd.c",
+          "source_sha256": "9df9a667e9714c8765b8d4f9225aeb287fe89997ac1cbbb8f929d1f89e660058",
+          "reference_archive_member": "pow_dd.o",
+          "reference_member_sha256": "1a743684c6552b68ce64f0933d15c6e0fe13452335f323eaa7d435e3cbab6145",
+          "defined_symbol": "pow_dd",
+          "netlib_source_sha256": "ef07bc99fd2a2e338293e5dd8441f5701d7593256e3639eb8f8fdb6013647a42",
+          "comparison": "Same implementation; current Netlib adds C++ linkage guards."
+        },
+        {
+          "source": "cspice/src/cspice/s_cat.c",
+          "source_sha256": "a88a0f23a186a16d5fe694a1f98694a0f314957b3a25c34bc33b5984d1730b28",
+          "reference_archive_member": "s_cat.o",
+          "reference_member_sha256": "daceb47c2554baf12a04be40ad260f72f51db06a867be0a1de8f5e29432faa86",
+          "defined_symbol": "s_cat",
+          "netlib_source_sha256": "cd513ccd60e826c7e74b39fa75b11ef6a44c6dd233de49ccb7d1dd359264c313",
+          "comparison": "Same string-concatenation implementation; current Netlib adds C++ linkage guards and declaration/type updates."
+        },
+        {
+          "source": "cspice/src/cspice/s_copy.c",
+          "source_sha256": "1eb562a0cb89115f70e40ebc84c8182952e31b6aecb38bf5dee6ff70a88b9bb8",
+          "reference_archive_member": "s_copy.o",
+          "reference_member_sha256": "1947449bf057563c71095611d2bc4a194cacf9ab5c5b0b4dbf5305db8df580a7",
+          "defined_symbol": "s_copy",
+          "netlib_source_sha256": "135dc2ee01d4ef5a372f2864cc80818b96de9f23328d46db2df0d575627b084e",
+          "comparison": "Same implementation; current Netlib adds C++ linkage guards."
+        }
+      ],
+      "verification": "Source comparison identifies Netlib-origin runtime implementations; the reference CSPICE archive contains their object members and symbols. This determination does not rely solely on f2c.h or use of the translator. Verify retained/linked objects in the final wheel.",
+      "obligations": [
+        "Keep copyright in all copies.",
+        "Include copyright, permission notice and warranty disclaimer in supporting documentation.",
+        "Do not use AT&T, Bell Laboratories, Lucent or Bellcore names in advertising without written permission."
+      ],
+      "license_file_sha256": "3f3d52045d2371743c2205d501540b3da4a51998cfe5fcb9ca6c6818eb362b1f"
+    },
+    {
+      "id": "swig-generated",
+      "name": "SWIG-generated bindings and support code",
+      "version": "4.5.0 in the recorded reference build; declared build dependency >=4.2,<5",
+      "license_expression": "LicenseRef-SWIG-output",
+      "license_file": "SWIG.txt",
+      "distribution": [
+        "generated_source_and_compiled_bindings"
+      ],
+      "generator_distribution": "SWIG executable and source are build dependencies, not bundled in the GMAT Py wheel.",
+      "primary_sources": [
+        "https://github.com/swig/swig/blob/v4.5.0/LICENSE",
+        "https://www.swig.org/Doc4.3/Preface.html#Preface_license"
+      ],
+      "installed_license_sha256": "39d44240ada6f78e14aa73646d37785f2e25852fc24d9b3c70c53cf466ef364c",
+      "verification": "Installed SWIG 4.5.0 license and official versioned license verified. Generated support code may be distributed under chosen terms; SWIG generator redistribution has separate GPL-3.0-or-later requirements.",
+      "license_file_sha256": "0f1b6aebf9e4a0a0bae071e9ba1d839bc5ba977f4ad77c9ed77608728283e5f9"
+    },
+    {
+      "id": "host-runtimes",
+      "name": "Host CPython and platform C/C++ runtimes",
+      "version": "Determined by the wheel tag and host platform",
+      "license_expression": null,
+      "license_file": null,
+      "distribution": [
+        "external_host_dependency"
+      ],
+      "examples": [
+        "CPython interpreter",
+        "glibc/libm/libdl on Linux",
+        "libstdc++ and libgcc_s on Linux"
+      ],
+      "verification": "Host-provided in the recorded Linux build. This is not permission to bundle runtime copies; inspect repaired wheels for newly copied libraries and record their actual licenses.",
+      "release_check": "Inspect final native dependency metadata and wheel contents; update this record if any runtime library is bundled."
+    },
+    {
+      "id": "erfa-data-generation",
+      "name": "ERFA scientific coefficients and generated numerical coordinate output",
+      "version": "2.0.1; upstream commit 9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3",
+      "license_expression": "BSD-3-Clause",
+      "license_file": "ERFA.txt",
+      "license_file_sha256": "b1858f9a263f22c438a455a32945da51a31a0ae25a21055da13bb7ed57cc3b51",
+      "distribution": [
+        "source-derived_numeric_coefficients",
+        "generated_numeric_output"
+      ],
+      "generator_library_distribution": "External offline regeneration input; no ERFA binary/source library bundled in runtime or sdist.",
+      "primary_sources": [
+        "https://github.com/liberfa/erfa/blob/v2.0.1/LICENSE",
+        "https://github.com/liberfa/erfa/releases/tag/v2.0.1"
+      ],
+      "obligations": [
+        "Retain ERFA copyright, terms and disclaimer for source-derived numerical table; identify independent generated output.",
+        "Do not imply NumFOCUS, IAU or SOFA endorsement."
+      ],
+      "verification": "1980 coefficients exactly match pinned ERFA source; independently generated ICRF output records documented convention/version and measured scientific differences."
+    }
+  ],
+  "excluded_from_headless_build": [
+    "wxWidgets/Qt GUI code",
+    "OpenFramesInterface",
+    "CSALT/SNOPT",
+    "MATLAB plugins",
+    "Xerces legacy data updater",
+    "Boost with the C++17 no-Boost configuration"
+  ],
+  "release_checks": [
+    "Match the release dependency archive hashes and linked runtime objects.",
+    "Verify all recorded license files are present in the wheel and source archive.",
+    "Review scientific data in DATA_MANIFEST.json.",
+    "Close inherited numerical-code provenance questions before unrestricted publication.",
+    "Record any libraries added by wheel repair or a different platform build."
+  ],
+  "numerical_remediation": {
+    "date": "2026-10-01",
+    "method": "Spline implementations independently authored from continuity/endpoint equations; entire inherited Brent-Dekker solver independently replaced from published mathematical interpolation/bisection, retaining its reverse-communication API. No Numerical Recipes implementation copied.",
+    "changed_files": [
+      {
+        "path": "src/base/solarsys/msise90_sub.c",
+        "sha256": "71b78960095268b1bdef8d35be2e2a885b0588ad2fbe0f50c469b26c8df8ac48"
+      },
+      {
+        "path": "src/gmatutil/util/interpolator/CubicSplineInterpolator.cpp",
+        "sha256": "10e6fca72e4c0cef1f42a8bf7ff4d1ec7478d47cf6bdd3252fe5e5d3140f2849"
+      },
+      {
+        "path": "src/gmatutil/util/interpolator/CubicSplineInterpolator.hpp",
+        "sha256": "193c062613f7dc4a00e3cbd5aa16e024156901af9c1c9829e6e68eb3818db6a7"
+      },
+      {
+        "path": "src/gmatutil/util/interpolator/NotAKnotInterpolator.cpp",
+        "sha256": "92cf47e715ae8ab58fbd12bc66fb0d4e31f61b344b8e077f98b9c78527eea10a"
+      },
+      {
+        "path": "src/gmatutil/util/interpolator/BrentDekkerZero.cpp",
+        "sha256": "991abd3d4c11d035b329dc5f984bd0d30112742897d437509ac5d1fe95a008f3"
+      },
+      {
+        "path": "src/gmatutil/util/interpolator/BrentDekkerZero.hpp",
+        "sha256": "553305ac58f2acbc34c23c3c6100ce6f2aed2130e28bc55c0dc83e670d26456a"
+      }
+    ],
+    "excluded_reference_source": "src/base/solarsys/msise90_sub.for",
+    "validation_summary": "Prior spline/atmosphere checks retained: 640 MSISE spline datasets/40722 evaluations, 5400 atmosphere cases (density change <=7.333e-7 relative), 320 C++ datasets/3200 evaluations. New Brent: 966 cases, every proposal bracket-contained, SciPy/analytic comparisons, seven invalid-input cases, copy/assignment/exact endpoints and subnormal bracket; independent review edge fixed.",
+    "scope_limitation": "The excluded original Fortran reference remains in the Git checkout/history. Targeted replacement is not a provenance audit of every inherited numerical routine."
+  },
+  "publication_review": [
+    {
+      "id": "cspice-derived-export-designation",
+      "status": "owner_decision_required",
+      "notes": "NAIF requires an outside producer incorporating SPICE to obtain its own product export designation. Owner must adopt and record the exact-release determination, confirming entity/location, nonpublic/controlled inputs and contracts. NAIF rules do not prescribe universal government filing or lawyer approval; documented self-determination is a regulatory route where facts support it, with NAIF contractual acceptance an inference. No designation assigned by this manifest."
+    },
+    {
+      "id": "inherited-event-location-provenance",
+      "status": "resolved",
+      "notes": "Inherited Brent implementation completely independently replaced from published mathematics; retained public API/layout, original notices and dated modification notice. 966-case validation and separate reviewer completed. Old MathSpec bibliography is not used as source permission evidence."
+    }
+  ],
+  "build_profiles": {
+    "minimal": {
+      "spice_kernel_support": false,
+      "data_files": 9,
+      "scope": "Shared headless GMAT core and propagation/frame helpers; CSPICE-supplied f2c objects retained. Extended convenience workflows are unsupported in this profile. Broad remaining core bindings are not a sandbox."
+    },
+    "extended": {
+      "spice_kernel_support": true,
+      "data_files": 17,
+      "scope": "Headless core, existing native bindings and tested mission increment. No optional plugin families enabled; not full GMAT parity."
+    },
+    "release_review": "The existing owner-dependent publication hold is retained for both profiles; reducing compiled functionality is not a legal clearance."
+  }
+}

@@ -1,4 +1,8 @@
 //$Id$
+// GMAT Py modification, 2026-10-01: corrected inherited Numerical Recipes,
+// natural-spline, and splint descriptions to match the existing not-a-knot
+// implementation and its GMAT Mathematical Specification. Comments only;
+// the implementation and its attribution are unchanged.
 //------------------------------------------------------------------------------
 //                            NotAKnotInterpolator
 //------------------------------------------------------------------------------
@@ -362,33 +366,18 @@ void NotAKnotInterpolator::CopyArrays(const NotAKnotInterpolator &i)
 //  bool BuildSplines()
 //------------------------------------------------------------------------------
 /**
- * Uses the data in the ring buffer to build the not a knot splines.
- * 
- * This method uses the procedures in Numerical Recipes in C to build the 
- * coefficients used to build the splines.  Basically, the spline derivation can
- * be written as a tri-diagonal matrix equation that can be inverted to find the 
- * coefficients for the splines, using boundary value data at the knots.  The
- * resulting equations contain 16 unknown coefficients, set by 14 constraints
- * and a choice of 2 additional conditions that are not forces by the
- * constraints at the knots.
- * 
- * The constraints on the spline equations are as follows:
- * 
- *   1. Each spline must match the dependent value at its starting and ending 
- *      knots.  (5 constraints)
- * 
- *   2. The first derivatives must be continuous at the internal knots.  
- *      (3 constraints)
- * 
- *   3. The first derivatives must be smooth at the internal knots.
- *      (3 constraints)
- * 
- *   4. The second derivatives must be continuous at the internal knots.
- *      (3 constraints) 
- * 
- * This implementation builds "natural" splines -- the 2 remaining free 
- * parameters in the derivation are determined by setting the second derivatives 
- * at the endpoints to 0.0.
+ * Uses the five data points in the ring buffer to build four cubic segments.
+ * Each segment interpolates its endpoint values, and the first and second
+ * derivatives agree at the interior knots. The not-a-knot conditions require
+ * equal third derivatives between the first two and last two segments.
+ *
+ * The implementation follows the "Cubic Spline (Not-a-Knot) Interpolation"
+ * derivation in the GMAT Mathematical Specification, reproduced in
+ * doc/SystemDocs/MathematicalSpecification/NumericalAlgorithms.tex. It solves
+ * a three-by-three system for the second derivatives at knots 1, 3, and 5
+ * using Cramer's rule, recovers the other two second derivatives, then forms
+ * the local polynomial coefficients. Endpoint second derivatives are not
+ * constrained to zero.
  * 
  * @return true on success, false on failure.
  */
@@ -509,11 +498,12 @@ void NotAKnotInterpolator::LoadArrays()
 //  bool Estimate(const Real ind, Real *results)
 //------------------------------------------------------------------------------
 /**
- * Perform the estimation using the information from the splines.  
- * 
- * This method is invoked after calling BuildSplines(), using the input 
- * parameters from the Interpolate() method.  It matches the "splint" routine
- * found in Numerical Recipes in C, section 3.3.
+ * Evaluates the local cubic polynomial constructed by BuildSplines().
+ *
+ * This method is invoked from Interpolate(). It locates the interval in the
+ * ordered knots and evaluates the stored coefficients about that interval's
+ * first knot. When extrapolation is allowed, the existing implementation
+ * uses the first interval's polynomial for either side of the knot range.
  * 
  * @param ind       The value of the independent parameter.
  * @param results   Data structure for the estimates.

@@ -1,3 +1,7 @@
+# GMAT Py modification notice (2026-10-01):
+# This file has been modified from NASA GMAT commit
+# 9363e129be366520c6edb0b4079204ed60666007 and is distributed in GMAT Py.
+#
 # $Id$
 # 
 # GMAT: General Mission Analysis Tool.
@@ -178,7 +182,7 @@ if(GMAT_INCLUDE_GUI)
      # On Mac/Linux, FindwxWidgets uses the wx-config utility which must be
      # accessible from the system PATH environment variable. 
      # So first save PATH (just the first time to avoid recursive setting)...
-     if(NOT wxWidgets_ROOT_DIR)
+     if(NOT DEFINED SYS_PATH)
        SET(SYS_PATH "$ENV{PATH}" CACHE INTERNAL "System PATH environment variable")
      endif()
 
@@ -249,8 +253,12 @@ else()
   MESSAGE(ERROR "CSPICE NOT FOUND. Set CSPICE_DIR to path to include/SpiceUsr.h and re-configure.")
 endif()
 
-# Add SPICE preprocessor definition to all projects
-ADD_DEFINITIONS("-D__USE_SPICE__")
+# GMAT Py 2026-10-15: minimal profile compiles without kernel support.
+# CSPICE's separate f2c runtime objects are still needed by MSISE.
+OPTION(GMAT_ENABLE_SPICE "Compile SPICE kernel support" ON)
+if(GMAT_ENABLE_SPICE)
+  ADD_DEFINITIONS("-D__USE_SPICE__")
+endif()
 
 # ====================================================================
 # Find F2C

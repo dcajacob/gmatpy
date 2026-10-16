@@ -72,3 +72,21 @@ def test_legacy_data_updater_is_disabled():
         finally:
             script.unlink(missing_ok=True)
             marker.unlink(missing_ok=True)
+
+
+def test_process_exit_removes_runtime_directory_without_open_log_error():
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    code = ("from gmatpy import native_session, _runtime\n"
+            "with native_session(): pass\n"
+            "print('RUNTIME_DIR=' + _runtime._directory.name)\n")
+    result = subprocess.run([sys.executable, "-c", code], capture_output=True,
+                            text=True, timeout=60)
+    assert result.returncode == 0, result.stderr
+    assert "Traceback" not in result.stderr, result.stderr
+    paths = [line.removeprefix("RUNTIME_DIR=") for line in result.stdout.splitlines()
+             if line.startswith("RUNTIME_DIR=")]
+    assert len(paths) == 1, result.stdout
+    assert not Path(paths[0]).exists(), result.stderr

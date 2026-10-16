@@ -602,6 +602,8 @@ void AttitudeWriterCK::StartNewSegment(const std::string& comments,
    bool saveEpochInfo, bool writeAfterData,
    bool ignoreBlankComments)
 {
+// GMAT Py 2026-10-15: compile without the CK kernel writer in minimal builds.
+#ifdef __USE_SPICE__
 #ifdef DEBUG_EPHEMFILE_RESTART
    MessageInterface::ShowMessage
    ("===== AttitudeWriterCK::StartNewSegment() entered\n   comments='%s'\n   "
@@ -665,6 +667,9 @@ void AttitudeWriterCK::StartNewSegment(const std::string& comments,
 #ifdef DEBUG_EPHEMFILE_RESTART
    MessageInterface::ShowMessage
    ("===== AttitudeWriterCK::StartNewSegment() leaving\n");
+#endif
+#else
+   throw SubscriberException("CK writing requires the extended GMAT Py profile");
 #endif
 }
 
@@ -743,6 +748,8 @@ void AttitudeWriterCK::FinishUpWriting()
 //------------------------------------------------------------------------------
 void AttitudeWriterCK::FinishUpWritingCK()
 {
+// GMAT Py 2026-10-15: compile without the CK kernel writer in minimal builds.
+#ifdef __USE_SPICE__
 #ifdef DEBUG_EPHEMFILE_FINISH
    MessageInterface::ShowMessage
    ("AttitudeWriterCK::FinishUpWritingCK) entered, canFinalize=%d\n", canFinalize);
@@ -814,6 +821,9 @@ void AttitudeWriterCK::FinishUpWritingCK()
 
 #ifdef DEBUG_EPHEMFILE_FINISH
    MessageInterface::ShowMessage("AttitudeWriterCK::FinishUpWritingCK() leaving\n");
+#endif
+#else
+   throw SubscriberException("CK writing requires the extended GMAT Py profile");
 #endif
 }
 

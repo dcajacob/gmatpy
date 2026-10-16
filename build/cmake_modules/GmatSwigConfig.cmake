@@ -1,3 +1,7 @@
+# GMAT Py modification notice (2026-10-01):
+# This file has been modified from NASA GMAT commit
+# 9363e129be366520c6edb0b4079204ed60666007 and is distributed in GMAT Py.
+#
 # $Id$
 #
 # GMAT: General Mission Analysis Tool.
@@ -124,7 +128,9 @@ MACRO(_SETUPSWIG TargetName SWIG_LANGUAGE SWIG_SRC TARGET_DEPS)
         )
     STRING(REPLACE " \\\n  " ";" SWIG_HEADER_DEPS ${SWIG_HEADER_DEPS})
     # Remove the first two items in the list as they are reudundant
+    # SWIG on Windows can leave trailing CR/whitespace in the final path.
     LIST(REMOVE_AT SWIG_HEADER_DEPS 0 1)
+    LIST(TRANSFORM SWIG_HEADER_DEPS STRIP)
     SET(SWIG_MODULE_${TargetNameFull}_EXTRA_DEPS ${SWIG_HEADER_DEPS})
   endif()
 

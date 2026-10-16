@@ -5324,7 +5324,12 @@ bool CelestialBody::SaveParameterAsDefault(const Integer id)
  //---------------------------------------------------------------------------
 SpiceOrbitKernelReader* CelestialBody::GetSpiceKernelReader()
 {
+   // GMAT Py 2026-10-15: this accessor is valid in the minimal build too.
+#ifdef __USE_SPICE__
    return kernelReader;
+#else
+   return NULL;
+#endif
 }
 
 //---------------------------------------------------------------------------

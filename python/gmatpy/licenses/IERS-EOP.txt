@@ -1,0 +1,35 @@
+IERS Earth Orientation Parameter data: provider permission and attribution
+
+This notice concerns the EOP (IERS) 20 C04 numeric data snapshot distributed
+with GMAT Py as data/planetary_coeff/eopc04_08.62-now. The legacy filename is
+retained for compatibility; the actual header identifies IERS 20 C04 in an
+old-format layout, with offsets compatible with the IAU 1980 model. This is
+not an assertion that IERS data are under Apache-2.0, CC BY, or public domain.
+
+Provider: IERS Earth Orientation Parameter Product Centre, Observatoire de
+Paris / SYRTE. Retain this attribution and the data-reference links:
+  https://hpiers.obspm.fr/eop-pc/index.php?index=C04&lang=en
+  https://hpiers.obspm.fr/iers/eop/eopc04/readme
+  https://hpiers.obspm.fr/iers/eop/eopc04/
+
+Christian Bizouard of the IERS EOP Centre confirmed the following on
+9 April 2017, in a reply publicly forwarded by Marshall Eubanks:
+
+"I confirm that IERS allows for unlimited copying and use of this and other
+EOP file,...as far you mention the reference!"
+
+Archived source of that provider statement:
+  https://lists.iana.org/hyperkitty/list/tz%40iana.org/message/DSTTJE5RC3PSYHPBVNR7J3FFDZMFH4TW/
+  https://lists.iana.org/hyperkitty/list/tz%40iana.org/message/DSTTJE5RC3PSYHPBVNR7J3FFDZMFH4TW/attachment/2/attachment.html
+
+The statement covers this family of EOP files generally. The retained file
+names the same provider contact. The project records this permission with
+attribution as its redistribution basis, preserving the provider header and
+numeric snapshot. It does not assert an unrelated open-license designation.
+
+Scientific snapshot limits: this file ends on 2026-09-14. Later rows carry
+forecast/error sentinel fields (including 0.999); those must not be mistaken
+for current final observations. The package does not download updates.
+Consult the manifest for exact file identity and date-range evidence.
+
+No assurance of numerical accuracy, suitability, or legal outcome is made.

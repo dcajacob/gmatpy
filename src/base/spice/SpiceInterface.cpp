@@ -1,3 +1,7 @@
+// GMAT Py modification notice (2026-10-01):
+// This file has been modified from NASA GMAT commit
+// 9363e129be366520c6edb0b4079204ed60666007 and is distributed in GMAT Py.
+//
 //$Id$
 //------------------------------------------------------------------------------
 //                              SpiceInterface
@@ -40,6 +44,9 @@
 #include "UtilityException.hpp"
 #include "FileManager.hpp"
 #include "FileUtil.hpp"
+#include <cerrno>
+#include <cstdio>
+#include <vector>
 
 //#define DEBUG_SPK_LOADING
 //#define DEBUG_SPK_ISLOADED
@@ -473,6 +480,21 @@ bool SpiceInterface::UnloadKernel(const std::string &fileName)
       reset_c();
 //      throw UtilityException(errmsg);
       MessageInterface::ShowMessage("%s", errmsg.c_str());
+      // A failed text-kernel unload may already have cleared/rebuilt part of
+      // CSPICE's pool. Reconstruct the remaining available kernels and rebuild
+      // our cache, so restored files will not be mistaken for loaded kernels.
+      const auto previous = loadedKernels;
+      UnloadAllKernels();
+      for (const auto &kernel : previous)
+      {
+         if (kernel.first == fileName) continue;
+         try { LoadKernel(kernel.first); }
+         catch (BaseException &error)
+         {
+            MessageInterface::ShowMessage("*** WARNING *** %s", error.GetFullMessage().c_str());
+         }
+      }
+
    }
 
    #ifdef DEBUG_SPK_LOADING
@@ -518,38 +540,20 @@ bool SpiceInterface::UnloadKernels(const StringArray &fileNames)
 //------------------------------------------------------------------------------
 bool SpiceInterface::UnloadAllKernels()
 {
-   std::string kName;
-   std::map<std::string, std::string>::iterator ii;
-   for (ii = loadedKernels.begin(); ii != loadedKernels.end(); ++ii)
+   // Unloading text kernels individually can make CSPICE re-read the other
+   // loaded text files. If one has disappeared, that leaves its kernel pool
+   // and our loaded-file cache inconsistent during mission reconstruction.
+   // This operation discards the entire pool, so use KEEPER's full reset.
+   // https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/kclear_c.html
+   reset_c();
+   kclear_c();
+   if (failed_c())
    {
-      kName = (*ii).second;
-      #ifdef DEBUG_SPK_LOADING
-         MessageInterface::ShowMessage("Now attempting to unload kernel %s\n",
-               kName.c_str());
-      #endif
-      kernelNameSPICE = kName.c_str();
-      unload_c(kernelNameSPICE);
-      if (failed_c())
-      {
-//         ConstSpiceChar option[] = "SHORT"; // retrieve short error message, for now
-//         SpiceInt       numChar  = MAX_SHORT_MESSAGE;
-//         SpiceChar      err[MAX_SHORT_MESSAGE];
-         ConstSpiceChar option[] = "LONG"; // retrieve long error message, for now
-         SpiceInt       numChar  = MAX_LONG_MESSAGE;
-         SpiceChar      err[MAX_LONG_MESSAGE];
-         getmsg_c(option, numChar, err);
-         std::string errStr(err);
-         std::string errmsg = "Error unloading kernel \"";
-         errmsg += kName + "\".  Message received from CSPICE is: ";
-         errmsg += errStr + "\n";
-         reset_c();
-         throw UtilityException(errmsg);
-      }
-      // @todo - handle exceptional conditions (SPICE signals) here ...
-      #ifdef DEBUG_SPK_LOADING
-         MessageInterface::ShowMessage("Successfully unloaded kernel %s\n",
-               kName.c_str());
-      #endif
+      SpiceChar err[MAX_LONG_MESSAGE];
+      getmsg_c("LONG", MAX_LONG_MESSAGE, err);
+      const std::string message(err);
+      reset_c();
+      throw UtilityException("Error clearing SPICE kernels: " + message + "\n");
    }
    loadedKernels.clear();
    return true;
@@ -776,17 +780,56 @@ void SpiceInterface::InitializeInterface()
    {
       loadedKernels.clear();
       kclear_c();  // clear all kernels from the pool
-      // Get path for output
-      FileManager *fm = FileManager::Instance();
-      std::string outPath = fm->GetAbsPathname(FileManager::OUTPUT_PATH) + "GMATSpiceKernelError.txt";
-      // need to get rid of const-ness to convert to SpiceChar*
-      char *pathChar;
-      pathChar = new char[outPath.length() + 1];
-      strcpy(pathChar, outPath.c_str());
+      // Set RETURN before configuring diagnostics: an unavailable diagnostic
+      // destination must not abort the process or hide a kernel exception.
+      char report[] = "LONG", action[] = "RETURN", screen[] = "SCREEN";
+      erract_c("SET", 0, action);
+      errprt_c("SET", 0, report);
+      errdev_c("SET", 0, screen);
 
-      // set output file for cspice methods
-      SpiceChar      *spiceErrorFileFullPath = pathChar;
-      errdev_c("SET", 1840, spiceErrorFileFullPath);
+      FileManager *fm = FileManager::Instance();
+      const std::string prefix = fm->GetAbsPathname(FileManager::OUTPUT_PATH) +
+            "GMATSpiceKernelError";
+      std::string outPath;
+      // CSPICE's WRLINE opens a new file. Reusing a previous run's file
+      // produces FILEOPENFAILED for every diagnostic line. Preserve that file
+      // and select an unused sibling, including directories/symlinks as used.
+      for (Integer suffix = 0; suffix < 1000; ++suffix)
+      {
+         const std::string candidate = prefix +
+               (suffix == 0 ? "" : "." + std::to_string(suffix)) + ".txt";
+         // errdev's filename limit is 255, independent of its devlen argument.
+         if (candidate.length() > 255)
+            break;
+         errno = 0;
+         FILE *probe = std::fopen(candidate.c_str(), "wx");
+         if (!probe)
+         {
+            if (errno == EEXIST)
+               continue;
+            break;
+         }
+         const int closed = std::fclose(probe);
+         // Remove only our exclusive, empty probe; WRLINE needs a new path.
+         const int removed = std::remove(candidate.c_str());
+         if (closed == 0 && removed == 0)
+            outPath = candidate;
+         break;
+      }
+      if (outPath.empty())
+      {
+         MessageInterface::ShowMessage("Warning: Cannot create the SPICE diagnostic file in \"%s\". "
+               "Raw SPICE diagnostics will use the console; kernel errors still appear in GMAT.\n",
+               fm->GetAbsPathname(FileManager::OUTPUT_PATH).c_str());
+         return;
+      }
+      if (outPath != prefix + ".txt")
+         MessageInterface::ShowMessage("Previous SPICE diagnostics retained. New diagnostics: %s\n",
+               outPath.c_str());
+      // The API takes a mutable device string even for SET.
+      std::vector<char> device(outPath.begin(), outPath.end());
+      device.push_back('\0');
+      errdev_c("SET", 0, device.data());
       if (failed_c())
       {
          #ifdef DEBUG_SPK_INIT
@@ -802,17 +845,10 @@ void SpiceInterface::InitializeInterface()
          errmsg += outPath + "\".  Message received from CSPICE is: ";
          errmsg += errStr + "\n";
          reset_c();
-         throw UtilityException(errmsg);
+         errdev_c("SET", 0, screen);
+         MessageInterface::ShowMessage("Warning: %sRaw SPICE diagnostics will use the console.\n",
+               errmsg.c_str());
       }
-
-
-      // set actions for cspice error writing
-      char  report[5] = "LONG"; // "ALL";
-      char  action[7] = "RETURN";
-      errprt_c("SET", 1840, report);
-      erract_c("SET", 1840, action);
-
-      delete [] pathChar;
    }
 }
 
