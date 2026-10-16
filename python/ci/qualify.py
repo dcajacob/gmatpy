@@ -1,9 +1,10 @@
 """Build/repair and test both profiles from one immutable sdist on a native host.
 
-Run using an isolated CPython 3.14.7 tools venv with requirements.txt installed.
+Run using an isolated standard-ABI CPython 3.14 tools venv with requirements.txt
+installed. Exact patch versions are recorded; the pinned native images may differ.
 No publishing, remote upload or cache; all outputs go to a new --output directory.
 """
-import argparse,hashlib,json,os,platform,shutil,subprocess,sys,tarfile,zipfile
+import argparse,hashlib,json,os,platform,shutil,subprocess,sys,sysconfig,tarfile,zipfile
 from pathlib import Path
 
 
@@ -18,7 +19,7 @@ def run(command, *, cwd, env, log, timeout=5400):
 
 
 def qualify(args):
-    assert sys.version_info[:3]==(3,14,7),sys.version
+    assert sys.version_info[:2]==(3,14) and not sysconfig.get_config_var('Py_GIL_DISABLED'),sys.version
     target=args.target;system,arch=target.split('-');actual=platform.machine().lower()
     assert actual==({'arm64':'aarch64','x86_64':'x86_64'}[arch] if system=='linux' else arch),(target,actual)
     assert platform.system()==('Linux' if system=='linux' else 'Darwin')

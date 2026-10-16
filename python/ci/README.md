@@ -1,7 +1,8 @@
 # Native portability qualification (experimental)
 
 `qualify.py` builds both minimal and extended profiles from a single frozen sdist
-using CPython 3.14.7. Run with `requirements.txt` in a fresh tools virtualenv.
+using standard-ABI CPython 3.14. Exact patch versions are recorded per target;
+the pinned x86_64 image uses 3.14.7 and the pinned ARM64 image uses 3.14.8. Run with `requirements.txt` in a fresh tools virtualenv.
 It leaves native build trees, wheels, pytest logs, source/data/license checks,
 installed-byte comparisons and numerical regression evidence under a fresh output
 folder. It does not publish or upload anything. SOURCE_DATE_EPOCH=1790812800 fixes
