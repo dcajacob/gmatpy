@@ -50,6 +50,15 @@ four NASA behaviors does not establish scientific equivalence for the entire
 derivative. Each changed source revision requires new build provenance and
 qualification; earlier results remain historical evidence.
 
+A separate required portability patch preserves the stream EOF sentinel in
+`ScriptInterpreter::ReadFirstPass` using `std::istream::int_type`. Linux AArch64
+uses unsigned plain `char`; narrowing `peek()` to that type turned EOF into 255
+and hung script loading before propagation. Native signed/unsigned-char probes
+reproduced the failure and verified the repair. Installed-engine tests cover LF,
+CRLF and missing final newline in bounded subprocesses on both profiles. This
+downstream portability patch awaits upstream consideration; no NASA submission
+or acceptance is implied. It changes no numerical algorithm, tolerance or data.
+
 For later updates, add `upstream` using the URL above, fetch it, and create a
 separate integration branch from this project's main. Review and merge the
 chosen NASA commit, resolve curated-data and component-notice changes explicitly,

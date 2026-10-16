@@ -1,3 +1,5 @@
+// GMAT Py modification (2026-10-16): preserve the stream EOF sentinel
+// on platforms with unsigned plain char.
 //$Id$
 //------------------------------------------------------------------------------
 //                               ScriptInterpreter
@@ -807,7 +809,7 @@ bool ScriptInterpreter::ReadFirstPass()
       return false;
    }
    
-   char ch;
+   std::istream::int_type ch;
    bool reachedEndOfFile = false;
    std::string line, newLine, type;
    StringArray controlLines;
