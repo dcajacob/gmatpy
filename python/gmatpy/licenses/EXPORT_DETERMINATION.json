@@ -4,7 +4,8 @@
   "adopted_on": "2026-10-16",
   "package": {
     "name": "gmatpy",
-    "version": "0.2.0"
+    "version": "0.2.0",
+    "display_name": "GMAT Py"
   },
   "producer": {
     "name": "Dan CaJacob",
