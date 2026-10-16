@@ -1,95 +1,106 @@
-name: GMAT Py native qualification
+name: GMAT Py ARM64 extended diagnostics
 on:
   workflow_dispatch:
 permissions:
   contents: read
-concurrency:
-  group: gmatpy-portability-${{ github.ref }}
-  cancel-in-progress: false
 jobs:
-  native:
-    # Refuse runner allocation if repository identity/visibility changes.
+  diagnose:
     if: >-
       github.repository == 'dcajacob/gmatpy' &&
       toJSON(github.event.repository.private) == 'false'
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        include:
-          - target: linux-x86_64
-            runner: ubuntu-24.04
-            image: quay.io/pypa/manylinux_2_28_x86_64@sha256:c2261579b9c2e5d45aa93312f73e2a302182e3e977b558581a1838d6fed3d8e6
-          - target: linux-arm64
-            runner: ubuntu-24.04-arm
-            image: quay.io/pypa/manylinux_2_28_aarch64@sha256:abd1230aa9e4058a74b89d27cd14ba18c0db036d7bfe6e6f219a29ea63c24eb6
-          - target: macos-arm64
-            runner: macos-15
-            python_arch: arm64
-          - target: macos-x86_64
-            runner: macos-15-intel
-            python_arch: x64
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 90
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 45
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
+          ref: 3f809bc0d66dfe797aa13f0d4c3236fc8d6954db
           persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        if: startsWith(matrix.target, 'macos-')
-        with:
-          python-version: '3.14.7'
-          architecture: ${{ matrix.python_arch }}
-      - name: Native Linux manylinux build and clean installed tests
-        if: startsWith(matrix.target, 'linux-')
-        env:
-          IMAGE: ${{ matrix.image }}
-          TARGET: ${{ matrix.target }}
+      - name: Build unchanged ARM64 extended candidate and capture bounded test stacks
         shell: bash
         run: |
+          ulimit -c 0
+          cat > "$RUNNER_TEMP/arm64-diagnostics.py" <<'PY'
+          """Instrument the CI coordinator only; compile unchanged source candidate E."""
+          import hashlib,importlib.util,json,os,signal,subprocess,sys
+          from pathlib import Path
+          from types import SimpleNamespace
+
+          original=Path('/checkout/python/ci/qualify.py')
+          text=original.read_text()
+          assert text.count("for profile in ('minimal','extended'):")==1
+          text=text.replace("for profile in ('minimal','extended'):","for profile in ('extended',):")
+          instrumented=Path('/output/qualifier-extended.py');instrumented.write_text(text)
+          print('COORDINATOR_ONLY_INSTRUMENTATION',json.dumps({'original_sha256':hashlib.sha256(original.read_bytes()).hexdigest(),'instrumented_sha256':hashlib.sha256(instrumented.read_bytes()).hexdigest(),'source_revision':'3f809bc0d66dfe797aa13f0d4c3236fc8d6954db','changes':'Extended profile only; bounded verbose pytest and stack capture. Engine/package inputs unchanged.'}),flush=True)
+          spec=importlib.util.spec_from_file_location('diagnostic_qualifier',instrumented)
+          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+          normal_run=module.run
+
+          def probe(command,cwd,env,log,seconds):
+              command=list(map(str,command));command=[c for c in command if c!='-q']
+              command+=['-vv','-s','-o','faulthandler_timeout=30']
+              env=dict(env,PYTHONFAULTHANDLER='1')
+              print('DIAGNOSTIC_PROBE',seconds,*command,flush=True)
+              timed_out=False
+              with log.open('w') as stream:
+                  child=subprocess.Popen(command,cwd=cwd,env=env,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)
+                  try:child.wait(timeout=seconds)
+                  except subprocess.TimeoutExpired:
+                      timed_out=True
+                      with log.with_suffix('.native.txt').open('w') as trace:
+                          try:subprocess.run(['gdb','--batch','-ex','set pagination off','-ex','thread apply all bt','-p',str(child.pid)],stdout=trace,stderr=subprocess.STDOUT,timeout=15)
+                          except Exception as error:trace.write(repr(error)+'\n')
+                      # Python 3.14 faulthandler emits Python and supported native stacks.
+                      # No core file is retained. Terminate all descendants of this probe.
+                      os.killpg(child.pid,signal.SIGABRT)
+                      try:child.wait(timeout=20)
+                      except subprocess.TimeoutExpired:
+                          os.killpg(child.pid,signal.SIGKILL);child.wait(timeout=10)
+              print(log.name+'\n'+log.read_text(errors='replace')[-35000:],flush=True)
+              result={'command':command,'returncode':child.returncode,'timed_out':timed_out,'limit_seconds':seconds,'log_sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
+              log.with_suffix('.probe.json').write_text(json.dumps(result,indent=2)+'\n')
+              print('PROBE_RESULT',json.dumps(result),flush=True)
+              return result
+
+          def diagnostic_run(command,*,cwd,env,log,timeout=5400):
+              if '-m' not in command or 'pytest' not in command:
+                  return normal_run(command,cwd=cwd,env=env,log=log,timeout=timeout)
+              full=probe(command,cwd,env,log,120)
+              if full['returncode']==0 and not full['timed_out']:return
+              test_root=Path(command[-1])
+              probe(list(command[:-1])+[test_root/'test_finite_burn.py'],cwd,env,log.with_name('finite-burn-isolated.log'),90)
+              probe(list(command)+['-k','not test_finite_burn_matches_thrust_and_mass_flow'],cwd,env,log.with_name('suite-without-finite-burn.log'),180)
+              raise RuntimeError('Full extended suite failed/timed out; focused probes are diagnostic partial coverage only.')
+
+          module.run=diagnostic_run
+          module.qualify(SimpleNamespace(target='linux-arm64',sdist=Path(sys.argv[1]),output=Path(sys.argv[2]),cspice=None,archive=None,wheelhouse=None))
+          PY
           mkdir -p "$RUNNER_TEMP/gmatpy-output"
-          docker run --rm --cpus 2 --memory 6g --user "$(id -u):$(id -g)" \
-            -v "$GITHUB_WORKSPACE:/checkout:ro" \
-            -v "$RUNNER_TEMP/gmatpy-output:/output" \
-            -e TARGET="$TARGET" -e SOURCE_REVISION="$GITHUB_SHA" -e PIP_NO_CACHE_DIR=1 "$IMAGE" bash -euc '
+          docker run --rm --cpus 2 --memory 6g --ulimit core=0 --user "$(id -u):$(id -g)" \
+            -v "$GITHUB_WORKSPACE:/checkout:ro" -v "$RUNNER_TEMP/gmatpy-output:/output" \
+            -v "$RUNNER_TEMP/arm64-diagnostics.py:/diagnostics.py:ro" -e PIP_NO_CACHE_DIR=1 \
+            quay.io/pypa/manylinux_2_28_aarch64@sha256:abd1230aa9e4058a74b89d27cd14ba18c0db036d7bfe6e6f219a29ea63c24eb6 bash -euc '
               /opt/python/cp314-cp314/bin/python -m venv /output/tools
               /output/tools/bin/python -m pip install -r /checkout/python/ci/requirements.txt
               /output/tools/bin/python /checkout/python/ci/freeze_clean_checkout.py \
-                --repo /checkout --revision "$SOURCE_REVISION" --output /output/frozen
-              /output/tools/bin/python /checkout/python/ci/qualify.py \
-                --target "$TARGET" --sdist /output/frozen/artifacts/*.tar.gz --output /output/qualified
+                --repo /checkout --revision 3f809bc0d66dfe797aa13f0d4c3236fc8d6954db --output /output/frozen
+              /output/tools/bin/python /diagnostics.py /output/frozen/artifacts/gmatpy-0.2.0.tar.gz /output/qualified
             '
-      - name: Native macOS build and clean installed tests
-        if: startsWith(matrix.target, 'macos-')
-        env:
-          TARGET: ${{ matrix.target }}
-          PIP_NO_CACHE_DIR: '1'
-        shell: bash
-        run: |
-          python -m venv "$RUNNER_TEMP/gmatpy-tools"
-          "$RUNNER_TEMP/gmatpy-tools/bin/python" -m pip install -r "$GITHUB_WORKSPACE/python/ci/requirements.txt"
-          "$RUNNER_TEMP/gmatpy-tools/bin/python" "$GITHUB_WORKSPACE/python/ci/freeze_clean_checkout.py" \
-            --repo "$GITHUB_WORKSPACE" --revision "$GITHUB_SHA" --output "$RUNNER_TEMP/gmatpy-output/frozen"
-          "$RUNNER_TEMP/gmatpy-tools/bin/python" "$GITHUB_WORKSPACE/python/ci/qualify.py" \
-            --target "$TARGET" --sdist "$RUNNER_TEMP/gmatpy-output/frozen/artifacts/"*.tar.gz \
-            --output "$RUNNER_TEMP/gmatpy-output/qualified"
-      - name: Record evidence in job log (no charged artifact/cache storage)
+      - name: Preserve diagnostics in ordinary public logs
         if: always()
         shell: bash
         run: |
           python3 - <<'PY'
-          import pathlib,os
-          output=pathlib.Path(os.environ['RUNNER_TEMP'])/'gmatpy-output'
-          receipt=output/'frozen/SOURCE_RECEIPT.json'
-          if receipt.exists():print(receipt.read_text())
-          root=output/'qualified'
-          for name in ['RESULTS.json','EVIDENCE_SHA256.json']:
-              p=root/name
-              if p.exists():print(name+'\n'+p.read_text())
-          for profile in ['minimal','extended']:
-              for name in ['pytest.log','binary-contents-check.log','auditwheel-after.log','state-comparison.json','release-hold.log']:
-                  p=root/profile/name
-                  if p.exists():print(str(p.relative_to(root))+'\n'+p.read_text()[-16000:])
+          import hashlib,json,os,pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'gmatpy-output'
+          for path in root.glob('qualified/extended/wheelhouse/*.whl'):
+              print('DIAGNOSTIC_WHEEL',path.name,path.stat().st_size,hashlib.sha256(path.read_bytes()).hexdigest())
+          for pattern in ['frozen/SOURCE_RECEIPT.json','qualified/RESULTS.json','qualified/extended/*.probe.json','qualified/extended/*.native.txt','qualified/extended/pytest.log','qualified/extended/*isolated.log','qualified/extended/suite-without-finite-burn.log','qualified/extended/binary-contents-check.log']:
+              for path in root.glob(pattern):
+                  print(str(path.relative_to(root)),hashlib.sha256(path.read_bytes()).hexdigest())
+                  print(path.read_text(errors='replace')[-45000:])
+          path=root/'qualified/CSPICE_BUILD_DEPENDENCY.json'
+          if path.exists():
+              data=json.loads(path.read_text());print('CSPICE_BUILD_SUMMARY',json.dumps({k:v for k,v in data.items() if k not in ('native_sources','header_sha256')}))
           PY
-# No cache/upload-artifact/publishing step. Public logs retain hashes/results;
-# wheel retention requires separately verified free storage or spending approval.
+# Diagnostic branch only: source checkout is explicitly pinned; no engine edits,
+# paid runner/storage, artifact upload, cache, credentials or publishing.
