@@ -44,3 +44,8 @@ tokens, no secrets, cache, artifact upload or release. Artifact storage allowanc
 is unverified, so upload is disabled rather than assumed free. Public source sharing for the dedicated repository is owner approved, recorded
 in PUBLIC_SOURCE_DECISION.md. The product release determination remains separate.
 The workflow freezes clean immutable Git inputs; it does not publish packages.
+
+Every native profile also compiles a small harness against its installed GmatUtil
+library and compares 320 spline cases / 9920 values with fixed independent SciPy
+expectations at scaled tolerance 1e-10. These are fresh comparisons; reference
+values are pre-recorded, with their generation script and hash retained.
