@@ -58,9 +58,9 @@ not validate operational mission use. Scientific inputs are fixed snapshots,
 with coverage and freshness limits in :doc:`conventions`.
 
 These pages describe the single-package cleanup based on
-``bff0ed4687964cd1f36a3ebaeb278b451bac271d``. That base revision has six passed
-native matrix cells across Linux x86_64/ARM64 and macOS ARM64; Intel macOS remains
-pending. Those historical profile builds do not establish a fresh native build
+``bff0ed4687964cd1f36a3ebaeb278b451bac271d``. That base revision passed all eight
+native matrix cells across Linux x86_64/ARM64 and macOS Intel/ARM64 on the first
+attempt. Those historical profile builds do not establish a fresh native build
 of the packaging cleanup. See :ref:`platform-support` for exact source and
 artifact boundaries and :doc:`development` for the checks.
 

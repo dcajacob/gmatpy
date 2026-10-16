@@ -52,9 +52,9 @@ Platform qualification
 
 The single-package cleanup is based on
 ``bff0ed4687964cd1f36a3ebaeb278b451bac271d``. The native matrix for that exact
-revision has passed six of eight historical profile/target cells: minimal and
-extended on Linux x86_64, Linux ARM64 and macOS Apple Silicon. Both Intel macOS
-cells remain pending. Those records retain their exact source revision and
+revision passed all eight historical profile/target cells on the first
+attempt: minimal and extended on Linux x86_64, Linux ARM64 and macOS
+Apple Silicon/Intel. Those records retain their exact source revision and
 profile identities. Reusing an extended binary to check this packaging cleanup
 does not make it a native build from the changed source.
 
@@ -80,7 +80,8 @@ does not make it a native build from the changed source.
        every older macOS version.
    * - macOS
      - Intel x86_64
-     - Qualification for the base revision is still pending.
+     - Both historical profiles passed with standard-ABI CPython 3.14 on
+       macOS 15; the 11.0 deployment tag is not older-host execution evidence.
 
 The package metadata permits Python 3.10 and later. That metadata is broader than
 the current build-and-test evidence: other Python versions, free-threaded Python

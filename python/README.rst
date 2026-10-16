@@ -23,8 +23,8 @@ internal compatibility label. No GUI is included or planned for GMAT Py.
 The most recent native qualification is for source
 ``bff0ed4687964cd1f36a3ebaeb278b451bac271d``, before this packaging cleanup.
 Its full headless wheels passed 144 tests with two expected skips on Linux
-x86_64 and ARM64 and macOS ARM64, using standard-ABI CPython 3.14.7; macOS Intel
-was still pending when this cleanup was prepared. The cleanup retains the full
+x86_64 and ARM64 and macOS Intel/ARM64 on the first attempt, using standard-ABI
+CPython 3.14.7 (Linux ARM64: 3.14.8). The cleanup retains the full
 native configuration and scientific inputs; tests reusing earlier extended
 binaries do not make them newly built artifacts of this source revision.
 Final release files require their own source/build receipts and validation.

@@ -100,9 +100,9 @@ verifies every installed package byte against the wheel, including native
 libraries, so a source-path overlay cannot be mistaken for an installed test.
 
 Native qualification for base revision
-``bff0ed4687964cd1f36a3ebaeb278b451bac271d`` has passed six of eight historical
-profile/target cells across Linux x86_64/ARM64 and macOS ARM64; Intel macOS is
-pending. The single-package cleanup does not change scientific code or inputs,
+``bff0ed4687964cd1f36a3ebaeb278b451bac271d`` passed all eight historical
+profile/target cells across Linux x86_64/ARM64 and macOS Intel/ARM64 on the
+first attempt. The single-package cleanup does not change scientific code or inputs,
 but task-local checks using retained extended binaries remain checks against
 those identified binaries, not fresh native builds from the changed source.
 See :ref:`platform-support` for the exact evidence boundary.
