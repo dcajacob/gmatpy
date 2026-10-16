@@ -23,6 +23,7 @@ cases=json.loads((base/'spline_oracle.json').read_text())['cases'];maximum=0.
 for n,r in enumerate(cases):
  x=(C.c_double*len(r['x']))(*r['x']);y=(C.c_double*len(r['y']))(*r['y']);q=(C.c_double*len(r['q']))(*r['q']);out=(C.c_double*len(q))()
  assert h.evaluate_spline(r['kind'],x,y,q,len(q),out,r['refill'])==0,n
+ assert all(math.isfinite(value) for value in out),(n,'non-finite spline result',list(out))
  error=max(abs(a-b)/(1+abs(b)) for a,b in zip(out,r['expected']));maximum=max(maximum,error);assert error<1e-10,(n,error)
 
 # New regressions are deliberately separate from the frozen SciPy oracle.

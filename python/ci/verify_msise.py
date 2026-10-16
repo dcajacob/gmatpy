@@ -59,6 +59,8 @@ def main():
     command += [str(harness_source), str(library), "-Wl,-rpath," + str(native), "-o", str(harness)]
     completed = subprocess.run(command, capture_output=True, text=True, timeout=60)
     (output / "compile.log").write_text(completed.stdout + completed.stderr)
+    if completed.returncode:
+        print(completed.stdout + completed.stderr, file=sys.stderr)
     completed.check_returncode()
     function = C.CDLL(str(harness)).evaluate_msise
     ptr = C.POINTER(C.c_float)
@@ -71,9 +73,10 @@ def main():
         assert function(arrays[0], arrays[1], len(x), left, right, arrays[2], len(queries), values) == 0, name
         expected = [C.c_float(value).value for value in expected]
         errors = [abs(a-b)/(1+abs(b)) for a,b in zip(values, expected)]
-        passed = list(values) == expected if exact else max(errors) < 2e-7
+        finite = all(math.isfinite(value) for value in values)
+        passed = finite and (list(values) == expected if exact else max(errors) < 2e-7)
         records.append({"name": name, "x": list(arrays[0]), "y": list(arrays[1]), "queries": list(arrays[2]),
-                        "expected": expected, "actual": list(values), "exact": exact,
+                        "expected": expected, "actual": list(values), "exact": exact, "finite": finite,
                         "maximum_scaled_error": max(errors), "passed": passed})
 
     for y in ([1., 1e-20], [1e20, 1.], [1e8, 1e-8], [1e-20, 1e20]):
