@@ -77,7 +77,9 @@ elseif(APPLE)
   foreach(TARGET IN ITEMS GmatUtil GmatBase)
     # Upstream R2026a is a release label, not a valid Mach-O numeric version.
     # Keep one physical dylib per target in the wheel, with relocatable IDs.
-    set_target_properties(${TARGET} PROPERTIES VERSION "" SOVERSION ""
+    set_property(TARGET ${TARGET} PROPERTY VERSION)
+    set_property(TARGET ${TARGET} PROPERTY SOVERSION)
+    set_target_properties(${TARGET} PROPERTIES
       MACHO_CURRENT_VERSION "0.2.0" MACHO_COMPATIBILITY_VERSION "0.2.0"
       MACOSX_RPATH TRUE INSTALL_NAME_DIR "@rpath" BUILD_WITH_INSTALL_NAME_DIR TRUE)
   endforeach()
