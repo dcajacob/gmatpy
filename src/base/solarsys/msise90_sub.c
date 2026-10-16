@@ -2641,7 +2641,7 @@ L50:
 	x, real *y)
 {
     integer interval;
-    double width, left, right, difference, linear, curvature;
+    double width, left, right, difference, linear, curvature_blend, curvature;
 
     /* Let right=(x-x0)/h and left=(x1-x)/h. The line joining the values
        has zero curvature. The correction below vanishes at both endpoints
@@ -2677,8 +2677,12 @@ L50:
     difference = (double)ya[interval + 1] - ya[interval];
     linear = right <= .5 ? ya[interval] + right * difference
                         : ya[interval + 1] - left * difference;
-    curvature = -left * right * width * width / 6. *
-        ((1. + left) * y2a[interval] + (1. + right) * y2a[interval + 1]);
+    /* The same anchoring preserves equal curvatures (a quadratic) when the
+       extrapolation weights are too large to retain their constant terms. */
+    difference = (double)y2a[interval + 1] - y2a[interval];
+    curvature_blend = right <= .5 ? 2. * y2a[interval] + y2a[interval + 1] + right * difference
+                                 : y2a[interval] + 2. * y2a[interval + 1] - left * difference;
+    curvature = -left * right * width * width / 6. * curvature_blend;
     *y = (real)(linear + curvature);
     return 0;
 } /* splint_ */

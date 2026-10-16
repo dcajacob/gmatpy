@@ -311,6 +311,12 @@ def main():
         row.update({label: evaluate(label, [0., width], values, 1e30, 1e30, queries) for label in libraries})
         check("msise_" + name, row["candidate"]["values"] == expected)
         spline_results["analytic_cases"].append(row)
+    queries = [-1e10, 1e10]
+    expected = [F(query * query).value for query in queries]
+    row = {"name": "far_clamped_quadratic", "queries": queries, "expected": expected}
+    row.update({label: evaluate(label, [0., 2**-60], [0., 2**-120], 0., 2**-59, queries) for label in libraries})
+    check("msise_far_clamped_quadratic", row["candidate"]["values"] == expected)
+    spline_results["analytic_cases"].append(row)
     spline_results["inherited_short_integral"] = {
         label: evaluate(label, [0., 1.], [1., 1.], 1e30, 1e30, [1e-8]) for label in libraries}
     # This is a known NASA/current integration limitation, not silently fixed.

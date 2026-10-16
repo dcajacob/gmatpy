@@ -88,6 +88,8 @@ def main():
     queries = [C.c_float(value).value for value in (-1e-25, 1e-25)]
     check("far extrapolation of scaled linear segment", [0., width], [1., 1. + 2**-23], queries,
           [1. + query / width * 2**-23 for query in queries], exact=True)
+    check("far clamped quadratic preserves equal endpoint curvatures", [0., 2**-60], [0., 2**-120],
+          [-1e10, 1e10], [1e20, 1e20], left=0., right=2**-59, exact=True)
     knots = [0., .25, .5, .75, 1.]
     ordinates = [value**3 for value in knots]
     queries = [-.25, 0., .125, .25, .375, .5, .625, .75, .875, 1., 1.25]
