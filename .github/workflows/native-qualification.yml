@@ -1,106 +1,68 @@
-name: GMAT Py ARM64 extended diagnostics
+name: GMAT Py native ARM EOF probe
 on:
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  diagnose:
+  prove:
     if: >-
       github.repository == 'dcajacob/gmatpy' &&
       toJSON(github.event.repository.private) == 'false'
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 45
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: 3f809bc0d66dfe797aa13f0d4c3236fc8d6954db
           persist-credentials: false
-      - name: Build unchanged ARM64 extended candidate and capture bounded test stacks
+      - name: Prove native char default and exact reader EOF behavior
         shell: bash
         run: |
-          ulimit -c 0
-          cat > "$RUNNER_TEMP/arm64-diagnostics.py" <<'PY'
-          """Instrument the CI coordinator only; compile unchanged source candidate E."""
-          import hashlib,importlib.util,json,os,signal,subprocess,sys
+          cat > "$RUNNER_TEMP/native-eof-probe.py" <<'PY'
+          """Bounded exact-method EOF portability probe; engine sources are read-only."""
+          PREFIX='#include <iostream>\n#include <sstream>\n#include <string>\n#include <vector>\n#include <limits>\n#include <cstdio>\nusing Integer=int;\nusing StringArray=std::vector<std::string>;\nusing IntegerArray=std::vector<int>;\nnamespace GmatStringUtil {enum {BOTH};std::string Trim(const std::string& s,int,bool){auto a=s.find_first_not_of(" \\t");if(a==s.npos)return "";return s.substr(a,s.find_last_not_of(" \\t")-a+1);}}\nstruct MessageInterface {static void ShowMessage(const char*,...){}};\nclass ScriptInterpreter {public:std::istream* inStream;explicit ScriptInterpreter(std::istream* p):inStream(p){}bool ReadFirstPass();bool IsBranchCommand(const std::string&){return false;}bool CheckBranchCommands(const IntegerArray&,const StringArray&){return true;}};\n'
+          SUFFIX='\nint main(int argc,char**argv){std::string which=argv[1];std::string input=which=="empty"?"":which=="newline"?"Create Spacecraft Sat;\\nBeginMissionSequence;\\n":which=="crlf"?"Create Spacecraft Sat;\\r\\nBeginMissionSequence;\\r\\n":"Create Spacecraft Sat;\\nBeginMissionSequence;";std::istringstream stream(input);ScriptInterpreter parser(&stream);std::cout<<"char_signed="<<std::numeric_limits<char>::is_signed<<std::endl;bool ok=parser.ReadFirstPass();std::cout<<"READER_COMPLETED "<<ok<<std::endl;return ok?0:1;}\n'
+          import argparse,hashlib,json,platform,subprocess,time
           from pathlib import Path
-          from types import SimpleNamespace
-
-          original=Path('/checkout/python/ci/qualify.py')
-          text=original.read_text()
-          assert text.count("for profile in ('minimal','extended'):")==1
-          text=text.replace("for profile in ('minimal','extended'):","for profile in ('extended',):")
-          instrumented=Path('/output/qualifier-extended.py');instrumented.write_text(text)
-          print('COORDINATOR_ONLY_INSTRUMENTATION',json.dumps({'original_sha256':hashlib.sha256(original.read_bytes()).hexdigest(),'instrumented_sha256':hashlib.sha256(instrumented.read_bytes()).hexdigest(),'source_revision':'3f809bc0d66dfe797aa13f0d4c3236fc8d6954db','changes':'Extended profile only; bounded verbose pytest and stack capture. Engine/package inputs unchanged.'}),flush=True)
-          spec=importlib.util.spec_from_file_location('diagnostic_qualifier',instrumented)
-          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-          normal_run=module.run
-
-          def probe(command,cwd,env,log,seconds):
-              command=list(map(str,command));command=[c for c in command if c!='-q']
-              command+=['-vv','-s','-o','faulthandler_timeout=30']
-              env=dict(env,PYTHONFAULTHANDLER='1')
-              print('DIAGNOSTIC_PROBE',seconds,*command,flush=True)
-              timed_out=False
-              with log.open('w') as stream:
-                  child=subprocess.Popen(command,cwd=cwd,env=env,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)
-                  try:child.wait(timeout=seconds)
-                  except subprocess.TimeoutExpired:
-                      timed_out=True
-                      with log.with_suffix('.native.txt').open('w') as trace:
-                          try:subprocess.run(['gdb','--batch','-ex','set pagination off','-ex','thread apply all bt','-p',str(child.pid)],stdout=trace,stderr=subprocess.STDOUT,timeout=15)
-                          except Exception as error:trace.write(repr(error)+'\n')
-                      # Python 3.14 faulthandler emits Python and supported native stacks.
-                      # No core file is retained. Terminate all descendants of this probe.
-                      os.killpg(child.pid,signal.SIGABRT)
-                      try:child.wait(timeout=20)
-                      except subprocess.TimeoutExpired:
-                          os.killpg(child.pid,signal.SIGKILL);child.wait(timeout=10)
-              print(log.name+'\n'+log.read_text(errors='replace')[-35000:],flush=True)
-              result={'command':command,'returncode':child.returncode,'timed_out':timed_out,'limit_seconds':seconds,'log_sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
-              log.with_suffix('.probe.json').write_text(json.dumps(result,indent=2)+'\n')
-              print('PROBE_RESULT',json.dumps(result),flush=True)
-              return result
-
-          def diagnostic_run(command,*,cwd,env,log,timeout=5400):
-              if '-m' not in command or 'pytest' not in command:
-                  return normal_run(command,cwd=cwd,env=env,log=log,timeout=timeout)
-              full=probe(command,cwd,env,log,120)
-              if full['returncode']==0 and not full['timed_out']:return
-              test_root=Path(command[-1])
-              probe(list(command[:-1])+[test_root/'test_finite_burn.py'],cwd,env,log.with_name('finite-burn-isolated.log'),90)
-              probe(list(command)+['-k','not test_finite_burn_matches_thrust_and_mass_flow'],cwd,env,log.with_name('suite-without-finite-burn.log'),180)
-              raise RuntimeError('Full extended suite failed/timed out; focused probes are diagnostic partial coverage only.')
-
-          module.run=diagnostic_run
-          module.qualify(SimpleNamespace(target='linux-arm64',sdist=Path(sys.argv[1]),output=Path(sys.argv[2]),cspice=None,archive=None,wheelhouse=None))
+          p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--expect-unsigned',action='store_true');args=p.parse_args()
+          root=args.output;root.mkdir(parents=True,exist_ok=False)
+          text=args.source.read_text();a=text.index('bool ScriptInterpreter::ReadFirstPass()');b=text.index(chr(10)+'}'+chr(10),a)+3;method=text[a:b]
+          assert method.count('   char ch;')==1
+          compiler=subprocess.check_output(['g++','--version'],text=True).splitlines()[0]
+          macros=subprocess.check_output(['g++','-dM','-E','-x','c++','/dev/null'],text=True);unsigned='#define __CHAR_UNSIGNED__ 1' in macros
+          if args.expect_unsigned:assert platform.machine()=='aarch64' and unsigned
+          results=[]
+          for version in ('original','int_type'):
+           body=method if version=='original' else method.replace('   char ch;','   std::istream::int_type ch;')
+           source=root/(version+'.cpp');source.write_text(PREFIX+body+SUFFIX)
+           for sign in ('default','signed','unsigned'):
+            exe=root/(version+'-'+sign);command=['g++','-std=c++17','-O2']+([] if sign=='default' else ['-f'+sign+'-char'])+[str(source),'-o',str(exe)];subprocess.run(command,check=True)
+            for case in ('empty','newline','crlf','no-final-newline'):
+             start=time.monotonic()
+             try:r=subprocess.run([str(exe),case],capture_output=True,text=True,timeout=2);code=r.returncode;output=r.stdout;timed_out=False
+             except subprocess.TimeoutExpired as error:code=None;output=(error.stdout or b'').decode();timed_out=True
+             expected_timeout=version=='original' and (sign=='unsigned' or (sign=='default' and unsigned))
+             entry={'version':version,'char_flag':sign,'case':case,'returncode':code,'timed_out':timed_out,'expected_timeout':expected_timeout,'stdout':output,'seconds':time.monotonic()-start};results.append(entry);print(json.dumps(entry),flush=True)
+             assert timed_out==expected_timeout
+             if not timed_out:assert code==0 and 'READER_COMPLETED 1' in output
+          record={'native_machine':platform.machine(),'compiler':compiler,'default_char_unsigned':unsigned,'original_method_sha256':hashlib.sha256(method.encode()).hexdigest(),'source_sha256':hashlib.sha256(args.source.read_bytes()).hexdigest(),'support_stubs':'Trim, branch check and null-stream diagnostic only; exact ReadFirstPass body and real stringstream IO retained.','fix':'Use std::istream::int_type for peek EOF sentinel; no engine algorithm/data edited.','results':results}
+          (root/'RESULTS.json').write_text(json.dumps(record,indent=2)+'\n');print('NATIVE_EOF_PROBE_OK',json.dumps(record),flush=True)
           PY
-          mkdir -p "$RUNNER_TEMP/gmatpy-output"
-          docker run --rm --cpus 2 --memory 6g --ulimit core=0 --user "$(id -u):$(id -g)" \
-            -v "$GITHUB_WORKSPACE:/checkout:ro" -v "$RUNNER_TEMP/gmatpy-output:/output" \
-            -v "$RUNNER_TEMP/arm64-diagnostics.py:/diagnostics.py:ro" -e PIP_NO_CACHE_DIR=1 \
-            quay.io/pypa/manylinux_2_28_aarch64@sha256:abd1230aa9e4058a74b89d27cd14ba18c0db036d7bfe6e6f219a29ea63c24eb6 bash -euc '
-              /opt/python/cp314-cp314/bin/python -m venv /output/tools
-              /output/tools/bin/python -m pip install -r /checkout/python/ci/requirements.txt
-              /output/tools/bin/python /checkout/python/ci/freeze_clean_checkout.py \
-                --repo /checkout --revision 3f809bc0d66dfe797aa13f0d4c3236fc8d6954db --output /output/frozen
-              /output/tools/bin/python /diagnostics.py /output/frozen/artifacts/gmatpy-0.2.0.tar.gz /output/qualified
-            '
-      - name: Preserve diagnostics in ordinary public logs
+          mkdir -p "$RUNNER_TEMP/eof-output"
+          docker run --rm --network none --cpus 1 --memory 2g --ulimit core=0 --user "$(id -u):$(id -g)" \
+            -v "$GITHUB_WORKSPACE:/checkout:ro" -v "$RUNNER_TEMP/eof-output:/output" \
+            -v "$RUNNER_TEMP/native-eof-probe.py:/probe.py:ro" \
+            quay.io/pypa/manylinux_2_28_aarch64@sha256:abd1230aa9e4058a74b89d27cd14ba18c0db036d7bfe6e6f219a29ea63c24eb6 \
+            /opt/python/cp314-cp314/bin/python /probe.py --expect-unsigned \
+            --source /checkout/src/base/interpreter/ScriptInterpreter.cpp --output /output/probe
+      - name: Preserve bounded probe in ordinary logs
         if: always()
         shell: bash
         run: |
           python3 - <<'PY'
-          import hashlib,json,os,pathlib
-          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'gmatpy-output'
-          for path in root.glob('qualified/extended/wheelhouse/*.whl'):
-              print('DIAGNOSTIC_WHEEL',path.name,path.stat().st_size,hashlib.sha256(path.read_bytes()).hexdigest())
-          for pattern in ['frozen/SOURCE_RECEIPT.json','qualified/RESULTS.json','qualified/extended/*.probe.json','qualified/extended/*.native.txt','qualified/extended/pytest.log','qualified/extended/*isolated.log','qualified/extended/suite-without-finite-burn.log','qualified/extended/binary-contents-check.log']:
-              for path in root.glob(pattern):
-                  print(str(path.relative_to(root)),hashlib.sha256(path.read_bytes()).hexdigest())
-                  print(path.read_text(errors='replace')[-45000:])
-          path=root/'qualified/CSPICE_BUILD_DEPENDENCY.json'
-          if path.exists():
-              data=json.loads(path.read_text());print('CSPICE_BUILD_SUMMARY',json.dumps({k:v for k,v in data.items() if k not in ('native_sources','header_sha256')}))
+          import hashlib,os,pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'eof-output/probe'
+          for path in root.glob('*.json'):
+              print(path.name,hashlib.sha256(path.read_bytes()).hexdigest());print(path.read_text())
           PY
-# Diagnostic branch only: source checkout is explicitly pinned; no engine edits,
-# paid runner/storage, artifact upload, cache, credentials or publishing.
+# Workflow instrumentation only; candidate engine source remains unchanged.
