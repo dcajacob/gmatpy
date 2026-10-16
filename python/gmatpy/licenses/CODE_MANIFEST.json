@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "manifest_kind": "code_licenses_and_provenance",
-  "reviewed_at": "2026-10-01",
+  "reviewed_at": "2026-10-16",
   "package": {
     "name": "gmatpy",
     "version": "0.2.0",
@@ -35,10 +35,10 @@
         "Mark modified inherited files.",
         "Do not imply NASA endorsement or trademark permission."
       ],
-      "verification": "Core license verified against local application/License.txt and official NASA R2026a source; numerical provenance exceptions require their own review.",
+      "verification": "NASA's distributed Apache-2.0 license and applicable notices were inspected at the pinned baseline. This does not independently determine origin or separate permissions for every inherited routine.",
       "primary_sources": [
-        "https://github.com/nasa/GMAT/blob/R2026a/License.txt",
-        "https://github.com/nasa/GMAT/blob/R2026a/application/README.txt",
+        "https://github.com/nasa/GMAT/blob/9363e129be366520c6edb0b4079204ed60666007/License.txt",
+        "https://github.com/nasa/GMAT/blob/9363e129be366520c6edb0b4079204ed60666007/application/README.txt",
         "https://www.apache.org/licenses/LICENSE-2.0"
       ],
       "license_file_sha256": "b9ea20f6e648554b46334d2322b9c237657febc746d862f52e47ea1bfacb87be"
@@ -182,14 +182,13 @@
     },
     {
       "id": "erfa-data-generation",
-      "name": "ERFA scientific coefficients and generated numerical coordinate output",
+      "name": "ERFA scientific nutation coefficients and optional offline coordinate generation",
       "version": "2.0.1; upstream commit 9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3",
       "license_expression": "BSD-3-Clause",
       "license_file": "ERFA.txt",
       "license_file_sha256": "b1858f9a263f22c438a455a32945da51a31a0ae25a21055da13bb7ed57cc3b51",
       "distribution": [
-        "source-derived_numeric_coefficients",
-        "generated_numeric_output"
+        "source-derived_numeric_coefficients"
       ],
       "generator_library_distribution": "External offline regeneration input; no ERFA binary/source library bundled in runtime or sdist.",
       "primary_sources": [
@@ -200,7 +199,7 @@
         "Retain ERFA copyright, terms and disclaimer for source-derived numerical table; identify independent generated output.",
         "Do not imply NumFOCUS, IAU or SOFA endorsement."
       ],
-      "verification": "1980 coefficients exactly match pinned ERFA source; independently generated ICRF output records documented convention/version and measured scientific differences."
+      "verification": "IAU1980 coefficient records match pinned ERFA source and are emitted in NASA summation order. The packaged ICRF default is restored NASA data, not generated ERFA output. Historical ERFA ICRF generation/validation remains a separately named optional alternative."
     }
   ],
   "excluded_from_headless_build": [
@@ -215,20 +214,23 @@
     "Match the release dependency archive hashes and linked runtime objects.",
     "Verify all recorded license files are present in the wheel and source archive.",
     "Review scientific data in DATA_MANIFEST.json.",
-    "Close inherited numerical-code provenance questions before unrestricted publication.",
+    "Record selected implementations, exact source evidence, validation scope and specifically identified provenance questions per numerical component.",
     "Record any libraries added by wheel repair or a different platform build."
   ],
   "numerical_remediation": {
-    "date": "2026-10-01",
-    "method": "Spline implementations independently authored from continuity/endpoint equations; entire inherited Brent-Dekker solver independently replaced from published mathematical interpolation/bisection, retaining its reverse-communication API. No Numerical Recipes implementation copied.",
+    "date": "2026-10-16",
+    "reviewed_parent_revision": "50f61a05a1dd68ba2682d74a8631eba1b514630e",
+    "nasa_base": "9363e129be366520c6edb0b4079204ed60666007",
+    "method": "Retain project-reported equation-derived MSISE/CubicSpline replacements with normalized-evaluation regression repairs; restore NASA Brent solver structure with focused safeguards. NotAKnot changes are comments only.",
+    "authorship_limitation": "Independent-origin/non-copying descriptions are project assertions. This source/behavior review does not independently authenticate authorship, source exposure, a clean-room process or rights clearance.",
     "changed_files": [
       {
         "path": "src/base/solarsys/msise90_sub.c",
-        "sha256": "71b78960095268b1bdef8d35be2e2a885b0588ad2fbe0f50c469b26c8df8ac48"
+        "sha256": "792995cd3bdeee7655ec6623955cafdc5898fa574404a832d6756d9b8c5065bb"
       },
       {
         "path": "src/gmatutil/util/interpolator/CubicSplineInterpolator.cpp",
-        "sha256": "10e6fca72e4c0cef1f42a8bf7ff4d1ec7478d47cf6bdd3252fe5e5d3140f2849"
+        "sha256": "2b326523ee49dc5b336729f73f63254a3aa115cb3645b39a283ddb9c5067a6ed"
       },
       {
         "path": "src/gmatutil/util/interpolator/CubicSplineInterpolator.hpp",
@@ -240,16 +242,60 @@
       },
       {
         "path": "src/gmatutil/util/interpolator/BrentDekkerZero.cpp",
-        "sha256": "991abd3d4c11d035b329dc5f984bd0d30112742897d437509ac5d1fe95a008f3"
+        "sha256": "0acfdf023047047c3597336f569608199f2befc15061600b41f4244e0d1b82e2"
       },
       {
         "path": "src/gmatutil/util/interpolator/BrentDekkerZero.hpp",
-        "sha256": "553305ac58f2acbc34c23c3c6100ce6f2aed2130e28bc55c0dc83e670d26456a"
+        "sha256": "fcc0e620902922733a6201ab0f1d7d9c4c6e891e31158524b412008b7e288c01"
       }
     ],
     "excluded_reference_source": "src/base/solarsys/msise90_sub.for",
-    "validation_summary": "Prior spline/atmosphere checks retained: 640 MSISE spline datasets/40722 evaluations, 5400 atmosphere cases (density change <=7.333e-7 relative), 320 C++ datasets/3200 evaluations. New Brent: 966 cases, every proposal bracket-contained, SciPy/analytic comparisons, seven invalid-input cases, copy/assignment/exact endpoints and subnormal bracket; independent review edge fixed.",
-    "scope_limitation": "The excluded original Fortran reference remains in the Git checkout/history. Targeted replacement is not a provenance audit of every inherited numerical routine."
+    "historical_validation": {
+      "source_identity_checked_at": "50f61a05a1dd68ba2682d74a8631eba1b514630e",
+      "summary": "Prior spline/atmosphere checks retained: 640 MSISE spline datasets/40722 evaluations, 5400 atmosphere cases (density change <=7.333e-7 relative), 320 C++ datasets/3200 evaluations. New Brent: 966 cases, every proposal bracket-contained, SciPy/analytic comparisons, seven invalid-input cases, copy/assignment/exact endpoints and subnormal bracket; independent review edge fixed.",
+      "limitation": "Prior manifest-reported validation, not newly executed at this revision or independently re-certified here. Relevant routine bytes were unchanged at the reviewed parent. These counts do not qualify new source hashes. Saved SciPy expectations are historical, even when comparison runs are fresh."
+    },
+    "scope_limitation": "Historical Fortran remains in NASA Git ancestry. Targeted implementation decisions do not audit or clear every inherited routine. See python/ci/CORE_BASELINE.md in source for behavior and validation boundaries.",
+    "component_dispositions": [
+      {
+        "component": "MSISE spline_/splint_",
+        "implementation_disposition": "retained_replacement_with_evaluation_repair",
+        "origin_evidence": "NASA explicitly identifies Numerical Recipes adaptations; project reports replacement derivation from endpoint/continuity equations.",
+        "reason": "Scoped provenance choice pending exact origin/permission evidence; not demonstrated legal necessity or Python/headless requirement.",
+        "limitation": "Publisher code terms are restrictive; applicability or separate permissions for NASA exact implementation remains undetermined. Unchanged splini_ retains inherited numerical limitations."
+      },
+      {
+        "component": "CubicSplineInterpolator",
+        "implementation_disposition": "retained_replacement_with_evaluation_repair",
+        "origin_evidence": "NASA file has Apache-2.0/contractor notices and specific Numerical Recipes procedural/splint references. Project reports equation-derived replacement.",
+        "reason": "Scoped provenance choice plus retained monotonic/cache safeguards; replacement is not required for Python/headless.",
+        "limitation": "References do not establish copying or actual publisher-license applicability; restoration is not certified cleared and retention is not certified clean-room."
+      },
+      {
+        "component": "BrentDekkerZero",
+        "implementation_disposition": "nasa_solver_structure_with_focused_safeguards",
+        "origin_evidence": "NASA Apache-2.0 notices retained; inherited citation mistakenly describes spline pages, which does not establish root-solver origin.",
+        "reason": "Reduce optional algorithm divergence while preserving tested initialized state/copy/exact-root/input/headless safeguards.",
+        "limitation": "No new independent-origin or third-party-rights determination."
+      },
+      {
+        "component": "NotAKnotInterpolator",
+        "implementation_disposition": "comments_only",
+        "origin_evidence": "Executable implementation equals NASA; MathSpec attribution and credits remain.",
+        "reason": "Accurate algorithm comments; no numerical replacement."
+      },
+      {
+        "component": "JacchiaRobertsAtmosphere::deflate_polynomial",
+        "implementation_disposition": "inherited_unchanged",
+        "origin_evidence": "Exact NASA source/header bytes retained, including original credits and Numerical Recipes section5.3 reference.",
+        "reason": "Citation alone does not prove copied protected expression or applicable publisher restrictions; no evidence-supported algorithm removal."
+      }
+    ],
+    "primary_terms": [
+      "https://numerical.recipes/licenseinfo.html",
+      "https://s3.amazonaws.com/nrbook.com/book_C210_pdf/chap00c.pdf",
+      "https://www.copyright.gov/circs/circ33.pdf"
+    ]
   },
   "publication_review": [
     {
@@ -260,7 +306,8 @@
     {
       "id": "inherited-event-location-provenance",
       "status": "resolved",
-      "notes": "Inherited Brent implementation completely independently replaced from published mathematics; retained public API/layout, original notices and dated modification notice. 966-case validation and separate reviewer completed. Old MathSpec bibliography is not used as source permission evidence."
+      "notes": "NASA-based solver disposition recorded with focused behavioral safeguards. The mismatched spline citation is not evidence of a licensing need for the removed wholesale replacement. This status does not certify source origin, independent authorship or rights clearance; component observations are separately bounded in numerical_remediation.",
+      "resolution_scope": "implementation_disposition_only"
     }
   ],
   "build_profiles": {

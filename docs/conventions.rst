@@ -56,7 +56,8 @@ both position and velocity at an epoch:
      - Earth-centered J2000 mean ecliptic axes.
    * - ``EarthICRF``
      - Earth-centered ICRF axes, using the bundled native rotation table for
-       MJ2000Eq/ICRF conversion.
+       MJ2000Eq/ICRF conversion. The default is the original NASA baseline's
+       ``ICRF_Table.txt`` values and irregular sampling grid.
    * - ``EarthFixed``
      - GMAT's Earth-fixed ``BodyFixed`` axes using its FK5/IAU1980 convention
        and bundled Earth-orientation/nutation inputs.
@@ -66,10 +67,14 @@ must not be treated as interchangeable labels. ``EarthFixed`` is not advertised
 as ITRF or TEME. The facade does not supply TEME, ITRS or GCRS transformations.
 Use an appropriate external adapter for those contracts.
 
-Rotating-frame velocity is the derivative of position in the destination
-frame. It includes the rotation-rate contribution, rather than just rotating
-the three velocity components. Transform a complete six-state when passing
-data to an Earth-fixed or TEME workflow.
+For ``EarthFixed``, native conversion includes the rotation-rate contribution
+to velocity, rather than just rotating its three components. The inherited
+FK5/MJ2000Eq-to-ICRF base conversion applies the same interpolated rotation
+matrix to position and velocity; it sets that base rotation's derivative to
+zero and does not differentiate the ICRF table. Passing six components preserves
+the native convention, without promising a different kinematic model.
+Transform a complete six-state when passing data to an Earth-fixed or TEME
+workflow, and check the receiving adapter's conventions.
 
 :func:`gmatpy.body_state` uses MJ2000Eq axes but changes the origin by subtracting
 the requested origin body's state. It returns a geometric state, without
@@ -193,12 +198,31 @@ is current or suitable for the requested scientific accuracy.
        2026-09-14 and includes forecast/error-sentinel rows. It is not a live
        set of final observations. Native extrapolation outside its coverage
        reduces fidelity; acceptance of an epoch does not validate that result.
+       This input supplies the default EarthFixed FK5/IAU1980 path; it is
+       distinct from the SPICE Earth PCK below.
    * - ICRF rotation vectors
-     - ``ICRF_ERFA_Table.txt`` covers GMAT A1MJD 6935.000000397937 through
+     - ``ICRF_Table.txt`` covers GMAT A1MJD 6935.000000397937 through
        58070.00000039794 (approximately 1960-01-01 through 2100-01-01).
-       Native interpolation rejects epochs outside this table. The table was
-       independently generated with ERFA 2.0.1; it is not an official SOFA
-       release or an assertion of numerical identity with the inherited table.
+       Its 49,063 rows are the exact pinned NASA baseline bytes, including
+       uneven intervals up to 16 days; missing daily rows are not filled.
+       Native conversion uses ninth-order Lagrange interpolation across the
+       original grid. Internal gaps do not cause a separate coverage error;
+       epochs outside the endpoints are rejected. Interpolation across a gap
+       does not establish accuracy relative to an independent frame model.
+   * - SPICE Earth orientation kernel
+     - Extended's ``earth_latest_high_prec.bpc`` is the exact March 2026
+       baseline snapshot, identified internally as
+       ``earth_000101_260612_260316.bpc``. Coverage is 2000-01-01 through
+       2026-06-12, with its last input datum dated 2026-03-16 and predictions
+       afterward. This bounds native SPICE frame queries using that kernel;
+       the September EOP endpoint does not extend its coverage. Minimal does
+       not bundle this kernel, and the default EarthFixed helper does not
+       select it as its rotation model.
+   * - Nutation coefficients
+     - The implemented 106 IAU1980 and 263 IAU1996 records retain the pinned
+       NASA baseline's values and summation order. File headings are
+       independently formatted and source notices remain attached; unused
+       or unsupported legacy sections are omitted.
    * - UTC offsets/leap seconds
      - ``tai-utc.dat`` includes historical drift segments and leap-second
        entries through the change effective 2017-01-01. No automatic updates
@@ -211,6 +235,15 @@ notes and scientific changes. Both profiles retain the inputs required for
 the propagation/time/frame/DE405 facade. Extended additionally includes native
 SPICE kernel facilities; this does not extend every convenience API contract.
 
+The restored ICRF/PCK bytes come from NASA GMAT source baseline
+``9363e129be366520c6edb0b4079204ed60666007``. Exact input identity is distinct
+from independent validation of the original scientific model: the historical
+ICRF generator is unidentified. The former ERFA-generated ICRF alternative is
+excluded from the installed defaults and wheel/source distributions; the
+offline generator can produce an explicitly requested alternative, with
+different values and a filled daily grid. Such output changes the scientific
+input and is outside the default contract documented here.
+
 AGI/CSSI space-weather files, Schatten forecasts and the unused ``marini.dat``
 are excluded from wheel/source distributions. Native callers selecting
 file-based weather must supply appropriate inputs through
@@ -219,5 +252,10 @@ exception; there is no automatic substitute forecast. The legacy SVN data
 updater is excluded.
 
 The tests exercise analytic cases, regression cases and selected native
-comparisons. They do not establish complete GMAT coverage, numerical
-equivalence to NASA releases, or qualification for operational mission analysis.
+comparisons. NASA-source control comparisons use declared build/binding/startup
+adapters and common scientific inputs, including explicitly selected DE405;
+they do not compare every upstream default. Agreement is limited to the
+executed cases and dates. Neither exact restored input bytes nor those tests
+establish complete GMAT coverage, numerical equivalence to NASA releases, or
+qualification for operational mission analysis. See :doc:`development` for
+source and native-artifact qualification scopes.

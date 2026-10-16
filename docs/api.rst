@@ -234,9 +234,17 @@ State, frame, time and ephemeris utilities
    :raises ValueError: Invalid vector, epoch or frame token.
    :raises RuntimeError: Native coordinate conversion fails or is non-finite.
 
-   Velocity includes rotating-frame terms. ``EarthFixed`` uses GMAT's
-   FK5/IAU1980 convention; do not label it ITRF or TEME. ``EarthICRF``
-   conversions depend on the bundled ICRF table's date range.
+   ``EarthFixed`` includes rotating-frame velocity terms and uses GMAT's
+   FK5/IAU1980 convention; do not label it ITRF or TEME. For the inherited
+   FK5/MJ2000Eq-to-ICRF base conversion, the same interpolated matrix rotates
+   position and velocity and the base rotation derivative is zero.
+
+   ``EarthICRF`` uses the exact original ``ICRF_Table.txt`` from the pinned
+   NASA baseline, with its irregular grid and gaps up to 16 days. Native
+   ninth-order Lagrange interpolation spans internal gaps; the table endpoints
+   bound supported epochs. This is not the former ERFA-generated alternative.
+   See :doc:`conventions` for exact date limits and the separate extended
+   SPICE Earth-PCK limit; that PCK is not the default EarthFixed rotation model.
 
 .. py:function:: epoch_mjd(epoch, scale="UTC")
 
@@ -523,3 +531,11 @@ Capabilities and native access
    existence of a SWIG symbol does not establish supported or qualified behavior.
    Startup files and logs use a private temporary directory. Value-based
    helpers preserve the caller's working directory.
+
+   In extended, the SPICE kernel pool is process-global. The native
+   ``UnloadAllKernels()`` operation clears the entire pool, including kernels
+   or inserted values furnished outside that interface; coordinate ownership
+   with other SPICE users. An individual ``UnloadKernel()`` failure retains
+   the inherited warning/recovery limitations and does not promise pool
+   reconstruction or isolation. The bundled March Earth PCK ends at
+   2026-06-12 even though the separate EOP snapshot extends to September.

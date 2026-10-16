@@ -100,21 +100,37 @@ Frame and time contract
 -----------------------
 
 The adapter propagates in EarthMJ2000Eq, GMAT's Earth-centered mean
-equator/equinox J2000 frame. For every output epoch it uses GMAT's full
-six-state EarthMJ2000Eq-to-EarthICRF transformation, then represents that
-geocentric ICRF-aligned state in Astropy GCRS and transforms it to TEME.
-Astropy carries the velocity differential, including frame-motion terms.
+equator/equinox J2000 frame. For every output epoch it passes all six
+components through GMAT's native EarthMJ2000Eq-to-EarthICRF transformation,
+then represents that geocentric ICRF-aligned state in Astropy GCRS and
+transforms it to TEME. GMAT's native MJ2000Eq/ICRF link applies the same
+table-derived matrix to position and velocity, with a zero matrix-derivative
+term. Astropy carries the velocity differential and frame-motion terms for
+its own transformations. This preserves the native GMAT convention; it does
+not add a time derivative of the ICRF table to the native velocity transform.
 
 For TEME or ITRS input, Astropy first converts the full state to GCRS; GMAT
 then converts EarthICRF to EarthMJ2000Eq. EarthICRF input needs only the GMAT
 step. Both directions of the native MJ2000Eq/ICRF conversion are therefore
-part of the bridge contract. This is not a position-only rotation or a
-relabelling of native states as TEME. GMAT's EarthFixed convention is not
-substituted for ITRS.
+part of the bridge contract. A native state must not simply be relabelled
+TEME, and a transformed position alone is insufficient. GMAT's EarthFixed
+convention is not substituted for ITRS.
+
+The current defaults restore NASA's exact ``ICRF_Table.txt`` values and
+original unequal grid: 49,063 rows with gaps up to 16 days. Native ninth-order
+Lagrange interpolation spans those gaps; the gaps are not rejected as missing
+data. Requests outside the table's endpoint range are rejected. The former
+ERFA-generated daily alternative changed both values and grid and is no longer
+the packaged default. Restoring the NASA table changes sampled ICRF and TEME
+outputs, so earlier bridge outputs or fit residuals obtained with the ERFA
+alternative must be re-evaluated. It does not establish universal numerical
+equivalence to a NASA release or independent physical truth.
 
 The adapter disables Astropy IERS auto-download and uses installed Earth
 orientation tables. The GMAT Py scientific inputs and the installed Astropy
-IERS data both constrain usable epochs and frame accuracy. Supply explicit
+IERS data both constrain usable epochs and frame accuracy. The restored Earth
+PCK snapshot ends at 2026-06-12 for native SPICE workflows; the direct bridge
+uses native DE405 and the ICRF table rather than SPICE kernel readers. Supply explicit
 reference frames, units, and time scales when converting external launch
 states or OPM data; the direct adapter does not infer those metadata or parse
 OPM files.
@@ -151,6 +167,11 @@ and samples one forward Earth orbit; it does not pass maneuver schedules,
 estimation settings, or the extended mission wrappers to GMAT Py. The
 external TLE Tailor project may provide other backends with different input
 contracts.
+
+The restored native candidate has fresh both-profile qualification on Linux
+x86_64 with CPython 3.14.7. Earlier ARM64 and macOS results apply to an older
+source revision and do not qualify this candidate or the external TLE Tailor
+fitters. See :ref:`platform-support` for the current qualification scope.
 
 Parallel calls follow :ref:`GMAT's native concurrency rules <native-access>`:
 use spawned processes for independent work. Within one process, GMAT calls

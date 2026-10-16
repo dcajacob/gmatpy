@@ -96,8 +96,10 @@ profile; it is not a security boundary around the raw engine.
 Minimal disables SPICE source modules and wrapper classes and bundles nine
 selected scientific inputs instead of extended's seventeen. It retains the
 shared GMAT framework and broad core bindings, native DE405, Earth gravity,
-constant-flux drag support, time/orientation data, and the ICRF orientation
-table required by the :ref:`TLE Tailor bridge <tle-tailor>`. JGM2 is retained as
+constant-flux drag support, time/orientation data, and the restored NASA
+``ICRF_Table.txt`` required by the :ref:`TLE Tailor bridge <tle-tailor>`.
+The table retains NASA's original values and unequal sampling grid; the former
+ERFA-generated alternative is outside the packaged defaults. JGM2 is retained as
 an engine-initialization dependency even when the facade selects EGM96 or
 JGM3. Minimal still has native dependencies, including CSPICE-supplied f2c
 runtime objects used by MSISE. A smaller profile does not settle distribution
@@ -272,6 +274,45 @@ Using GMAT Py after ``fork`` is rejected. Keep a separately installed GMAT
 Python API in a separate process and virtual environment: it shares the
 ``gmatpy`` import name and must not coexist with this bundled engine in one
 process.
+
+.. _native-spice-cleanup:
+
+SPICE kernel cleanup is process-global
+--------------------------------------
+
+The extended native API exposes ``SpiceInterface``. Its CSPICE kernel pool is
+shared by the whole process, including other libraries that call CSPICE.
+``native_session`` serializes GMAT access and clears configured GMAT objects;
+it does not create a private kernel pool or isolate external pool owners.
+
+``UnloadKernel(path)`` retains NASA's individual-unload behavior. If CSPICE
+reports an unload error, GMAT prints a warning, resets CSPICE's error flag,
+removes the kernel from its own loaded-file cache, and can still return
+``True``. That return value therefore does not prove that a failed unload
+reconstructed a usable pool. The method does not clear the entire pool and
+replay unrelated kernels. ``IsLoaded`` checks GMAT's cache, not every kernel
+or value present in CSPICE. A partly failed meta-kernel load can leave child
+kernel state in CSPICE that the cache does not track.
+
+``UnloadAllKernels()`` is an explicit full reset using CSPICE ``kclear_c``.
+It can clear the pool even when previously loaded text-kernel files have
+vanished and cannot be reread. It also removes **externally furnished kernels
+and directly inserted pool values**, then clears GMAT's loaded-file cache.
+This operation has no private-ownership boundary. Coordinate a full reset and
+any required reloads with every user of the process-global pool, or run
+independent native work in separate spawned processes.
+
+The extended profile includes the restored March 2026 Earth high-precision
+PCK snapshot, whose coverage ends on 2026-06-12; its
+``earth_latest_high_prec.bpc`` alias does not mean it is a current download.
+Implemented nutation coefficients retain NASA's original summation order.
+These restored scientific inputs do not enlarge the facade's frame or
+mission coverage. See :doc:`conventions` for the individual data limits.
+
+The restored source candidate has fresh native qualification for Linux
+x86_64, CPython 3.14.7, in both profiles. Previous Linux ARM64 and macOS
+results concern the older source and do not qualify the restored candidate.
+Read :ref:`platform-support` for the current source and artifact boundaries.
 
 Deferred coverage
 -----------------

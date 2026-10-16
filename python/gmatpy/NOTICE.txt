@@ -6,8 +6,8 @@ the source archive also includes application/License.txt at its root.
 
 GMAT source: https://github.com/nasa/GMAT
 Source baseline: 9363e129be366520c6edb0b4079204ed60666007 (R2026a development tree).
-This independent GMAT Py adaptation changes packaging, engine initialization,
-bindings and selected numerical routines. Changed inherited source files carry
+GMAT Py is a separately maintained derivative with changes to packaging,
+engine initialization, bindings and selected numerical routines. Changed files carry
 modification notices. No endorsement by NASA, JPL or other providers is implied.
 
 Applicable retained source credits include Thinking Systems, Inc., Schafer Corp.,
@@ -34,6 +34,7 @@ host operating system. The legacy SVN data updater and Xerces are excluded.
 
 Gravity numerical-data credits and reuse assessments: licenses/GRAVITY-DATA.txt.
 Native DE405 scientific source and independent reconstruction:
-licenses/JPL-EPHEMERIS-NUMERIC.txt. ERFA-based coordinate regeneration preserves
-its BSD notice in licenses/ERFA.txt. Original model citations and separate data
+licenses/JPL-EPHEMERIS-NUMERIC.txt. NASA ICRF values/grid and the March 2026 Earth
+PCK snapshot are retained. ERFA-derived 1980 nutation coefficients and optional
+offline ERFA generation preserve its BSD notice in licenses/ERFA.txt. Original model citations and separate data
 reuse bases remain attached; no new Apache-only license is asserted for them.

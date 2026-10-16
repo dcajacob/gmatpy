@@ -1,8 +1,9 @@
-"""Compare DE405 propagation/frame results with the qualified Linux reference.
+"""Compare with fresh NASA-source engine/common-NASA-input samples.
 
-Reference: source tree 4e4c39e637a4da4f521be024359f84438462f5ab4b3dd16e11b725329b656167,
-Linux x86_64 CPython 3.14, extended profile. This is a regression comparison,
-not independent validation of the ephemeris. Position km, velocity km/s.
+NASA9363e129 science sources plus explicitly recorded Python/build/startup
+adapters, Linux x86_64 CPython3.14.7 extended. Exact source/input/native hashes
+and claim limits are embedded in reference-states.json. This is not an official
+unmodified NASA build or independent empirical truth. Position km, velocity km/s.
 """
 import json, math, sys
 from pathlib import Path

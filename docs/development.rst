@@ -100,6 +100,15 @@ reasons as well as the pass count. The full qualification driver additionally
 verifies every installed package byte against the wheel, including native
 libraries, so a source-path overlay cannot be mistaken for an installed test.
 
+The current Linux x86_64 CPython 3.14.7/glibc 2.28 qualification recorded
+124 passed / 22 skipped for minimal and 144 passed / 2 skipped for extended.
+The native wheels were built from
+``540c4c1c84bf422a96bc8667a8585beba8af2ad9``. Its child
+``ea39c085a95e5bf6151139bf69b977f74c80690b`` changes only two CI verifiers;
+the stricter verifiers passed against the exact installed libraries from those
+wheels. No rebuilt-child wheel or fresh macOS/ARM qualification is claimed.
+See :ref:`platform-support` for the distinction from historical platform runs.
+
 .. list-table:: What the tests establish
    :header-rows: 1
    :widths: 28 72
@@ -118,20 +127,43 @@ libraries, so a source-path overlay cannot be mistaken for an installed test.
      - Validation, time-scale offsets, frame round trips and rotating velocity,
        body-state origins, profile rejection, mission semantics, script errors,
        native object cleanup, threads, spawned processes and fork rejection.
-   * - Historical state regression
-     - ``sample_states.py`` and ``check_states.py`` compare specified states with
-       an earlier qualified source tree at explicit tolerances. They detect
-       changes relative to that reference.
-   * - Independent spline oracle
-     - ``verify_splines.py`` compiles a small harness against the built
-       ``GmatUtil`` library and compares 320 cases / 9,920 values with stored
-       SciPy-generated expectations at scaled tolerance ``1e-10``.
+   * - Controlled NASA-source fixture
+     - ``sample_states.py`` and ``check_states.py`` compare selected propagation
+       and frame states with ``reference-states.json``. It was sampled from
+       NASA revision ``9363e129be366520c6edb0b4079204ed60666007`` with declared
+       build/startup/binding adapters and exact common inputs. Position and
+       velocity limits remain ``2e-7`` km and ``2e-10`` km/s.
+   * - Saved independent spline oracle
+     - ``verify_splines.py`` compiles a harness against the installed
+       ``GmatUtil`` library and freshly compares 320 cases / 9,920 values with
+       previously saved SciPy expectations at scaled tolerance ``1e-10``.
+       SciPy expectations are not regenerated in this run or in CI.
+   * - Fresh analytic spline checks
+     - Separate CubicSpline exact-knot, linear and rational natural-spline
+       cases run against installed ``GmatUtil``. ``verify_msise.py`` compiles
+       a small caller against installed ``GmatBase`` and checks exact-line and
+       exact-cubic invariants. These checks require no runtime SciPy.
+
+Both profiles reported zero sampled position/velocity error against the
+source-controlled NASA-source fixture. The fixture embeds source, input,
+sampling-script and native-library receipts. It is a bounded regression subset;
+the old ERFA-based derivative reference remains separately preserved in
+``reference-states-erfa-historical.json``.
+
+The broader local controlled comparison recorded zero state, matrix and epoch
+differences in eight supported minimal cases and ten extended cases; minimal
+explicitly omitted two SPICE-only cases. Both profiles also passed the stricter
+verifiers' 17 fresh Cubic analytic cases / 54 values and 12 MSISE analytic cases /
+51 values. Their fresh comparison against the 320 saved SciPy cases had maximum
+scaled error ``4.694258908022594e-13``. These are executed-input results, not
+range-wide numerical bounds or newly generated SciPy references.
 
 These checks cover specific calculations, regressions and packaging contracts.
 They do not demonstrate complete GMAT functionality, independent numerical
-equivalence to an unmodified NASA distribution, or operational mission-analysis
-validation. Read the test source and its tolerances when assessing suitability
-for a new use case.
+equivalence to an unmodified NASA distribution, independent physical truth or
+operational mission-analysis validation. Read the test source and its tolerances
+when assessing suitability for a new use case. ``python/ci/CORE_BASELINE.md``
+records the retained native changes and scientific-default dispositions.
 
 Inspect distribution and binary contents
 ----------------------------------------
@@ -168,9 +200,11 @@ See the source ``python/gmatpy/LICENSES.md`` and component manifests for details
 Reproduce native qualification
 ------------------------------
 
-The manually dispatched ``.github/workflows/native-qualification.yml`` builds
-minimal and extended from one immutable source archive on each of the four
-targets in :ref:`platform-support`. It pins Linux container digests and native
+The manually dispatched ``.github/workflows/native-qualification.yml`` is
+configured to build minimal and extended from one immutable source archive on
+Linux x86_64/ARM64 and native macOS x86_64/ARM64. The configured matrix is broader
+than the current candidate's fresh Linux x86_64 results; it is not evidence that
+the new source passed on all four targets. It pins Linux container digests and
 macOS runner architecture. ``python/ci/requirements.txt`` pins the Python build,
 repair and test tools. The driver requires standard-ABI CPython 3.14 and records
 its exact patch version rather than assuming identical interpreters everywhere.

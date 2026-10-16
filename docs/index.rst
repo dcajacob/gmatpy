@@ -50,15 +50,21 @@ geometric DE405 body states, and a bounded set of extended mission operations.
 The bundled core SWIG interface is broader and experimental. Optional GMAT
 plugins and GUI workflows are outside the supported facade.
 
-Numerical tests combine analytical checks, selected independent expectations,
-same-engine comparisons, and cross-platform regressions. Their scope is
-described in :doc:`development`; passing them does not validate operational
-mission use. Scientific inputs are fixed snapshots, with documented coverage
-and freshness limits in :doc:`conventions`.
+Numerical tests combine analytical checks, saved independent expectations,
+same-engine comparisons, and a controlled NASA-source comparison with declared
+adapters. Zero differences in sampled cases do not establish universal NASA
+equivalence. Their scope is described in :doc:`development`; passing them does
+not validate operational mission use. Scientific inputs are fixed snapshots,
+with coverage and freshness limits in :doc:`conventions`.
 
-These pages describe the API at qualified source revision
-``50f61a05a1dd68ba2682d74a8631eba1b514630e``. See
-:ref:`platform-support` for the supplied CPython 3.14 qualification scope.
+These pages describe core candidate
+``ea39c085a95e5bf6151139bf69b977f74c80690b``. Its tested native wheels remain
+bound to ``540c4c1c84bf422a96bc8667a8585beba8af2ad9``; the child changes only
+verifiers, which were rerun against those exact libraries. Current native
+qualification covers Linux x86_64 with standard-ABI CPython 3.14.7. Earlier
+ARM64/macOS results do not qualify this changed candidate. See
+:ref:`platform-support` for the exact scope and :doc:`development` for evidence
+boundaries.
 
 .. toctree::
    :maxdepth: 2

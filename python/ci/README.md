@@ -25,9 +25,15 @@ building against the old baseline, never by changing tags on newer binaries.
 
 The numerical comparison includes DE405 propagation at 0, 60 (duplicate), 600s,
 Earth ICRF/fixed transforms, gravity degree 70, drag, JGM3, and point mass. Absolute
-limits are 2e-7 km position and 2e-10 km/s velocity. The reference is the earlier
-qualified source tree 4e4c39e637a4da4f521be024359f84438462f5ab4b3dd16e11b725329b656167,
-not an independent truth source. The full test suite separately exercises the
+limits remain 2e-7 km position and 2e-10 km/s velocity. `reference-states.json`
+was freshly sampled from NASA9363e129 scientific source with explicitly recorded
+binding/build/startup adapters and exact common NASA inputs. Its embedded receipt
+pins source, data, native libraries and sampling script. This is a NASA-source
+comparison fixture, not an unmodified official NASA build or independent empirical
+truth. The previous ERFA-based derivative reference is preserved byte-for-byte as
+`reference-states-erfa-historical.json` (SHA256
+`9e1436509a7f24c4246545a40d28f4ee0dd1a7edb8ca142c6c9f9e4e5cb5b303`).
+The full test suite separately exercises the
 numerical replacements and shutdown behavior. New run logs determine results;
 previous Windows/Linux runs are historical evidence only.
 
@@ -49,3 +55,13 @@ Every native profile also compiles a small harness against its installed GmatUti
 library and compares 320 spline cases / 9920 values with fixed independent SciPy
 expectations at scaled tolerance 1e-10. These are fresh comparisons; reference
 values are pre-recorded, with their generation script and hash retained.
+The verifier additionally checks analytic/exact CubicSpline boundary, scale,
+reuse and extrapolation cases. `verify_msise.py` compiles a tiny caller against
+the installed GmatBase and checks analytic MSISE spline boundaries; it introduces
+no runtime SciPy dependency. Neither check certifies every numerical input range.
+
+Native behavior/default dispositions and bounded provenance observations are in
+`CORE_BASELINE.md`. The common-data engine comparison also exercises native DE405,
+explicit SPICE, ICRF gap/endpoints, EarthFixed/ITRF93 and one-day propagation.
+Its detailed local source receipts and failed diagnostic runs are review evidence;
+the small embedded reference is the durable CI regression subset.

@@ -1,5 +1,5 @@
 GMAT Py: standalone Python access to GMAT
-========================================
+===========================================
 
 ``gmatpy`` bundles GMAT R2026a's native C++ engine, its existing SWIG bindings,
 and scientific inputs in a Python wheel. Install a matching wheel and import
@@ -13,21 +13,26 @@ Install a built wheel::
     python -m pip install /path/to/gmatpy-0.2.0-*.whl
 
 Platform support
-----------------
+------------------
 
-The qualified source revision ``50f61a05a1dd68ba2682d74a8631eba1b514630e`` was
-tested with standard-ABI CPython 3.14 for both profiles on Linux x86_64/ARM64
-and macOS Intel/Apple Silicon. Linux qualification uses manylinux_2_28
-(glibc 2.28+); macOS tests run on macOS 15. macOS 11.0 deployment tags do not
-establish execution on macOS 11 through 14. Older Windows results do not qualify
-this candidate. Python 3.10+ metadata is broader than the tested interpreter
-scope; other Python versions and free-threaded Python remain unqualified.
-Wheels are specific to their Python ABI and platform. Runtime needs only the
-standard library and bundled native binaries/data; native build requirements
-are separate. This qualification does not imply public binary availability.
+The current core candidate is ``ea39c085a95e5bf6151139bf69b977f74c80690b``.
+Both native wheel profiles were built from
+``540c4c1c84bf422a96bc8667a8585beba8af2ad9`` and freshly qualified on Linux
+x86_64, standard-ABI CPython 3.14.7 and glibc 2.28. The child changes only two
+verifiers, which passed against those same installed wheel libraries; it does
+not give the wheels a new source binding. Minimal passed 124 tests with 22
+expected skips; extended passed 144 with two expected skips.
+
+The earlier ``50f61a0`` CPython 3.14 Linux ARM64 and macOS Intel/Apple Silicon
+results do not qualify this changed candidate. Older Windows results are also
+historical. Python 3.10+ metadata is broader than the tested interpreter scope;
+other Python versions and free-threaded Python remain unqualified. Wheels are
+specific to their Python ABI and platform. Runtime needs only the standard
+library and bundled native binaries/data; native build requirements are
+separate. This qualification does not imply public binary availability.
 
 Documentation
--------------
+---------------
 
 The Sphinx documentation in ``docs/`` covers installation, profiles, quickstart,
 TLE Tailor integration, time/frames/units, all public Python exports, scripts,
@@ -39,7 +44,7 @@ repository root. This does not install or compile GMAT. Read the Docs
 configuration is included; hosted project setup is separate.
 
 Propagate an orbit
-------------------
+--------------------
 
 ::
 
@@ -68,7 +73,7 @@ Each call starts a new orbit. Empty times return an empty list.
 * Constant spacecraft mass, Cd, Cr and drag/SRP areas.
 
 State, time, frame and ephemeris utilities
------------------------------------------
+--------------------------------------------
 
 These functions call GMAT's native routines and return plain Python values::
 
@@ -95,6 +100,9 @@ precision applies, and literal leap-second timestamps (23:59:60) are unsupported
 ``transform_state`` handles EarthMJ2000Eq, EarthMJ2000Ec, EarthICRF and EarthFixed,
 including the rotating-frame velocity contribution. EarthFixed uses GMAT's
 FK5/IAU1980 convention; it is not advertised as ITRF or TEME.
+The native MJ2000Eq/ICRF link applies the same table-derived rotation to position
+and velocity and uses a zero rotation derivative; it does not differentiate
+the ICRF table with respect to time.
 
 ``body_state`` returns a geometric six-state in MJ2000Eq, in km and km/s,
 relative to a selected origin. Available bodies are Sun, Moon/Luna, Mercury,
@@ -102,7 +110,7 @@ Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune and Pluto. No light-time or
 aberration correction is applied. All helpers preserve the caller's directory.
 
 Advanced native bindings
-------------------------
+--------------------------
 
 The bundled core's existing SWIG API is available through a scoped session::
 
@@ -127,7 +135,7 @@ virtual environment when replacing that API. Startup configuration and logs are
 written to a private temporary directory, never site-packages.
 
 Scientific inputs and limits
-----------------------------
+------------------------------
 
 The wheel includes gravity coefficients, DE405, orientation, time and the
 exponential-atmosphere table from this checkout. They are snapshots and do not
@@ -140,8 +148,11 @@ inputs via ``CSSISpaceWeatherFile``/``SchattenFile``; absent selected inputs rai
 an exception, with no automatic download or substitute predictions.
 Native DE405 covers 1941-01-06 to 2201-02-20; the inherited Earth-orientation
 snapshot ends at 2026-09-14 and includes predicted rows. GMAT can extrapolate
-orientation outside the snapshot with reduced
-fidelity. The legacy SVN updater and Xerces are excluded. A new data updater is
+orientation outside the snapshot with reduced fidelity. The restored NASA
+``ICRF_Table.txt`` retains its irregular grid and internal gaps, with table
+coverage approximately 1960-01-01 through 2100-01-01. The restored March 2026
+Earth high-precision PCK ends on 2026-06-12; that SPICE-frame limit is separate
+from the default FK5/EOP path. The legacy SVN updater and Xerces are excluded. A new data updater is
 deferred. Numerical regressions are provided, but this is not validated as an
 operational mission-analysis tool or an STK HPOP replacement. The extended convenience API exposes impulsive maneuvers, multi-spacecraft
 propagation, bounded SMA targeting and mission scripts. Finite burns use scripts.
@@ -149,7 +160,7 @@ Estimation and STM helpers remain deferred.
 Other core facilities are accessible experimentally through ``native_session``.
 
 Licensing and distribution status
---------------------------------
+-----------------------------------
 
 GMAT and GMAT Py code use Apache-2.0; CSPICE and embedded f2c runtime components
 have their own notices. ``gmatpy/NOTICE.txt``, ``gmatpy/LICENSES.md`` and
@@ -170,13 +181,17 @@ fails on unresolved manifest review items, instead of presenting an unverified
 bundle as cleared. Upstream reference data remain in the Git checkout/history;
 the unreplaced historical ``msise90_sub.for`` source is also excluded from the
 source archive. Excluding these files from wheel/sdist does not clear publication
-of the entire repository. The explicit C/C++ spline adaptations have been
-replaced from mathematical equations, as has the entire Brent-Dekker solver.
-This targeted work is not an exhaustive audit of every inherited routine.
+of the entire repository. The retained CubicSpline/MSISE replacements are the
+project's equation-derived implementations, with scoped numerical repairs;
+their independent-origin descriptions remain project assertions. Brent uses
+NASA's proposal formulas with focused safeguards. The specific baseline and
+provenance decisions are recorded in ``python/ci/CORE_BASELINE.md``. They do not
+establish a blanket proprietary dependency, rights clearance, or an exhaustive
+audit of every inherited routine.
 Choose an independent project brand and use NASA/GMAT names to identify origin.
 
 Building and validation
------------------------
+-------------------------
 
 Source builds support Linux and experimental native Windows x64/macOS
 qualification paths. They require a C++17 compiler, CMake,
@@ -184,7 +199,9 @@ Ninja (or Make), CPython development headers and a PIC CSPICE archive.
 SWIG and scikit-build-core are Python build requirements. Obtain the official
 NAIF CSPICE toolkit and compile its C library with position-independent code,
 or point ``CSPICE_DIR`` at an existing ``include/SpiceUsr.h`` /
-``lib/cspice.a`` tree. The source archive does not bundle CSPICE or its downloader::
+``lib/cspice.a`` tree. The source archive does not bundle CSPICE binaries;
+``python/ci/build_cspice.py`` can rebuild the recorded target-native dependency
+from its pinned source archive::
 
     python -m pip install build 'scikit-build-core>=1.0' 'swig>=4.2,<5' auditwheel patchelf ninja
     CSPICE_DIR=/path/to/cspice bash python/tools/build_wheel.sh
@@ -200,7 +217,7 @@ need ``-Ccmake.define.CSPICE_DIR=/path/to/cspice``. Normal GMAT builds retain th
 legacy updater by default. Wheels omit duplicate unversioned linker aliases.
 
 Experimental Windows x64 qualification
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Windows build path is explicitly gated while platform qualification is
 recorded. It requires an existing x64 MSVC C++17 toolchain/SDK, CMake/Ninja,
@@ -226,7 +243,7 @@ CSPICE library/header hashes. The source and owner-dependent publication checks
 apply to Windows candidates too.
 
 Identifiable local candidates
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Use an isolated copy of the intended source inputs, retaining the original Git
 revision, a full working-tree file/hash manifest and the patch layered on that
@@ -266,7 +283,7 @@ GMAT comparison, coordinate round trips and rotating velocity, time offsets,
 ephemeris origins, native session lifetime/reentry, validation and concurrency.
 
 Build profiles and expanded mission workflows
----------------------------------------------
+-----------------------------------------------
 
 See ``python/PROFILES.rst`` for the minimal/extended wheel boundary, TLE Tailor
 contract, supported impulse/multi-spacecraft/targeting/script workflows and

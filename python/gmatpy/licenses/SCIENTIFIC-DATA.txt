@@ -39,8 +39,11 @@ Nutation: data/planetary_coeff/NUTATION.DAT
   by GMAT's coordinate transformations: 1980 (106 terms) and 1996 (263
   terms). The unused 1950 and unsupported 2000 sections are not included.
   All argument multipliers and numerical coefficients of both implemented
-  models are unchanged. Their deterministic order and headings are generated
-  independently by python/tools/generate_coordinate_data.py.
+  models are unchanged. The implemented records retain the exact NASA
+  baseline order, including ties, because native summation follows record
+  order. Only numeric formatting and independently written headings differ.
+  python/tools/generate_coordinate_data.py verifies the source coefficient
+  multisets and the hash-pinned NASA order before writing those records.
 
   The 1980 values match ERFA 2.0.1 nut80.c exactly. Preserve the BSD-3-Clause
   notice in ERFA.txt for this component. ERFA is derived with permission
@@ -59,23 +62,49 @@ Nutation: data/planetary_coeff/NUTATION.DAT
     https://iers-conventions.obspm.fr/conventions_archive.php
     https://iers-conventions.obspm.fr/archive/1996/1996IERSConventionsArchive.tar.gz
 
-ICRF: data/icrf/ICRF_ERFA_Table.txt
-  Independently regenerated numerical rotation-vector output using the
-  BSD-3-Clause ERFA 2.0.1 reference routines. Preserve ERFA.txt and identify
-  this table as a GMAT Py generated table, not an official ERFA/SOFA table.
-  It implements the documented transformation through a common terrestrial
-  frame between the IAU 1976/1980 FK5 and IAU 2006/2000A ICRF reductions.
-  The generator documents the A1/TAI/TT offsets, conventional common
-  Earth-rotation phase, radian vector units, signs, and historical
-  equation-of-equinoxes convention. No original NASA ICRF vector values
-  or external observed EOP values are inputs to this computation.
-    https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/c2i06a.c
-    https://raw.githubusercontent.com/liberfa/erfa/9915ba38c9365f8b0738269b8c2ac1fdd5f8dee3/src/pnm80.c
-    https://iers-conventions.obspm.fr/content/chapter5/icc5.pdf
-  The 51,136 daily rows retain the old date range and fill gaps in its
-  sampling grid. This changes small scientific/model/interpolation errors,
-  as quantified in the distribution validation report. It is not a claim
-  of bit-identical results to the legacy table or perfect physical accuracy.
+ICRF: data/icrf/ICRF_Table.txt
+  Exact numeric bytes and original unequal sampling grid restored from
+  NASA GMAT commit 9363e129be366520c6edb0b4079204ed60666007. The table has
+  49,063 numeric-only rotation-vector rows, A1MJD 6935.000000397937 through
+  58070.00000039794, with gaps up to 16 days. Its original historical
+  generator and provider-specific grant remain unidentified. Copying the
+  hash-pinned NASA file preserves its values; it does not regenerate or
+  independently validate the original physical model.
+    https://raw.githubusercontent.com/nasa/GMAT/9363e129be366520c6edb0b4079204ed60666007/application/data/icrf/ICRF_Table.txt
+
+  Reuse is recorded on a narrow U.S. scientific-numerical-data assessment,
+  distinguishing numeric facts/methods from authored expression. No authored
+  prose or table artwork is present in this file. This is not a verified
+  provider license, blanket Government/public-domain designation, or finding
+  about all compilation, contractual or non-U.S. rights. Preserve NASA/GMAT
+  attribution and the explicit unknown-generator limitation.
+    https://www.copyright.gov/help/faq/faq-protect.html
+    https://www.copyright.gov/title17/92chap1.html (Sections 102 and 103)
+
+  The previous ERFA-derived 51,136-row daily alternative changed both values
+  and grid. Its saved validation is historical evidence about that excluded
+  alternative, not the default table. The offline generator retains an
+  explicit --erfa-icrf-output option for research; it is neither installed
+  nor used implicitly. Preserve ERFA.txt for any ERFA-derived output and
+  identify it as GMAT Py output, not an official ERFA/SOFA release.
+
+Earth orientation PCK: data/planetary_coeff/earth_latest_high_prec.bpc
+  Exact NASA-baseline bytes restored, including embedded NAIF metadata.
+  This is the NAIF-created 2026-03-16 snapshot, identified in its comments
+  as earth_000101_260612_260316.bpc. It covers ET -43135.816087188054 through
+  834494469.184639 (2000-01-01 through 2026-06-12), with last input datum
+  2026-03-16; later coverage includes prediction. The runtime alias does not
+  mean it is the latest snapshot. No automatic refresh is performed.
+    https://raw.githubusercontent.com/nasa/GMAT/9363e129be366520c6edb0b4079204ed60666007/application/data/planetary_coeff/earth_latest_high_prec.bpc
+    https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/earth_000101_260612_260316.bpc
+    https://naif.jpl.nasa.gov/naif/rules.html
+  NASA Git-blob identity and embedded NAIF producer metadata are verified.
+  No fresh direct NAIF-download byte comparison was performed for this
+  restored snapshot. The documented reuse basis combines that lineage,
+  NAIF's unchanged-kernel rules and the numeric-data assessment above;
+  it is not labeled a newly verified provider license. Keep embedded
+  comments and NAIF-CSPICE.txt. September 2026 PCK validation saved earlier
+  describes the replaced snapshot, not this restored June coverage.
 
 Atmosphere: data/atmosphere/earth/EarthExponentialAtmosphereData.txt
   Regenerated from the 28 refHeight/refDensity/scaleHeight constants in

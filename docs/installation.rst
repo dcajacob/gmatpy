@@ -75,30 +75,45 @@ capability checks.
 Platform qualification
 ----------------------
 
-The current qualification applies to source revision
-``50f61a05a1dd68ba2682d74a8631eba1b514630e`` and both build profiles. It covers
-standard-ABI CPython 3.14 on these native targets:
+The current source candidate is
+``ea39c085a95e5bf6151139bf69b977f74c80690b``. Fresh native wheels for both
+profiles were built from its parent
+``540c4c1c84bf422a96bc8667a8585beba8af2ad9`` using standard-ABI CPython 3.14.7
+on Linux x86_64 with glibc 2.28. The child changes only two verification tools;
+those stricter tools were rerun against the exact installed wheel libraries.
+The wheels retain their parent source identity and are not presented as rebuilt
+from the child.
 
 .. list-table::
    :header-rows: 1
-   :widths: 22 28 50
+   :widths: 22 24 54
 
    * - Operating system
      - Architecture
      - Qualification scope
    * - Linux
-     - x86_64 and ARM64/aarch64
-     - Separate native builds in pinned ``manylinux_2_28`` images; the wheel
-       baseline is glibc 2.28 or later.
+     - x86_64
+     - Fresh minimal and extended qualification in a pinned
+       ``manylinux_2_28`` image. The wheel baseline is glibc 2.28 or later.
+   * - Linux
+     - ARM64/aarch64
+     - Build configuration exists; the current source has not received fresh
+       native qualification on this target.
    * - macOS
      - Intel x86_64 and Apple Silicon arm64
-     - Separate native tests on macOS 15. Wheels target macOS 11.0, but execution
-       on macOS 11 through 14 has not been established by those runs.
+     - Native build configurations exist; the current source has not received
+       fresh qualification on either architecture.
+
+The earlier revision ``50f61a05a1dd68ba2682d74a8631eba1b514630e`` passed a
+four-target CPython 3.14 qualification across Linux x86_64/ARM64 and macOS
+Intel/ARM64. Those historical results do not qualify the changed source and
+scientific defaults. Its macOS runs used macOS 15 with an 11.0 deployment tag;
+execution on macOS 11 through 14 was not established.
 
 The package metadata permits Python 3.10 and later. That metadata is broader than
 the current build-and-test qualification: other Python versions, free-threaded
 Python and Windows are not qualified by the current candidate results. Earlier
-Windows results are historical and do not qualify this revision. A CMake-gated
+Windows results also remain historical. A CMake-gated
 Windows x64 development path exists; Windows ARM64 is outside that path.
 
 Linux ARM64 builds rebuild CSPICE C sources natively using the project's LP64
@@ -126,11 +141,16 @@ cannot be reused.
 
 Start from the intended source revision in a fresh checkout:
 
+The candidate revision below may still exist only in an owner-provided local
+review checkout until source publication is approved. If the public remote
+does not contain it, use that checkout or its identified source archive;
+these instructions do not make a pending revision publicly available.
+
 .. code-block:: console
 
    git clone https://github.com/dcajacob/gmatpy.git
    cd gmatpy
-   git checkout 50f61a05a1dd68ba2682d74a8631eba1b514630e
+   git checkout ea39c085a95e5bf6151139bf69b977f74c80690b
    python3.14 -m venv .venv
    . .venv/bin/activate
    python -m pip install -r python/ci/requirements.txt
@@ -139,7 +159,7 @@ Install the native compiler, CMake and build tool through your operating system'
 development environment. Obtain the `NAIF CSPICE toolkit
 <https://naif.jpl.nasa.gov/naif/toolkit.html>`_ and rebuild it for your target with
 PIC enabled, or provide an already verified matching dependency tree. For the
-four current qualification targets, ``python/ci/build_cspice.py`` rebuilds the
+four configured qualification targets, ``python/ci/build_cspice.py`` rebuilds the
 pinned official C sources, records hashes and runs ABI probes. It downloads the
 archive unless ``--archive`` supplies the pinned file. For example, on native
 Linux x86_64, with a new output directory:
@@ -179,7 +199,8 @@ macOS
 
 The Linux helper is not the macOS build path. Use the native build frontend with
 the experimental CMake gate and one explicit architecture. This example builds
-minimal for Apple Silicon:
+minimal for Apple Silicon; it is a development path awaiting fresh qualification
+for the current source:
 
 .. code-block:: console
 

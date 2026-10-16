@@ -1,7 +1,7 @@
 //$Id$
-// GMAT Py modification, 2026-10-01: independently replaced the implementation
-// using Brent's published mathematics, under Apache-2.0, and documented the
-// preserved public API. Original attribution and class layout are retained.
+// GMAT Py modification, 2026-10-16: NASA algorithm retained with bounded
+// lifecycle, validation, exact-root and reverse-communication repairs.
+// Original attribution, public signatures and class layout are retained.
 //------------------------------------------------------------------------------
 //                            BrentDekkerZero
 //------------------------------------------------------------------------------
@@ -31,9 +31,8 @@
  * Defines a Brent-Dekker zero finder using bisection, linear interpolation,
  * and inverse quadratic interpolation to update a bracketed root estimate.
  *
- * Mathematical reference: R. P. Brent, Computer Journal 14 (1971), 422-425,
- * sections 1-7; Algorithms for Minimization without Derivatives (1973),
- * chapter 4. The replacement implements mathematics without copying solver code.
+ * NASA's interpolation/bisection formulas are retained. The inherited
+ * cubic-spline bibliography described a different algorithm.
  */
 //------------------------------------------------------------------------------
 
@@ -65,10 +64,11 @@ public:
    Real TestDriver(Real aVal, Real bVal, Real tVal);
    
 protected:
-   // Existing field names/layout retained. a/b bracket the zero with b best;
-   // c/fc hold the preceding evaluated best point, d its predecessor; p marks
-   // a preceding bisection, s the proposed point, e its displacement. q/r are
-   // legacy workspace, m is half the bracket, and tol is effective tolerance.
+   // NASA workspace/layout retained: a/fa are the preceding evaluated point,
+   // b/fb the best evaluated endpoint, c/fc its opposite bracket endpoint;
+   // d/e are step history, p/q/r/s interpolation workspace, m half the bracket,
+   // and tol the effective tolerance. A returned proposal is not stored as b
+   // until its evaluation is consumed by FindStep.
    Real a;
    Real b;
    Real macheps;
