@@ -19,8 +19,10 @@ Propagation, state/time/frame conversion, native DE405 ephemeris helpers and
 scoped ``native_session`` are always available. Sun/Moon ephemerides, the ICRF
 orientation table, EOP/nutation/time inputs and gravity data retain their exact
 scientific values and coverage limits. The source/data inventory and component
-notices remain attached. CSPICE and embedded f2c have their separate terms;
-the owner-dependent product export-determination item remains unresolved.
+notices remain attached. CSPICE and embedded f2c have their separate terms.
+The owner adopted the scoped product determination on 2026-10-16, recorded in
+``gmatpy/licenses/EXPORT_DETERMINATION.json``. Package publication requires
+separate approval.
 
 The package includes these supported value-based mission operations:
 
@@ -51,7 +53,7 @@ models, STM/covariance, general multi-goal targeting, maneuvers with mass deplet
 additional gravity bodies/models and full C++ binding parity remain future work.
 
 TLE Tailor contract checked from its adapter/tests
--------------------------------------------------
+--------------------------------------------------
 
 ``tle_tailor/propagation/gmatpy.py`` forwards Cartesian km/km/s state,
 timezone-aware epoch, nonnegative nondecreasing elapsed SI seconds (including

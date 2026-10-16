@@ -50,15 +50,17 @@ Do not install a second distribution that also owns the ``gmatpy`` import tree.
 Platform qualification
 ----------------------
 
-The single-package cleanup is based on
-``bff0ed4687964cd1f36a3ebaeb278b451bac271d``. The native matrix for that exact
-revision passed all eight historical profile/target cells on the first
-attempt: minimal and extended on Linux x86_64, Linux ARM64 and macOS
-Apple Silicon/Intel. Those records retain their exact source revision and
-profile identities. Reusing an extended binary to check this packaging cleanup
-does not make it a native build from the changed source.
+Qualification on 2026-10-16 for source
+``b52941e9830940c3086839431fd1fb64812076ff`` built the single full headless wheel
+for each target below, with 194 tests passed and no skips per target. Linux
+x86_64 was qualified locally; the other three targets passed
+`native run 38970516533 <https://github.com/dcajacob/gmatpy/actions/runs/38970516533>`_.
+These results identify that exact revision; successor artifacts require their
+own source/build receipts and validation. The eight profile/target cells for
+the earlier ``bff0ed4687964cd1f36a3ebaeb278b451bac271d`` revision remain
+historical evidence with their original source and profile identities.
 
-.. list-table:: Native evidence for the base revision
+.. list-table:: Qualified CPython 3.14 wheels for b52941e
    :header-rows: 1
    :widths: 22 24 54
 
@@ -67,28 +69,27 @@ does not make it a native build from the changed source.
      - Qualification scope
    * - Linux
      - x86_64
-     - Both historical profiles passed with standard-ABI CPython 3.14 in a pinned
-       ``manylinux_2_28`` image. The wheel baseline is glibc 2.28 or later.
+     - Standard-ABI CPython 3.14.7 on glibc 2.28. Dual manylinux 2.24/2.28 tags
+       were audited; glibc 2.24 through 2.27 execution was not tested.
    * - Linux
      - ARM64/aarch64
-     - Both historical profiles passed with standard-ABI CPython 3.14 in the
-       native pinned ``manylinux_2_28`` environment.
+     - Standard-ABI CPython 3.14.8 on glibc 2.28. Dual manylinux 2.24/2.28 tags
+       were audited; glibc 2.24 through 2.27 execution was not tested.
    * - macOS
      - Apple Silicon arm64
-     - Both historical profiles passed with standard-ABI CPython 3.14 on the
-       native macOS runner. Its deployment tag does not establish execution on
-       every older macOS version.
+     - Standard-ABI CPython 3.14.7 on macOS 15.7.9. The 11.0 deployment tag
+       does not establish runtime execution on macOS 11 through 14.
    * - macOS
      - Intel x86_64
-     - Both historical profiles passed with standard-ABI CPython 3.14 on
-       macOS 15; the 11.0 deployment tag is not older-host execution evidence.
+     - Standard-ABI CPython 3.14.7 on macOS 15.7.9. The 11.0 deployment tag
+       does not establish runtime execution on macOS 11 through 14.
 
-The package metadata permits Python 3.10 and later. That metadata is broader than
-the current build-and-test evidence: other Python versions, free-threaded Python
-and Windows are not qualified by this matrix. Earlier Windows results remain
-historical. A CMake-gated Windows x64 development path exists; Windows ARM64 is
-outside that path. Earlier results for other source revisions do not qualify a
-changed source tree or scientific defaults.
+The package metadata permits source-build attempts on Python 3.10 and later.
+The qualified wheels use the standard CPython 3.14 ABI; other Python versions,
+interpreters, free-threaded Python and Windows remain unqualified. Earlier
+Windows results remain historical. A CMake-gated Windows x64 development path
+exists; Windows ARM64 is outside that path. Earlier results for other source
+revisions do not qualify a changed source tree or scientific defaults.
 
 Linux ARM64 builds rebuild CSPICE C sources natively using the project's LP64
 port configuration. This is not an official NAIF ARM64 toolkit distribution.

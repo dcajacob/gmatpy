@@ -20,18 +20,20 @@ curated scientific inputs. There is no profile selection or feature extra.
 The historical ``extended`` value returned by ``capabilities().profile`` is an
 internal compatibility label. No GUI is included or planned for GMAT Py.
 
-The most recent native qualification is for source
-``bff0ed4687964cd1f36a3ebaeb278b451bac271d``, before this packaging cleanup.
-Its full headless wheels passed 144 tests with two expected skips on Linux
-x86_64 and ARM64 and macOS Intel/ARM64 on the first attempt, using standard-ABI
-CPython 3.14.7 (Linux ARM64: 3.14.8). The cleanup retains the full
-native configuration and scientific inputs; tests reusing earlier extended
-binaries do not make them newly built artifacts of this source revision.
-Final release files require their own source/build receipts and validation.
+Qualification on 2026-10-16 for source
+``b52941e9830940c3086839431fd1fb64812076ff`` built full headless wheels that each
+passed 194 tests without skips on Linux x86_64 and ARM64 and macOS Intel/ARM64.
+Linux x86_64 was qualified locally; the other three targets passed
+`native run 38970516533 <https://github.com/dcajacob/gmatpy/actions/runs/38970516533>`_.
+The builds used standard-ABI CPython 3.14.7 (Linux ARM64: 3.14.8), glibc 2.28
+on Linux and macOS 15.7.9. Deployment tags do not establish execution on every
+older host. These results identify that exact source revision; successor
+release files require their own source/build receipts and validation.
 
 The earlier minimal/extended wheel variants and Windows results are historical.
-Python 3.10+ metadata is broader than the qualified interpreter scope; other
-Python versions and free-threaded Python remain unqualified. Wheels are specific
+Windows is unqualified for this candidate. Python 3.10+ metadata permits source
+build attempts beyond the qualified CPython 3.14 scope; other Python versions,
+interpreters and free-threaded Python remain unqualified. Wheels are specific
 to their Python ABI and platform. Runtime needs only the standard library and
 bundled native binaries/data; source-build requirements are separate.
 This qualification does not imply public binary availability.
@@ -172,9 +174,10 @@ manifests record source URLs, content hashes, applicable terms, numerical-data
 reuse assessments and scientific changes. They are an engineering inventory,
 not a worldwide legal guarantee. The optional archive-wide SPDX expression is
 omitted for this mixed distribution; component licenses remain attached.
-The responsible owner must record the product-specific export determination
-required by NAIF for a CSPICE-derived product. No designation is assigned by
-this package. Check an artifact::
+The owner adopted the scoped product-specific determination on 2026-10-16,
+recorded in ``gmatpy/licenses/EXPORT_DETERMINATION.json``. Its applicability
+remains limited to the recorded scope; package publication requires separate
+approval. Check an artifact::
 
     python python/tools/check_distribution.py dist/gmatpy-0.2.0.tar.gz
     python python/tools/check_distribution.py /path/to/gmatpy-0.2.0-*.whl --release
@@ -196,8 +199,9 @@ Choose an independent project brand and use NASA/GMAT names to identify origin.
 Building and validation
 -------------------------
 
-Source builds support Linux and experimental native Windows x64/macOS
-qualification paths. They require a C++17 compiler, CMake,
+Source builds provide Linux and gated native macOS/Windows x64 qualification
+paths. Windows source builds remain experimental and unqualified for this
+candidate. They require a C++17 compiler, CMake,
 Ninja (or Make), CPython development headers and a PIC CSPICE archive.
 SWIG and scikit-build-core are Python build requirements. Obtain the official
 NAIF CSPICE toolkit and compile its C library with position-independent code,
@@ -269,7 +273,8 @@ also relies on the recorded isolated build. It is not a bit-for-bit reproducible
 native-build or dependency source-provenance claim. Set ``SOURCE_DATE_EPOCH`` for
 repeatable archive timestamps. The wheel helper uses fresh raw, native-build and
 repair directories per invocation, so old wheels in ``dist/`` cannot be selected.
-The owner-dependent ``--release`` hold remains separate from candidate identity.
+The ``--release`` artifact and recorded-scope checks remain separate from
+candidate identity and authorization to publish.
 
 Install the repaired wheel in a fresh environment and run::
 

@@ -318,7 +318,7 @@
       "data_files": 17,
       "scope": "The single standard complete headless library: shared GMAT core, native bindings, SPICE kernels and supported mission workflows. No GUI or optional plugin families. The historical extended token is retained only in the internal build/capability record."
     },
-    "release_review": "The existing owner-dependent CSPICE product determination remains unresolved for the standard package."
+    "release_review": "The owner adopted the scoped CSPICE product determination on 2026-10-16, recorded in EXPORT_DETERMINATION.json and marked resolved in publication_review. Its applicability remains limited to the recorded scope; package publication requires separate approval."
   },
   "distribution_policy": "One standard complete headless gmatpy wheel per supported Python ABI/platform; no minimal variant, profile build tags, GUI or published feature extras."
 }

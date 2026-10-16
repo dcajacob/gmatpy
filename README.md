@@ -29,8 +29,11 @@ work from the prior development line is excluded.
 
 Public source sharing for this dedicated repository is owner approved. Native
 qualification is tracked by the manual GitHub Actions workflow. A successful test
-run is not a product release clearance. The CSPICE-derived product determination
-in `python/gmatpy/licenses/CODE_MANIFEST.json` remains owner dependent.
+run is not a product release clearance. The owner adopted the scoped CSPICE-derived
+product determination on 2026-10-16, recorded in
+`python/gmatpy/licenses/EXPORT_DETERMINATION.json` and marked resolved in
+`CODE_MANIFEST.json`. Its applicability remains limited to the recorded scope;
+package publication requires separate approval.
 
 GMAT code uses Apache-2.0; third-party code and data have separate component terms.
 Read [LICENSES.md](python/gmatpy/LICENSES.md),
