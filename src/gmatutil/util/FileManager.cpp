@@ -1,5 +1,5 @@
-// GMAT Py modification (2026-10-16): preserve initialized startup paths after
-// caller cwd restoration and release owned file entries when replacing/reloading.
+// GMAT Py modification (2026-10-16): release owned file entries when
+// replacing/reloading; retain this temporary downstream ownership cleanup.
 //$Id$
 //------------------------------------------------------------------------------
 //                            FileManager
@@ -1018,6 +1018,7 @@ std::string FileManager::GetFullStartupFilePath()
       return mStartupFileName;
    else
    {
+      mStartupFileDir = GmatFileUtil::GetCurrentWorkingDirectory() + mPathSeparator;
       return mStartupFileDir + mStartupFileName;
    }
 }

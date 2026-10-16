@@ -44,9 +44,6 @@
 #include "UtilityException.hpp"
 #include "FileManager.hpp"
 #include "FileUtil.hpp"
-#include <cerrno>
-#include <cstdio>
-#include <vector>
 
 //#define DEBUG_SPK_LOADING
 //#define DEBUG_SPK_ISLOADED
@@ -780,56 +777,17 @@ void SpiceInterface::InitializeInterface()
    {
       loadedKernels.clear();
       kclear_c();  // clear all kernels from the pool
-      // Set RETURN before configuring diagnostics: an unavailable diagnostic
-      // destination must not abort the process or hide a kernel exception.
-      char report[] = "LONG", action[] = "RETURN", screen[] = "SCREEN";
-      erract_c("SET", 0, action);
-      errprt_c("SET", 0, report);
-      errdev_c("SET", 0, screen);
-
+      // Get path for output
       FileManager *fm = FileManager::Instance();
-      const std::string prefix = fm->GetAbsPathname(FileManager::OUTPUT_PATH) +
-            "GMATSpiceKernelError";
-      std::string outPath;
-      // CSPICE's WRLINE opens a new file. Reusing a previous run's file
-      // produces FILEOPENFAILED for every diagnostic line. Preserve that file
-      // and select an unused sibling, including directories/symlinks as used.
-      for (Integer suffix = 0; suffix < 1000; ++suffix)
-      {
-         const std::string candidate = prefix +
-               (suffix == 0 ? "" : "." + std::to_string(suffix)) + ".txt";
-         // errdev's filename limit is 255, independent of its devlen argument.
-         if (candidate.length() > 255)
-            break;
-         errno = 0;
-         FILE *probe = std::fopen(candidate.c_str(), "wx");
-         if (!probe)
-         {
-            if (errno == EEXIST)
-               continue;
-            break;
-         }
-         const int closed = std::fclose(probe);
-         // Remove only our exclusive, empty probe; WRLINE needs a new path.
-         const int removed = std::remove(candidate.c_str());
-         if (closed == 0 && removed == 0)
-            outPath = candidate;
-         break;
-      }
-      if (outPath.empty())
-      {
-         MessageInterface::ShowMessage("Warning: Cannot create the SPICE diagnostic file in \"%s\". "
-               "Raw SPICE diagnostics will use the console; kernel errors still appear in GMAT.\n",
-               fm->GetAbsPathname(FileManager::OUTPUT_PATH).c_str());
-         return;
-      }
-      if (outPath != prefix + ".txt")
-         MessageInterface::ShowMessage("Previous SPICE diagnostics retained. New diagnostics: %s\n",
-               outPath.c_str());
-      // The API takes a mutable device string even for SET.
-      std::vector<char> device(outPath.begin(), outPath.end());
-      device.push_back('\0');
-      errdev_c("SET", 0, device.data());
+      std::string outPath = fm->GetAbsPathname(FileManager::OUTPUT_PATH) + "GMATSpiceKernelError.txt";
+      // need to get rid of const-ness to convert to SpiceChar*
+      char *pathChar;
+      pathChar = new char[outPath.length() + 1];
+      strcpy(pathChar, outPath.c_str());
+
+      // set output file for cspice methods
+      SpiceChar      *spiceErrorFileFullPath = pathChar;
+      errdev_c("SET", 1840, spiceErrorFileFullPath);
       if (failed_c())
       {
          #ifdef DEBUG_SPK_INIT
@@ -845,10 +803,17 @@ void SpiceInterface::InitializeInterface()
          errmsg += outPath + "\".  Message received from CSPICE is: ";
          errmsg += errStr + "\n";
          reset_c();
-         errdev_c("SET", 0, screen);
-         MessageInterface::ShowMessage("Warning: %sRaw SPICE diagnostics will use the console.\n",
-               errmsg.c_str());
+         throw UtilityException(errmsg);
       }
+
+
+      // set actions for cspice error writing
+      char  report[5] = "LONG"; // "ALL";
+      char  action[7] = "RETURN";
+      errprt_c("SET", 1840, report);
+      erract_c("SET", 1840, action);
+
+      delete [] pathChar;
    }
 }
 

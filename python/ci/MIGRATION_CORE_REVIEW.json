@@ -385,7 +385,7 @@
     {
       "path": "src/base/forcemodel/DragForce.cpp",
       "decision": "retain focused source",
-      "reason": "Only require caller weather files selected by the model; constant-flux operation."
+      "reason": "Temporary downstream patch 06: validate only selected weather inputs and defer atmosphere filename assignment until initialization; required by the current constant-flux workflow with optional datasets absent."
     },
     {
       "path": "src/base/function/GetEphemStates.cpp",
@@ -399,13 +399,13 @@
     },
     {
       "path": "src/base/parameter/EquinoctialParameters.cpp",
-      "decision": "retain focused source",
-      "reason": "Native SMADot factory/type registration consistency."
+      "decision": "remove optional correction",
+      "reason": "Remove patch 03's SMADot type-name correction; restore NASA's reported EquinoctialSMADot type while the correction remains separate for upstream review."
     },
     {
       "path": "src/base/parameter/OrbitData.cpp",
-      "decision": "retain focused source",
-      "reason": "Keplerian true-longitude rate when perturbing acceleration vanishes."
+      "decision": "remove optional correction",
+      "reason": "Remove patch 04's unperturbed true-longitude-rate initialization; restore NASA's zero rate in the exact zero-perturbation case while the correction remains separate for upstream review."
     },
     {
       "path": "src/base/plugin/DynamicLibrary.cpp",
@@ -445,7 +445,7 @@
     {
       "path": "src/base/spice/SpiceInterface.cpp",
       "decision": "retain focused source",
-      "reason": "Recover kernel pool/cache after unload failure; return errors instead of process abort on diagnostic path failures."
+      "reason": "Retain whole-pool kernel unload and cache recovery. Remove optional diagnostics-only patch 07 and restore NASA's diagnostic initialization and destination handling; the unload recovery change is outside that patch."
     },
     {
       "path": "src/base/subscriber/AttitudeWriterCK.cpp",
@@ -470,7 +470,7 @@
     {
       "path": "src/base/subscriber/EphemerisFile.cpp",
       "decision": "retain focused source",
-      "reason": "Native output paths must not delete directories or accept unresolved locations."
+      "reason": "Temporary downstream patch 05: preserve directory-before-delete and unresolved-output-path guards while the general correction remains separate for upstream review."
     },
     {
       "path": "src/base/subscriber/GroundTrack.cpp",
@@ -505,7 +505,7 @@
     {
       "path": "src/gmatutil/util/FileManager.cpp",
       "decision": "retain focused source",
-      "reason": "Stable startup path after caller cwd restoration and ownership/leak fixes; omit Qt snapshot/help-writing APIs."
+      "reason": "Retain temporary downstream FileInfo ownership cleanup patch 01. Remove startup-identity patch 02: NASA's GetFullStartupFilePath again uses the caller cwd and updates the stored startup directory. Qt snapshot/help-writing APIs remain excluded."
     },
     {
       "path": "src/gmatutil/util/FileManager.hpp",
@@ -563,5 +563,5 @@
     "application/data/atmosphere/earth/marini.dat",
     "application/data/icrf/ICRF_Table.txt"
   ],
-  "note": "Shared core reviewed individually; numerical replacement bytes retained from qualified reference. No Qt UI/debugger/viewer implementation carried."
+  "note": "Shared-core follow-up on 2026-10-16 removes optional patches 02, 03, 04 and 07, and retains 01, 05 and 06 as temporary downstream patches pending upstream review. Separately retained SPICE unload recovery, numerical replacements, scientific data, headless/profile and packaging changes are outside this action. Prior qualification remains historical; regenerate source identity and qualify the resulting revision. No Qt UI/debugger/viewer implementation is carried."
 }

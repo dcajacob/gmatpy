@@ -6,11 +6,15 @@ import pytest
 import gmatpy as g
 
 
-@pytest.mark.parametrize('kind',['SMADot','TLONGDot'])
-def test_native_rate_parameter_factory_reports_requested_type(kind):
+@pytest.mark.parametrize(('kind', 'expected_type'), [
+    ('SMADot', 'EquinoctialSMADot'),
+    ('TLONGDot', 'TLONGDot'),
+])
+def test_native_rate_parameter_factory_preserves_nasa_type_identity(kind, expected_type):
+    # NASA's public SMADot factory identifier differs from its native type name.
     with g.native_session() as api:
         parameter=api.Construct(kind,'Migration'+kind)
-        assert parameter.GetTypeName()==kind
+        assert parameter.GetTypeName()==expected_type
 
 
 def test_ephemeris_output_cannot_replace_a_directory(tmp_path):
