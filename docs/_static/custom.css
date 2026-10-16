@@ -1,0 +1,6 @@
+/* Keep wide signatures and capability tables usable on narrow screens. */
+.content { width: 54em; }
+.sidebar-brand-text { font-weight: 650; letter-spacing: 0.02em; }
+table.docutils { font-size: 0.93em; }
+section > h1 { letter-spacing: -0.025em; }
+pre { line-height: 1.5; }

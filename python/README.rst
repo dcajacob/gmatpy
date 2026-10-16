@@ -15,14 +15,28 @@ Install a built wheel::
 Platform support
 ----------------
 
-The verified wheel is CPython 3.14 on Linux x86_64 (manylinux_2_24, glibc 2.24+).
-Source metadata supports Python 3.10+, but other interpreter versions have not
-been built or tested yet. Wheels are specific to their Python ABI and platform.
-Windows, macOS, ARM64 and free-threaded Python wheels are not supplied or claimed
-as supported yet. OS compatibility is handled by building and testing matching
-wheels, rather than requiring each user to build GMAT. Python build requirements
-are separate from the installed wheel's runtime, which needs only the standard
-library and the bundled native binaries and data.
+The qualified source revision ``50f61a05a1dd68ba2682d74a8631eba1b514630e`` was
+tested with standard-ABI CPython 3.14 for both profiles on Linux x86_64/ARM64
+and macOS Intel/Apple Silicon. Linux qualification uses manylinux_2_28
+(glibc 2.28+); macOS tests run on macOS 15. macOS 11.0 deployment tags do not
+establish execution on macOS 11 through 14. Older Windows results do not qualify
+this candidate. Python 3.10+ metadata is broader than the tested interpreter
+scope; other Python versions and free-threaded Python remain unqualified.
+Wheels are specific to their Python ABI and platform. Runtime needs only the
+standard library and bundled native binaries/data; native build requirements
+are separate. This qualification does not imply public binary availability.
+
+Documentation
+-------------
+
+The Sphinx documentation in ``docs/`` covers installation, profiles, quickstart,
+TLE Tailor integration, time/frames/units, all public Python exports, scripts,
+native access, examples and development. See the `documentation sources
+<https://github.com/dcajacob/gmatpy/tree/main/docs>`_. To render them locally,
+install ``docs/requirements.txt`` and run
+``python -m sphinx -W --keep-going -n -b html docs docs/_build/html`` from the
+repository root. This does not install or compile GMAT. Read the Docs
+configuration is included; hosted project setup is separate.
 
 Propagate an orbit
 ------------------
