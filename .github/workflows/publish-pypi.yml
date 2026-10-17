@@ -1,20 +1,31 @@
-name: Promote exact GMAT Py 0.2.0 files to PyPI
+name: Publish exact reviewed GMAT Py release files
 on:
   workflow_dispatch:
     inputs:
+      release_version:
+        description: Separate explicitly approved immutable release allowlist
+        type: choice
+        required: true
+        default: '0.2.1'
+        options: ['0.2.1', '0.2.0']
+      qualification_run_id:
+        description: Successful exact-file 0.2.1 qualification run on this control commit
+        type: string
+        required: false
+        default: ''
       confirm_production_upload:
-        description: Separate production authorization for all five fixed trial files received
+        description: Combined production authorization for this exact version and file allowlist received
         type: boolean
         required: true
         default: false
 permissions: {}
 concurrency:
-  group: gmatpy-pypi-0.2.0
+  group: gmatpy-release-0.2.1
   cancel-in-progress: false
 jobs:
   publish:
     if: >-
-      inputs.confirm_production_upload && github.event_name == 'workflow_dispatch' &&
+      inputs.release_version == '0.2.0' && inputs.confirm_production_upload && github.event_name == 'workflow_dispatch' &&
       github.repository == 'dcajacob/gmatpy' && github.ref == 'refs/heads/main' &&
       toJSON(github.event.repository.private) == 'false' && github.run_attempt == '1'
     runs-on: ubuntu-24.04
@@ -51,3 +62,50 @@ jobs:
           print-hash: 'true'
 # Local proposal only. No build, cache, Actions artifact, draft release,
 # repository write permission or long-lived credential is required.
+
+  publish021:
+    if: >-
+      inputs.release_version == '0.2.1' && inputs.confirm_production_upload &&
+      github.event_name == 'workflow_dispatch' && github.repository == 'dcajacob/gmatpy' &&
+      github.ref == 'refs/heads/main' && toJSON(github.event.repository.private) == 'false' &&
+      github.run_attempt == '1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: pypi
+      url: https://pypi.org/p/gmatpy
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: |
+            .github
+            python/ci
+            python/tools
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14.8'
+      - name: Require sixteen exact final-wheel results and immutable files
+        id: ready
+        env:
+          GH_TOKEN: ${{ github.token }}
+          QUALIFICATION_RUN_ID: ${{ inputs.qualification_run_id }}
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python .github/scripts/release_021.py prepare --run-id "$QUALIFICATION_RUN_ID" --temporary "$RUNNER_TEMP/release-verified" --output "$RUNNER_TEMP/publish-dist"
+      - name: Publish only missing exact allowlisted 0.2.1 files
+        if: steps.ready.outputs.has_files == 'true'
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
+        with:
+          repository-url: https://upload.pypi.org/legacy/
+          packages-dir: ${{ runner.temp }}/publish-dist/
+          verify-metadata: 'true'
+          skip-existing: 'false'
+          attestations: 'false'
+          print-hash: 'true'
+# Explicit combined activation approval is still required. Native bytes retain
+# f8 compilation origin; this workflow cannot build, repair or repackage files.
