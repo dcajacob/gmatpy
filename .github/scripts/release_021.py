@@ -21,7 +21,7 @@ from release_bundle import CAP, TARGETS, MINORS, check_manifest, verify_bundle
 
 REPOSITORY = 'dcajacob/gmatpy'
 CONFIG = Path('.github/release/pypi-0.2.1.json')
-CONFIG_SHA256 = '4f7b30d788623f4b9395b7554023faccf642742078b83112d265cfc4fdd0223d'
+CONFIG_SHA256 = '738697d00a2b1daa5ddba13ae7b30c1f26a6ddad8bbcf37ea5491b840319a8d6'
 QUALIFICATION_WORKFLOW = '.github/workflows/qualify-release-0.2.1.yml'
 
 

@@ -1,8 +1,9 @@
 {
-  "activation_authorized": false,
+  "activation_authorization_record": "Separate explicit combined approval must be retained before dispatch; none received at local preparation time.",
+  "activation_authorized_at_preparation": false,
   "files": [
     {
-      "bytes": 78848420,
+      "bytes": 78848508,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -36,11 +37,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp312-cp312-macosx_11_0_arm64.whl",
       "original_sha256": "1e46c87641a92c83772e3a1b0b0f924fa20156672f5b95a999770b92c5a404d3",
-      "sha256": "e919b355898513390b74b17f3a70f622eb3755ecd2547a13151495a18c88b67e",
+      "sha256": "af9a74191c5eae00974a9ea4e4d8bbd2fb94d985d8895cbeaa20c3afba3314c5",
       "target": "macos-arm64"
     },
     {
-      "bytes": 79887054,
+      "bytes": 79887144,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -74,11 +75,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp312-cp312-macosx_11_0_x86_64.whl",
       "original_sha256": "f674325f6a7863e1748697567d32acd07486e520f5bf912babf475c3fc5f3268",
-      "sha256": "84b11a0b74ed88616f35acc52a06ee270be19a35a611ebde08caa16a400a2123",
+      "sha256": "8378f292f2ffb788fbcd08f148cf7042e9119908c032477652e0b053c450932c",
       "target": "macos-x86_64"
     },
     {
-      "bytes": 79527093,
+      "bytes": 79527181,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -112,11 +113,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
       "original_sha256": "86fb2013c702387da9bd91c1b54919417bb05d6895e31c56aba57fe2741fae2c",
-      "sha256": "45e2e884bb9744aac75838c6f4a1f3b84e60daedfefb787f94ad47094f962c5c",
+      "sha256": "60243d1100ceff9d09268a113c1933ed477b7fe1a4198b87ef341d7f2e2fdf45",
       "target": "linux-arm64"
     },
     {
-      "bytes": 80462446,
+      "bytes": 80462536,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -150,11 +151,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
       "original_sha256": "34140ddd7f333386a2c04fd6c296366081eeda9ccc53f3d871cadc19d2a555fe",
-      "sha256": "96a5b0dfb9fc81af674950620709da99437c0b286d820c8f2f806945e58b7e77",
+      "sha256": "0ac2c460ecd5cb2d16bb13849ba4caa9e40ec917c5d7e110348e1375105d86b8",
       "target": "linux-x86_64"
     },
     {
-      "bytes": 78848373,
+      "bytes": 78848459,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -188,11 +189,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp313-cp313-macosx_11_0_arm64.whl",
       "original_sha256": "d662f22321ae507f56a44b6a3540aa1e7d4f641ce2be71d7f9e24b384fe23b38",
-      "sha256": "d4d482bd63efc6b5b1f4219db0a22b9dd047cde5847734f5b0b6c2dd2a9bdcee",
+      "sha256": "1bf7ad8de12896e473efc4856c7817767759dd291a2ad1f2cdff9d73819924a1",
       "target": "macos-arm64"
     },
     {
-      "bytes": 79886832,
+      "bytes": 79886923,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -226,11 +227,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp313-cp313-macosx_11_0_x86_64.whl",
       "original_sha256": "dc5fd4bdce678a450753055c7d5c12276ea7863e8a4fa5e9dee27b185a2df8ff",
-      "sha256": "32ef7ee2bb69f3af85ec7bb5fc84b29944813739500e7d2e6230a45d9f01289f",
+      "sha256": "1723fe21f73fbf6cbb85c4c5291b087e1674019fe292308d608de3fc101801af",
       "target": "macos-x86_64"
     },
     {
-      "bytes": 79526660,
+      "bytes": 79526747,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -264,11 +265,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
       "original_sha256": "2350a5ce71428e5c601707b1d8b4b06352eb37f08948749cf2e1e1d632f592cf",
-      "sha256": "2b3c6ffd3435ab02ce6469a079aa3328373ec99e4f32af00930b92e7110eae79",
+      "sha256": "4c7b9534469b8123d60232e69cad8f42cf38a104e53908900f7b6c76b74bcb61",
       "target": "linux-arm64"
     },
     {
-      "bytes": 80462425,
+      "bytes": 80462516,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -302,11 +303,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
       "original_sha256": "d7c6ee2d40158adaa47a75250df6a6f9a04e77d5a8424120c54bddbb99a3987e",
-      "sha256": "a2b19e0af498b45e65aee655bae3f3530e35ef64d499a50793842038370b0ced",
+      "sha256": "c334ed4c556569669de69665b3d2132fc361f12aafedc7d729e1c98d431fbb57",
       "target": "linux-x86_64"
     },
     {
-      "bytes": 78851342,
+      "bytes": 78851429,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -340,11 +341,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp314-cp314-macosx_11_0_arm64.whl",
       "original_sha256": "4c8546191bb1308de83cbfdbf4ebcfea7f7a0c88ca736a111189219fca65262e",
-      "sha256": "8d2553131f33be4899eebe9465f30f3b212183e624a712fb9dc87faab4ecdab8",
+      "sha256": "b52a80f3a68cc8fbb7c3dc4f2dca5ecc50a3e8646ab6b593ef6779728df7b6ab",
       "target": "macos-arm64"
     },
     {
-      "bytes": 79890637,
+      "bytes": 79890730,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -378,11 +379,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp314-cp314-macosx_11_0_x86_64.whl",
       "original_sha256": "c43f69118fa99dccf260b571cb3658046438e0e7a6cac0d4131e8274461f5cdb",
-      "sha256": "0d62445235c1ee9caf65c071d6faacbdc56d98b2f9c24eb7b7d0cf1246a1c3e4",
+      "sha256": "fd2ed0f06da3afc84b638d6b78a81f23adf4c8aa1a6c4558b3cdd967935b50a9",
       "target": "macos-x86_64"
     },
     {
-      "bytes": 79529542,
+      "bytes": 79529631,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -416,11 +417,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
       "original_sha256": "9d2fd573553364b745bcd2343393cfcb6e850ce1b7703d652e7d894ee172bcd2",
-      "sha256": "6548a48b6a35487454a68cf58799538cd1244c54fb893762312fbf15e6acdfad",
+      "sha256": "5c7dabc7ae53072ac8779f746003065f648aa196698828f881c83c826c772b16",
       "target": "linux-arm64"
     },
     {
-      "bytes": 80456830,
+      "bytes": 80456920,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -454,11 +455,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
       "original_sha256": "91570bb8eb35648a38c5ddf6b5fca868759312152d5688d86922133b55c74c95",
-      "sha256": "a7dc744000314652e8399a935411214af6ec4b30fd18a70883c934670212d4f1",
+      "sha256": "ca37fbf275de196fb29ba621810dc5f7e5987c564bc31184650592e5d6f17288",
       "target": "linux-x86_64"
     },
     {
-      "bytes": 78851261,
+      "bytes": 78851346,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -492,11 +493,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp315-cp315-macosx_11_0_arm64.whl",
       "original_sha256": "04a3ad26f2ba298d756babbc99e6a714008e4a9fe46081024f5bec23ec62a2cd",
-      "sha256": "9db79ceeeb77d4d43a8fbf22c712e335b1ee04845c7cb8c2a3d1aea6980bd233",
+      "sha256": "87e29e0112f224550c3ee5df4e5892da9420d8314af0945c174612d6468e5a0c",
       "target": "macos-arm64"
     },
     {
-      "bytes": 79890576,
+      "bytes": 79890667,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -530,11 +531,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp315-cp315-macosx_11_0_x86_64.whl",
       "original_sha256": "fe7d5d45af6310683ba13ecfcee3f3923614c4870c3d27c97a98c40ec8fd0c2c",
-      "sha256": "e9615a0487396195e99bbea615f2ca0eb49fc5c1f0ca232d38b2d74014d7e668",
+      "sha256": "0a61d8801cad3ba00d964eaf248ae7f74d08b834ab6b182568b5f058cabf3494",
       "target": "macos-x86_64"
     },
     {
-      "bytes": 79529523,
+      "bytes": 79529610,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -568,11 +569,11 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp315-cp315-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
       "original_sha256": "ee4ccdbf7380005fc8d739fb39553b4fe9f34a5c3540cd39271169249b094463",
-      "sha256": "e9c9ac93f5a06793e8379e8c7371ff47b3fe96981b5f7374f7f5bf85e7c0f711",
+      "sha256": "d2e596a894e194953bfbdbdd9ab03cba271b228f055fb0e124e98b2ef3ee4d2b",
       "target": "linux-arm64"
     },
     {
-      "bytes": 80456735,
+      "bytes": 80456825,
       "changed_members": [
         "gmatpy-0.2.1.dist-info/BINARY_REUSE_PROVENANCE.json",
         "gmatpy-0.2.1.dist-info/METADATA",
@@ -606,26 +607,26 @@
       },
       "original_file": "gmatpy-0.2.1.dev0-cp315-cp315-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
       "original_sha256": "e294ea38881b028ec09e6beb8b3b84d7dc78852afedd97f05711a944980e84b1",
-      "sha256": "3916e0bbd12fdeba64134f3436452b908e40ace55d5595f8006b46d43a560860",
+      "sha256": "ead8d8b81f6cc7527c7eeb5697f3375a30a09c3ae160c761ca078b266c7b3b2b",
       "target": "linux-x86_64"
     },
     {
-      "bytes": 73841410,
+      "bytes": 73841523,
       "file": "gmatpy-0.2.1.tar.gz",
-      "sha256": "db10b45757562044804eb8f3cd8d955c24ac85e83a090d78b3f4991f9970fd00"
+      "sha256": "39e7aa19820ccad1cbb1d70573ad3456c778e4f5e96f5f5a7d9bc2a5a132039e"
     }
   ],
   "native_build_source_revision": "f8d8e4ce997ca7400afbe035b7ec55bd66c02575",
   "native_recompiled": false,
   "new_installed_validation_required": true,
   "packaging_source": {
-    "git_tree_sha1": "b4bb8b61aee836eb66a622b4269ec597ba3c0844",
+    "git_tree_sha1": "5b0819748d8b4c90dfb57bd2e05692d9ba1ce190",
     "source_archive": "gmatpy-0.2.1.tar.gz",
-    "source_archive_sha256": "db10b45757562044804eb8f3cd8d955c24ac85e83a090d78b3f4991f9970fd00",
-    "source_date_epoch": "1792215404",
-    "source_revision": "fe8a20426a6ab7653e4fde04025d7ca879ac519e",
-    "source_tree_sha256": "3d6841327ee8709d315fbd26579c621a2ebdb5ec2cd51f7b72e0b5f5ff6e8c3b",
-    "working_tree_manifest_sha256": "1b902f6d03473bc5ffdc0b9630d0ad40c85fa36c23d445e015e984d09e81dff2"
+    "source_archive_sha256": "39e7aa19820ccad1cbb1d70573ad3456c778e4f5e96f5f5a7d9bc2a5a132039e",
+    "source_date_epoch": "1792216024",
+    "source_revision": "6b5c286cfbd64500a848277aeed0aee9b2e440fc",
+    "source_tree_sha256": "37cbdabbc8e859cd85805817f79fff76ac240ca21e04eb797d48a24f49a27e6e",
+    "working_tree_manifest_sha256": "9abea43c50c1b48b5398b76bde0fd3779963d3d968cbee12710f55e896c828d9"
   },
   "preserve_production_020": {
     "gmatpy-0.2.0-cp314-cp314-macosx_11_0_arm64.whl": "ac19c4258dc677eedf69f189342cab83ed537991dc4b2971c60fe44189357522",
