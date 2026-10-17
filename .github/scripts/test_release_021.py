@@ -161,3 +161,19 @@ def test_public_download_requires_complete_fixed_release():
     with pytest.raises(ValueError): public_download.check_listing(value,public)
     public['releases']['0.2.1']=[{'filename':r['file'],'size':r['bytes'],'digests':{'sha256':r['sha256']}} for r in value['files']]
     assert len(public_download.check_listing(value,public))==17
+
+
+def test_captured_job_logs_allow_and_strip_ansi_without_terminal_rendering(monkeypatch):
+    calls=[]
+    def capture(args, **kwargs):
+        calls.append(args)
+        return b'\x1b[31mFINAL_RELEASE_CELL_OK {"result":"passed"}\x1b[0m\n'
+    monkeypatch.setattr(guard.subprocess,'check_output',capture)
+    result=guard.captured_job_log(123)
+    assert '--allow-escape-sequences' in calls[0]
+    assert '\x1b' not in result
+    assert json.loads(result.split('FINAL_RELEASE_CELL_OK ',1)[1])['result']=='passed'
+
+
+def test_recovery_pins_successful_qualification_source():
+    assert guard.QUALIFICATION_SOURCE_REVISION=='f5fdc6d35250d8466b05da682cb0aefc85ae5e72'

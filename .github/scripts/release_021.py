@@ -23,6 +23,9 @@ REPOSITORY = 'dcajacob/gmatpy'
 CONFIG = Path('.github/release/pypi-0.2.1.json')
 CONFIG_SHA256 = '738697d00a2b1daa5ddba13ae7b30c1f26a6ddad8bbcf37ea5491b840319a8d6'
 QUALIFICATION_WORKFLOW = '.github/workflows/qualify-release-0.2.1.yml'
+# Immutable successful qualification; subsequent publisher-only fixes cannot
+# relabel its source or justify rebuilding/restaging the sealed payload.
+QUALIFICATION_SOURCE_REVISION = 'f5fdc6d35250d8466b05da682cb0aefc85ae5e72'
 
 
 def api(path):
@@ -132,16 +135,24 @@ def check_public_state(manifest, public):
     return {f['filename'] for f in existing}
 
 
+def captured_job_log(job_id):
+    # Opt in only for captured PIPE bytes, never terminal rendering. New gh
+    # versions otherwise reject ANSI-bearing job logs before verification.
+    raw = subprocess.check_output(['gh', 'api', '--allow-escape-sequences',
+                                   f'repos/{REPOSITORY}/actions/jobs/{job_id}/logs'], timeout=120)
+    return re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', raw.decode('utf-8-sig'))
+
+
 def prepare_publish(manifest, run_id, temp, output):
     context(os.environ, 'publish-pypi.yml')
     require(re.fullmatch('[1-9][0-9]*', run_id), 'Invalid qualification run ID')
     run = api(f'repos/{REPOSITORY}/actions/runs/{run_id}')
     jobs = api(f'repos/{REPOSITORY}/actions/runs/{run_id}/jobs?per_page=100')['jobs']
-    verify_qualification(run, jobs, os.environ['GITHUB_SHA'])
+    verify_qualification(run, jobs, QUALIFICATION_SOURCE_REVISION)
     records = []
     for job in jobs:
         if job['name'].startswith('installed ('):
-            log = subprocess.check_output(['gh', 'api', f'repos/{REPOSITORY}/actions/jobs/{job["id"]}/logs'], timeout=120).decode()
+            log = captured_job_log(job['id'])
             for line in log.splitlines():
                 marker = 'FINAL_RELEASE_CELL_OK '
                 if marker in line:
