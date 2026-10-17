@@ -7,7 +7,7 @@ it alongside your other Python code. No separate GMAT installation, executable,
 GUI, display server, runtime download or library-path setup is required.
 This is an experimental, independently packaged GMAT module. Public
 ``gmatpy`` 0.2.0 is available on PyPI for standard CPython 3.14 Linux/macOS.
-This source checkout prepares the unreleased 0.2.1.dev0 compatibility candidate;
+This source checkout prepares stable 0.2.1 with expanded Python compatibility;
 it does not publish a new release.
 
 Install a published wheel with a matching standard CPython 3.14 interpreter::
@@ -22,31 +22,28 @@ curated scientific inputs. There is no profile selection or feature extra.
 The historical ``extended`` value returned by ``capabilities().profile`` is an
 internal compatibility label. No GUI is included or planned for GMAT Py.
 
-Qualification on 2026-10-16 for source
-``b52941e9830940c3086839431fd1fb64812076ff`` built full headless wheels that each
-passed 194 tests without skips on Linux x86_64 and ARM64 and macOS Intel/ARM64.
-Linux x86_64 was qualified locally; the other three targets passed
-`native run 38970516533 <https://github.com/dcajacob/gmatpy/actions/runs/38970516533>`_.
-The builds used standard-ABI CPython 3.14.7 (Linux ARM64: 3.14.8), glibc 2.28
-on Linux and macOS 15.7.9. Deployment tags do not establish execution on every
-older host. These results identify that exact source revision; successor
-release files require their own source/build receipts and validation.
+Native qualification on 2026-10-17 for immutable source
+``f8d8e4ce997ca7400afbe035b7ec55bd66c02575`` passed all sixteen standard-GIL
+CPython 3.12.15, 3.13.16, 3.14.8 and 3.15.0 cells on Linux x86_64/aarch64 and
+macOS Intel/ARM64: 209 tests plus three subtests per wheel, no skips, with
+source/data/notices/installed-byte and state/spline/MSISE checks.
+The first two Linux cells are in run 38998592411; the remaining fourteen
+passed run 38999648051, which explicitly reused that immutable source.
 
-The earlier minimal/extended wheel variants and Windows results are historical.
-Windows is unqualified for this candidate. Python 3.10+ metadata permits source
-build attempts beyond the qualified CPython 3.14 scope; other Python versions,
-interpreters and free-threaded Python remain unqualified. Wheels are specific
-to their Python ABI and platform. Runtime needs only the standard library and
-bundled native binaries/data; source-build requirements are separate.
-Public 0.2.0 files retain packaging source ``09eafabe`` and unchanged native
-binaries from ``b52941e``. They were promoted without rebuilding.
+The 0.2.1 preparation reuses these exact native libraries and SWIG wrappers.
+Each wheel records its new packaging source separately from native source f8,
+including the original archive and native member hashes, dependency/interpreter
+receipts and carried-forward qualification. It does not claim recompilation
+from the packaging revision. Final repackaged-wheel installed tests remain a
+separate release gate. The existing 0.2.0 files and their native source b529
+are historical evidence and remain unchanged.
 
-The unreleased expansion targets CPython 3.12.15, 3.13.16 and 3.14.8 on the same
-four targets, followed by a 3.15.0 assessment. Require a retained ABI-specific
-wheel, clean installed tests, scientific regressions and source/license/data
-audits before marking each cell supported. Configuration alone is not a pass.
-Windows and free-threaded Python remain unqualified. Candidate metadata permits
-3.12 through 3.15 for these tests; failing ABIs must be excluded before release.
+Windows, alternative interpreters and free-threaded Python are unqualified.
+Metadata allows standard CPython 3.12 through 3.15. The exact tested patches
+and host versions are recorded in the receipts; deployment tags alone do not
+prove execution on every older OS or historical interpreter patch.
+Runtime needs only the standard library and bundled native binaries/data;
+source-build requirements are separate.
 
 Documentation
 ---------------

@@ -1,0 +1,479 @@
+{
+  "files": [
+    {
+      "bytes": 79348881,
+      "file": "gmatpy-0.2.1.dev0-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
+      "minor": "3.13",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9314640,
+          "sha256": "106634a5ef139cad011fd61efd2b9df9c14010c4c99a72d2654605580a242461"
+        },
+        "gmatpy/_native/libGmatBase.so.R2026a": {
+          "bytes": 19501248,
+          "sha256": "bb85c5ae0d9bd20b6ba957762d19083f9f30763decdf97804f3232a054f1a308"
+        },
+        "gmatpy/_native/libGmatUtil.so.R2026a": {
+          "bytes": 2108816,
+          "sha256": "a8073a6a1305ebf14d13e8ebe5005b389846a24e6f91319624fab74439c0aa4d"
+        }
+      },
+      "qualification_run": 38998592411,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "6e9dc720a6371194cdef78f082d8e7d3d95a91974e225b262d5d745373440029",
+        "INTERPRETER.json": "d7b664969a9a75d81cc6c8d2299bb792d2de851890a77568bbb697779c3d0f51",
+        "RESULTS.json": "064a7295e5aeba84f4f8cbe714a9ae5007ef3d22c1508480734009d574aa4321",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "2350a5ce71428e5c601707b1d8b4b06352eb37f08948749cf2e1e1d632f592cf",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "linux-arm64"
+    },
+    {
+      "bytes": 80284688,
+      "file": "gmatpy-0.2.1.dev0-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+      "minor": "3.13",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9319568,
+          "sha256": "3e885aa494f7bd575e2f646f3936e4ca42a734d07e3adbdc5ed4e6615eda64ab"
+        },
+        "gmatpy/_native/libGmatBase.so.R2026a": {
+          "bytes": 20845552,
+          "sha256": "9d9b797dd9f80833fc107469cfd77489a56b3e90cfb356731d98d908ab9b82e5"
+        },
+        "gmatpy/_native/libGmatUtil.so.R2026a": {
+          "bytes": 2346384,
+          "sha256": "a836e934c6590e16c775ed1ba7660573f792c9719335cc5c3f0c4c0c96573ed4"
+        }
+      },
+      "qualification_run": 38998592411,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "c7704abd98b1ad3d00dd68038293683347cc78d68b0307b40ae121e0be422e9a",
+        "INTERPRETER.json": "784a7b92526b0dde2be094c88526b14f9b2e7ad2a4091eae05815000d9e16d8a",
+        "RESULTS.json": "3860873c3158c4d40989697b65b4028c0760fe10b79ee85f5613f3f9d845245f",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "d7c6ee2d40158adaa47a75250df6a6f9a04e77d5a8424120c54bddbb99a3987e",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "linux-x86_64"
+    },
+    {
+      "bytes": 78668296,
+      "file": "gmatpy-0.2.1.dev0-cp313-cp313-macosx_11_0_arm64.whl",
+      "minor": "3.13",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9667872,
+          "sha256": "f7cbad1c52ee04588b4a9444614368c4be01b6c0c847a0279e19b99f877ba3f3"
+        },
+        "gmatpy/_native/libGmatBase.dylib": {
+          "bytes": 14023328,
+          "sha256": "9007e773db994bf11ac3b3d7c3bea60a97cadc19e2650bde26d6a8fe8180427d"
+        },
+        "gmatpy/_native/libGmatUtil.dylib": {
+          "bytes": 1819760,
+          "sha256": "d4d6327847119562824ada62e3982c9c2b6d81ea6e20702859e342796337b0d2"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "b07edca74f65a2429bfcb4ead1bd17c171e3b3dbb27a62708e874cb324df2750",
+        "INTERPRETER.json": "a5f4a6e8e3d7874fe53f3a6d937ebd761ab72d6065bb429f32b84e173e87720e",
+        "RESULTS.json": "71e35fc82928f1d8930970efe407270d5a2dadcc17f715b4a7cb239fcb713a99",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "d662f22321ae507f56a44b6a3540aa1e7d4f641ce2be71d7f9e24b384fe23b38",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "macos-arm64"
+    },
+    {
+      "bytes": 79706750,
+      "file": "gmatpy-0.2.1.dev0-cp313-cp313-macosx_11_0_x86_64.whl",
+      "minor": "3.13",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9833808,
+          "sha256": "6a101f3fe24edd07a3301f7e0e3deeb8d512ea3b2da095ab86514a78488d9808"
+        },
+        "gmatpy/_native/libGmatBase.dylib": {
+          "bytes": 14307984,
+          "sha256": "8d974a0cb3456d5880f0eda34f2ef47e44b0de242f875ade6ccf969d1b27a7c1"
+        },
+        "gmatpy/_native/libGmatUtil.dylib": {
+          "bytes": 1926008,
+          "sha256": "233bd870eae22582192c0b69d8ee374ea8b526735e0df1c5eb758dcd8ffdade5"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "21bf5991f09221f8979f12fd5ea01b8ddd64e4fb1648295b4c84da5b7f0e3890",
+        "INTERPRETER.json": "268ac6ed7afa8e37c336e588814e7b6a47a817a750cc991821a7632926efc0b2",
+        "RESULTS.json": "3a75dab50c7779ea8b0eb6a62458dca0f9da4b1f9ebd25ac16ab7efd5c94f96d",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "dc5fd4bdce678a450753055c7d5c12276ea7863e8a4fa5e9dee27b185a2df8ff",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "macos-x86_64"
+    },
+    {
+      "bytes": 80284713,
+      "file": "gmatpy-0.2.1.dev0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+      "minor": "3.12",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9319568,
+          "sha256": "2a815a59abfcf37ecac39c7373b1434a8a29ebc3781c4d9378014920e6470db9"
+        },
+        "gmatpy/_native/libGmatBase.so.R2026a": {
+          "bytes": 20845552,
+          "sha256": "9d9b797dd9f80833fc107469cfd77489a56b3e90cfb356731d98d908ab9b82e5"
+        },
+        "gmatpy/_native/libGmatUtil.so.R2026a": {
+          "bytes": 2346384,
+          "sha256": "a836e934c6590e16c775ed1ba7660573f792c9719335cc5c3f0c4c0c96573ed4"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "f6bc5f7187d46038a935b9dc952f02a81a3a961ce5750cf75d80015a65822509",
+        "INTERPRETER.json": "f5f8f8efb817da3f0952d8282b7b06635b36f888903d42c691cf244b8a5c1756",
+        "RESULTS.json": "82d8bde965c7a8a6b9626096bb61e20da81dd1e22298e0b5385e3df1ac00b178",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "34140ddd7f333386a2c04fd6c296366081eeda9ccc53f3d871cadc19d2a555fe",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "linux-x86_64"
+    },
+    {
+      "bytes": 78668348,
+      "file": "gmatpy-0.2.1.dev0-cp312-cp312-macosx_11_0_arm64.whl",
+      "minor": "3.12",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9667808,
+          "sha256": "6dc4f513a98914ff2761a850047ca60dde91659af4c6d7eb1b3d08767c57e7ca"
+        },
+        "gmatpy/_native/libGmatBase.dylib": {
+          "bytes": 14023328,
+          "sha256": "9007e773db994bf11ac3b3d7c3bea60a97cadc19e2650bde26d6a8fe8180427d"
+        },
+        "gmatpy/_native/libGmatUtil.dylib": {
+          "bytes": 1819760,
+          "sha256": "d4d6327847119562824ada62e3982c9c2b6d81ea6e20702859e342796337b0d2"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "267f37c6543bf198021b3853d42a2b024d59d9b594fc6dcc6c04835b2b603a4e",
+        "INTERPRETER.json": "8a13265ceacc9b2223708c5bd075a3fcd05d0a5ba333e027c6b1808cb23c5188",
+        "RESULTS.json": "8f0ea512c7c093aac0ddb83e1cdeb6947662410de18b4c66da337c1f3f7408d6",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "1e46c87641a92c83772e3a1b0b0f924fa20156672f5b95a999770b92c5a404d3",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "macos-arm64"
+    },
+    {
+      "bytes": 79349313,
+      "file": "gmatpy-0.2.1.dev0-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
+      "minor": "3.12",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9314632,
+          "sha256": "fa2c2bf66ee68f4e55e8e8d58100c87dd19bf860ccd40bbaad09d962e7f2b706"
+        },
+        "gmatpy/_native/libGmatBase.so.R2026a": {
+          "bytes": 19501248,
+          "sha256": "bb85c5ae0d9bd20b6ba957762d19083f9f30763decdf97804f3232a054f1a308"
+        },
+        "gmatpy/_native/libGmatUtil.so.R2026a": {
+          "bytes": 2108816,
+          "sha256": "a8073a6a1305ebf14d13e8ebe5005b389846a24e6f91319624fab74439c0aa4d"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "140670739b3e82ee4aba14f24fa07252176bca911c9f1eaa35f2d35f164a96c6",
+        "INTERPRETER.json": "3b6d8e0ff954f3153ee07a66f71cfe1cd6201a38120703d442e702670ba804ac",
+        "RESULTS.json": "614c3c9451c81c8393603cb1839b4e79c252e14e64a4e321ad8c03cac195fde7",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "86fb2013c702387da9bd91c1b54919417bb05d6895e31c56aba57fe2741fae2c",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "linux-arm64"
+    },
+    {
+      "bytes": 80279101,
+      "file": "gmatpy-0.2.1.dev0-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+      "minor": "3.14",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9335952,
+          "sha256": "c5f5945f47d956aa0aab527640e0da9fdfa96b3d1520476c090ff3bfe2d72c49"
+        },
+        "gmatpy/_native/libGmatBase.so.R2026a": {
+          "bytes": 20845552,
+          "sha256": "9d9b797dd9f80833fc107469cfd77489a56b3e90cfb356731d98d908ab9b82e5"
+        },
+        "gmatpy/_native/libGmatUtil.so.R2026a": {
+          "bytes": 2346384,
+          "sha256": "a836e934c6590e16c775ed1ba7660573f792c9719335cc5c3f0c4c0c96573ed4"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "8f78c764b6c0676a1a0c8339e8d63054c1c16840f7d59db86fd7e40531c6349e",
+        "INTERPRETER.json": "b16188075cea692cd381477fe89bb83c01e0ac11507c39e3eeb4c54c02803e50",
+        "RESULTS.json": "6cd343d8f50010c5dc6664e064ad303eea1c15cc17f48583a4edc5548b0c1742",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "91570bb8eb35648a38c5ddf6b5fca868759312152d5688d86922133b55c74c95",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "linux-x86_64"
+    },
+    {
+      "bytes": 79706977,
+      "file": "gmatpy-0.2.1.dev0-cp312-cp312-macosx_11_0_x86_64.whl",
+      "minor": "3.12",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9833728,
+          "sha256": "54cdae3dfbb80e9459b673ed72d53b602fb261106e24a81cc9c9e866fc2eae21"
+        },
+        "gmatpy/_native/libGmatBase.dylib": {
+          "bytes": 14307984,
+          "sha256": "8d974a0cb3456d5880f0eda34f2ef47e44b0de242f875ade6ccf969d1b27a7c1"
+        },
+        "gmatpy/_native/libGmatUtil.dylib": {
+          "bytes": 1926008,
+          "sha256": "233bd870eae22582192c0b69d8ee374ea8b526735e0df1c5eb758dcd8ffdade5"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "002109b5a47d2fa879c31098ccb0cbc1ee65525fa7b153550846bee4453608ad",
+        "INTERPRETER.json": "38cf1868b44504e1c584834bcd930004f2cc7d28b84480a8e946c77b06a13d40",
+        "RESULTS.json": "8fb18c181aec84a467672982c9da6393236e664f86a0a96edae2a9be6b28cfd4",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "f674325f6a7863e1748697567d32acd07486e520f5bf912babf475c3fc5f3268",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "macos-x86_64"
+    },
+    {
+      "bytes": 79351763,
+      "file": "gmatpy-0.2.1.dev0-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
+      "minor": "3.14",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9380176,
+          "sha256": "3dc9eddb6d3f3102170280508ad1d8c301c94818bb034a4c73e9612d8ae6973d"
+        },
+        "gmatpy/_native/libGmatBase.so.R2026a": {
+          "bytes": 19501248,
+          "sha256": "bb85c5ae0d9bd20b6ba957762d19083f9f30763decdf97804f3232a054f1a308"
+        },
+        "gmatpy/_native/libGmatUtil.so.R2026a": {
+          "bytes": 2108816,
+          "sha256": "a8073a6a1305ebf14d13e8ebe5005b389846a24e6f91319624fab74439c0aa4d"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "11b6fc36f828f79c081d6947e4987172da589ca3c44a5ff9bff843efae683595",
+        "INTERPRETER.json": "34c78f0d2c74cbe96894ba4573ebe793deeef3adf0c1b00c6562e5409a557f11",
+        "RESULTS.json": "dcc194118a048443f2d6854c0a4abac6370f3af72e19f9610fd55672209c4f4b",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "9d2fd573553364b745bcd2343393cfcb6e850ce1b7703d652e7d894ee172bcd2",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "linux-arm64"
+    },
+    {
+      "bytes": 78671268,
+      "file": "gmatpy-0.2.1.dev0-cp314-cp314-macosx_11_0_arm64.whl",
+      "minor": "3.14",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9700896,
+          "sha256": "17f34d965596ade781d888a3ddff1da2e246be224095985678858a71e55f50ba"
+        },
+        "gmatpy/_native/libGmatBase.dylib": {
+          "bytes": 14023328,
+          "sha256": "9007e773db994bf11ac3b3d7c3bea60a97cadc19e2650bde26d6a8fe8180427d"
+        },
+        "gmatpy/_native/libGmatUtil.dylib": {
+          "bytes": 1819760,
+          "sha256": "d4d6327847119562824ada62e3982c9c2b6d81ea6e20702859e342796337b0d2"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "e37bbdd394c8ef5eb8c743d0d291780649bee6b40a3793cffc57f9821323b929",
+        "INTERPRETER.json": "645befd298ebebeb8b62c7109c9b9c1d1967cf7c932162023650249f51391bba",
+        "RESULTS.json": "6faaa077bb3dc549058aba4a10ffc56e5ba776369efa1c700a0d7a9449f8cbe5",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "4c8546191bb1308de83cbfdbf4ebcfea7f7a0c88ca736a111189219fca65262e",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "macos-arm64"
+    },
+    {
+      "bytes": 79710567,
+      "file": "gmatpy-0.2.1.dev0-cp314-cp314-macosx_11_0_x86_64.whl",
+      "minor": "3.14",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9846192,
+          "sha256": "3b6c38f37ba8d9dc39d68931791da69dc7b79dc02dfe94ab9fec65fda20dc0ca"
+        },
+        "gmatpy/_native/libGmatBase.dylib": {
+          "bytes": 14307984,
+          "sha256": "8d974a0cb3456d5880f0eda34f2ef47e44b0de242f875ade6ccf969d1b27a7c1"
+        },
+        "gmatpy/_native/libGmatUtil.dylib": {
+          "bytes": 1926008,
+          "sha256": "233bd870eae22582192c0b69d8ee374ea8b526735e0df1c5eb758dcd8ffdade5"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "acbcba7b2aa34886a292aee9551b3e2986a9252e05167f89323359fac8fba024",
+        "INTERPRETER.json": "f8f784a9f3c6eac6dc78dabf34c025a39135397fc74e136e7f8c3cac6c229901",
+        "RESULTS.json": "d4bd21b258b50de177c6bca94c8b0c79620638f0979371cd7963021eaaf8c5b1",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "c43f69118fa99dccf260b571cb3658046438e0e7a6cac0d4131e8274461f5cdb",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "macos-x86_64"
+    },
+    {
+      "bytes": 80278994,
+      "file": "gmatpy-0.2.1.dev0-cp315-cp315-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+      "minor": "3.15",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9335952,
+          "sha256": "d3c01474059dd6fee47206a59c5848f66062095b5b755d9660c6995057c86643"
+        },
+        "gmatpy/_native/libGmatBase.so.R2026a": {
+          "bytes": 20845552,
+          "sha256": "9d9b797dd9f80833fc107469cfd77489a56b3e90cfb356731d98d908ab9b82e5"
+        },
+        "gmatpy/_native/libGmatUtil.so.R2026a": {
+          "bytes": 2346384,
+          "sha256": "a836e934c6590e16c775ed1ba7660573f792c9719335cc5c3f0c4c0c96573ed4"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "d34759fd8c1131d8a60c0135bc2e9f6db54b8a370028a08045ef64e5ff768931",
+        "INTERPRETER.json": "b4c68f4d51315d22779f9f787d931793b7c16530b4ab974a960d5f9502f425ac",
+        "RESULTS.json": "f585873733809fa9f7266e2dda4a64ad3849fd86db1b515373f7a4c98a9016ce",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "e294ea38881b028ec09e6beb8b3b84d7dc78852afedd97f05711a944980e84b1",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "linux-x86_64"
+    },
+    {
+      "bytes": 79351743,
+      "file": "gmatpy-0.2.1.dev0-cp315-cp315-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
+      "minor": "3.15",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9380176,
+          "sha256": "75bee8dd2c7cafaf3dddbfbb459bf96c8389afe86a2a19f4c550a6f47bd2b750"
+        },
+        "gmatpy/_native/libGmatBase.so.R2026a": {
+          "bytes": 19501248,
+          "sha256": "bb85c5ae0d9bd20b6ba957762d19083f9f30763decdf97804f3232a054f1a308"
+        },
+        "gmatpy/_native/libGmatUtil.so.R2026a": {
+          "bytes": 2108816,
+          "sha256": "a8073a6a1305ebf14d13e8ebe5005b389846a24e6f91319624fab74439c0aa4d"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "a930f7d4ea5b18fd77230fbe8d2a604d3172dcd369aeb0ea8dd4a6e4e0df23b1",
+        "INTERPRETER.json": "e4c4116a5c13361f37e5c47aec2867eb20979ca212c83c949e8713bc71fdc4ad",
+        "RESULTS.json": "3af7a2b26de80b197c51097e506394448e2b7091185e5ffd5bdd7dcf147cc404",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "ee4ccdbf7380005fc8d739fb39553b4fe9f34a5c3540cd39271169249b094463",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "linux-arm64"
+    },
+    {
+      "bytes": 78671185,
+      "file": "gmatpy-0.2.1.dev0-cp315-cp315-macosx_11_0_arm64.whl",
+      "minor": "3.15",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9700896,
+          "sha256": "bb6c2d184eee01eb6486287c0be70869229ffccc66febbd603fbe0a0ff44d043"
+        },
+        "gmatpy/_native/libGmatBase.dylib": {
+          "bytes": 14023328,
+          "sha256": "9007e773db994bf11ac3b3d7c3bea60a97cadc19e2650bde26d6a8fe8180427d"
+        },
+        "gmatpy/_native/libGmatUtil.dylib": {
+          "bytes": 1819760,
+          "sha256": "d4d6327847119562824ada62e3982c9c2b6d81ea6e20702859e342796337b0d2"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "96ec50bd2c776f7402f586a756eb84cf8f99b65c5178fed0d132d3c7625e3bb5",
+        "INTERPRETER.json": "454050a8bb1387b04ed75577e14aa05b7cb5ffe3311ef92d6b628c82e9cc7ceb",
+        "RESULTS.json": "1602f1dc6d64bdf4f3ce2b581125ed41a95e1c6846005cc473fbb78317f46b10",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "04a3ad26f2ba298d756babbc99e6a714008e4a9fe46081024f5bec23ec62a2cd",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "macos-arm64"
+    },
+    {
+      "bytes": 79710498,
+      "file": "gmatpy-0.2.1.dev0-cp315-cp315-macosx_11_0_x86_64.whl",
+      "minor": "3.15",
+      "native_members": {
+        "gmatpy/_native/_gmat_py.so": {
+          "bytes": 9846192,
+          "sha256": "8029cc8201c9f959f1622d0968fe5769201e4207c3533fce4b8b8b59169d4cef"
+        },
+        "gmatpy/_native/libGmatBase.dylib": {
+          "bytes": 14307984,
+          "sha256": "8d974a0cb3456d5880f0eda34f2ef47e44b0de242f875ade6ccf969d1b27a7c1"
+        },
+        "gmatpy/_native/libGmatUtil.dylib": {
+          "bytes": 1926008,
+          "sha256": "233bd870eae22582192c0b69d8ee374ea8b526735e0df1c5eb758dcd8ffdade5"
+        }
+      },
+      "qualification_run": 38999648051,
+      "receipts_sha256": {
+        "CSPICE_BUILD_DEPENDENCY.json": "94bd3649e54d573324a358f51e6c33a26ee2503c737b0e4fa0c08c9b8af528a0",
+        "INTERPRETER.json": "1650c9d8ee7e6aef2841b2213af19519669439a8e82459b6632c93801fc05d97",
+        "RESULTS.json": "4080d16914bce733b00abe20f5578b1513a3f4cab1cbe4c2e138d52ac994092b",
+        "SOURCE_RECEIPT.json": "147711585f6a843f103247863771b012c573855049ba71bfad34d6bcc0b8974e"
+      },
+      "sha256": "fe7d5d45af6310683ba13ecfcee3f3923614c4870c3d27c97a98c40ec8fd0c2c",
+      "swig_wrapper_sha256": "bad6d5cd7235a04fce56a582ec0006ba23d3910c94da52bf235e96e494584581",
+      "target": "macos-x86_64"
+    }
+  ],
+  "schema_version": 1,
+  "source": {
+    "git_tree_sha1": "e533c280ce2ca995b1d5f45d33849948475cf232",
+    "source_archive": "gmatpy-0.2.1.dev0.tar.gz",
+    "source_archive_sha256": "0ca599b84caa3c463c22c0595bcbda7394a3835020d332e69762f8298e3f3351",
+    "source_date_epoch": "1792207173",
+    "source_revision": "f8d8e4ce997ca7400afbe035b7ec55bd66c02575",
+    "source_tree_sha256": "c7bf9b0ba28cfb45c4972991c3f50098df970fd4f7038460bc319a5a90fe5c4f",
+    "working_tree_manifest_sha256": "4f11dbd40a457fab1fc34e5f597116769ae6050c00ad0371bfa8a2f2548d27f5"
+  },
+  "version": "0.2.1.dev0"
+}

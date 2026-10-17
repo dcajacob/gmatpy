@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "native_build_source_revision": "f8d8e4ce997ca7400afbe035b7ec55bd66c02575",
+  "previous_scope_sha256": "5a2a058d92daf77394194854ef550bfe4897aefb0c252e4cc0abc2f31551d195",
+  "scope_sha256": "abd4d6096f24c6c1561e24a1bda72c46b9ca6fd95f8dad6a28d260fab9d335ae",
+  "file_count": 1176,
+  "unchanged_scoped_records": 1174,
+  "changed_scoped_records": [
+    {
+      "path": "pyproject.toml",
+      "before": {
+        "mode": 420,
+        "path": "pyproject.toml",
+        "sha256": "328eb0725069f7806bae030c81952914e9c32e88db6630731e9bd176771940cc",
+        "size": 3281
+      },
+      "after": {
+        "mode": 420,
+        "path": "pyproject.toml",
+        "sha256": "fbc6678de72ec4ef029afa1c545fbba73532d516709bdf0aebe8e8abb24be954",
+        "size": 3276
+      },
+      "change": "Only 0.2.1.dev0 -> 0.2.1 version value"
+    },
+    {
+      "path": "python/gmatpy/__init__.py",
+      "before": {
+        "mode": 420,
+        "path": "python/gmatpy/__init__.py",
+        "sha256": "eb3d6147db7918db97cb107aab9292e7df44cc133c21ec05b3c0c2c59f4af8e7",
+        "size": 791
+      },
+      "after": {
+        "mode": 420,
+        "path": "python/gmatpy/__init__.py",
+        "sha256": "433527d39a97642885d7d5ea1d28731335cfc226d6ee1dccef5f0773c6b336d1",
+        "size": 786
+      },
+      "change": "Only 0.2.1.dev0 -> 0.2.1 version value"
+    }
+  ],
+  "native_runtime_dependency_data_behavior_changed": false,
+  "native_recompiled": false,
+  "authorization": "Local-preparation delegation from coordinating GMAT task: regenerate version metadata/RECORD/source successor proof; no push, external staging/upload or publication.",
+  "new_publication_authorized": false
+}

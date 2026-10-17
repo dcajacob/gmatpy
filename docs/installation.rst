@@ -1,5 +1,13 @@
 .. _installation:
 
+
+.. note::
+
+   Stable 0.2.1 is being prepared locally from the qualified f8 native binaries.
+   Packaging provenance and native compilation provenance are recorded
+   separately; final installed-wheel validation and production approval are
+   required before upload. Public 0.2.0 remains the published release.
+
 Installation
 ============
 
