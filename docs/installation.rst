@@ -90,8 +90,8 @@ historical evidence with their original source and profile identities.
      - Standard-ABI CPython 3.14.7 on macOS 15.7.9. The 11.0 deployment tag
        does not establish runtime execution on macOS 11 through 14.
 
-The package metadata permits source-build attempts on Python 3.10 and later.
-The qualified wheels use the standard CPython 3.14 ABI; other Python versions,
+Public 0.2.0 metadata permits source-build attempts on Python 3.10 and later.
+Those public wheels use the standard CPython 3.14 ABI; other Python versions,
 interpreters, free-threaded Python and Windows remain unqualified. Earlier
 Windows results remain historical. A CMake-gated Windows x64 development path
 exists; Windows ARM64 is outside that path. Earlier results for other source
@@ -103,21 +103,66 @@ Wheel tags and successful installation alone do not establish numerical or
 runtime qualification on an untested platform. The release must retain the
 source and final artifact identities for every platform it offers.
 
-Unreleased expansion candidate
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Qualified unreleased expansion candidate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The new matrix pins the latest stable patches when prepared: CPython 3.12.15,
-3.13.16 and 3.14.8 on each of the four targets above. After all twelve core
-cells pass, a four-cell 3.15.0 assessment runs. Each builds an ABI-specific wheel
-from one shared immutable source archive, clean-installs it, then checks
-propagation, saved states, splines/MSISE, native dependencies, notices and all
-17 scientific inputs and exclusions. A configured cell is not a successful or
-published wheel. Final support requires its exact retained file and receipt.
-Windows, free-threaded Python and other interpreters remain unqualified.
+The immutable ``0.2.1.dev0`` candidate from source ``f8d8e4ce997ca7400afbe035b7ec55bd66c02575``
+passed all twelve core ABI/target cells below, followed by all four
+standard-ABI CPython 3.15.0 assessment cells. Each exact wheel passed
+209 tests plus three subtests, clean installed-byte checks, native dependency
+and data/notices audits, saved-state comparisons and spline/MSISE regressions.
+These candidate files have not been published to PyPI. Public 0.2.0 still has
+only the CPython 3.14 wheels described above.
 
-Pinned standalone interpreters supply current security patches absent from
-some runner catalogs. Archive hashes, actual runtime patches and standard ABI
-are checked before use. They are build tools, not extra wheel payload.
+.. list-table:: Candidate f8d8e4ce qualification
+   :header-rows: 1
+   :widths: 20 20 20 20 20
+
+   * - CPython patch
+     - Linux x86_64
+     - Linux ARM64
+     - macOS ARM64
+     - macOS Intel
+   * - 3.12.15
+     - Passed
+     - Passed
+     - Passed
+     - Passed
+   * - 3.13.16
+     - Passed
+     - Passed
+     - Passed
+     - Passed
+   * - 3.14.8
+     - Passed
+     - Passed
+     - Passed
+     - Passed
+   * - 3.15.0 assessment
+     - Passed
+     - Passed
+     - Passed
+     - Passed
+
+The `initial run <https://github.com/dcajacob/gmatpy/actions/runs/38998592411>`_ qualified both Linux 3.13 cells.
+An early macOS standalone-Python CA-path failure was repaired without disabling
+TLS checks. The `bounded recovery run <https://github.com/dcajacob/gmatpy/actions/runs/38999648051>`_ verified the
+original source and both previous successes, then qualified the remaining
+fourteen wheels from that same source archive. The workflow-only recovery
+revision is ``54378760``; it is distinct from the candidate source revision.
+
+Pinned standalone interpreters supply the exact patches above. Interpreter
+archive hashes, runtime versions and standard ABI are checked before use;
+the interpreters are build tools, not extra wheel payload. Linux tests ran on
+glibc 2.28 and macOS tests on native macOS 15 runners. Older minimum-OS wheel
+tags do not establish execution on every older host. Windows, free-threaded
+Python and other interpreters remain unqualified.
+
+The source archive and an independently rebuilt Linux x86 CPython 3.13 wheel
+matched their hosted counterparts byte-for-byte. That wheel required the same
+interpreter-header prefix; this is a scoped reproduction result, not a promise
+of identical native output across different compilers or runner images.
+See :doc:`development` for the source/artifact identities and reproduction limits.
 
 .. _source-build:
 

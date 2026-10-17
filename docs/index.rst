@@ -59,9 +59,12 @@ with coverage and freshness limits in :doc:`conventions`.
 
 Public 0.2.0 wheels use packaging source ``09eafabe`` and original native
 binaries from ``b52941e``, which passed 194 tests per target. The public Linux
-wheel also passed a fresh 194-test installed check. Expansion qualification
-targets 3.12 through 3.14, then assesses 3.15. Configuration is not evidence
-that every cell passed; see :ref:`platform-support` for exact limits.
+wheel also passed a fresh 194-test installed check. The separate unreleased
+``f8d8e4ce`` candidate passed all four native targets on CPython 3.12.15,
+3.13.16 and 3.14.8, followed by the four 3.15.0 assessment cells, with 209 tests
+plus three subtests per wheel. These are candidate qualification results;
+they do not add files to public 0.2.0. See :ref:`platform-support` for exact
+source/build receipts, runtime hosts and remaining platform limits.
 
 .. toctree::
    :maxdepth: 2

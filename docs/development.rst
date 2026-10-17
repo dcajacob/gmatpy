@@ -99,13 +99,20 @@ associated calculation ran. The full qualification driver additionally
 verifies every installed package byte against the wheel, including native
 libraries, so a source-path overlay cannot be mistaken for an installed test.
 
-Native qualification for base revision
-``bff0ed4687964cd1f36a3ebaeb278b451bac271d`` passed all eight historical
-profile/target cells across Linux x86_64/ARM64 and macOS Intel/ARM64 on the
-first attempt. The single-package cleanup does not change scientific code or inputs,
-but task-local checks using retained extended binaries remain checks against
-those identified binaries, not fresh native builds from the changed source.
-See :ref:`platform-support` for the exact evidence boundary.
+The unreleased candidate from ``f8d8e4ce997ca7400afbe035b7ec55bd66c02575`` passed all
+twelve core ABI/target cells (CPython 3.12.15, 3.13.16 and 3.14.8 on Linux
+x86_64/ARM64 and macOS Intel/ARM64), followed by all four 3.15.0 assessment
+cells. Each exact wheel passed 209 tests plus three subtests and the checks
+below. Both Linux 3.13 results are in the `initial run <https://github.com/dcajacob/gmatpy/actions/runs/38998592411>`_;
+the other fourteen are in the `bounded recovery run <https://github.com/dcajacob/gmatpy/actions/runs/38999648051>`_.
+Recovery verified the initial source and two successes, preserving one shared
+source archive after a macOS CA-path repair. It did not substitute a new
+scientific payload or disable TLS verification.
+
+The eight profile/target cells for ``bff0ed4`` and the single-package
+``b52941e``/194-test results remain historical evidence for their own source
+and binaries. Public 0.2.0 uses packaging source ``09eafabe`` and those
+``b52941e`` native binaries. See :ref:`platform-support` for the exact boundary.
 
 .. list-table:: What the tests establish
    :header-rows: 1
@@ -226,7 +233,7 @@ paths:
    python python/ci/freeze_clean_checkout.py --repo /absolute/path/to/gmatpy \
      --revision <full-commit> --output /absolute/path/to/new-frozen-output
    python python/ci/qualify.py --target linux-x86_64 --python-minor 3.13 \
-     --sdist /absolute/path/to/new-frozen-output/artifacts/gmatpy-0.2.0.tar.gz \
+     --sdist /absolute/path/to/new-frozen-output/artifacts/gmatpy-0.2.1.dev0.tar.gz \
      --output /absolute/path/to/new-qualification-output
 
 Run the driver on the corresponding native host/container. Its output directory
@@ -239,7 +246,38 @@ requests ``manylinux_2_28``; macOS uses delocate and one native architecture.
 
 The records identify tested source and artifact bytes. Setting
 ``SOURCE_DATE_EPOCH`` makes archive timestamps repeatable; the project does not
-claim bit-identical native builds across compilers. The workflow records evidence
-in job logs and has no binary upload or package-publication step. See
+claim bit-identical native builds across compilers. The workflow retains
+bounded candidate source/wheel artifacts for one day after explicit storage
+approval; it has no package-publication step. Verified artifacts are copied
+locally with their receipts before the hosted copies are deleted. See
 ``python/ci/README.md`` for the retained comparison definitions and current
 qualification mechanics.
+
+Exact expansion candidate identities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Source revision: ``f8d8e4ce997ca7400afbe035b7ec55bd66c02575``.
+Source archive SHA256:
+``0ca599b84caa3c463c22c0595bcbda7394a3835020d332e69762f8298e3f3351``.
+Complete working-tree manifest SHA256:
+``4f11dbd40a457fab1fc34e5f597116769ae6050c00ad0371bfa8a2f2548d27f5``.
+Packaged-source tree SHA256:
+``c7bf9b0ba28cfb45c4972991c3f50098df970fd4f7038460bc319a5a90fe5c4f``.
+
+The source archive matched local and hosted freezes exactly. A fresh offline
+Linux x86 CPython 3.13.16 rebuild, using the same ``/output/interpreter``
+header prefix, also reproduced the complete hosted wheel byte-for-byte:
+``d7c6ee2d40158adaa47a75250df6a6f9a04e77d5a8424120c54bddbb99a3987e``.
+All 60 members matched, and its fresh 209 tests plus three subtests and
+numerical checks passed. The actual cached and freshly built CSPICE archive
+hashes are retained separately; those archives differ while the linked
+engine and final wheel bytes match. No independent bit-rebuild claim is made
+for the other fifteen wheels.
+
+The exact hosted cp313 Linux wheel additionally installed with uv 0.8.23 on
+CPython 3.13.7, with source builds disabled; all 46 installed package files
+matched and sampled propagation states passed. This is an install/regression
+check on that older patch, separate from qualification on the pinned latest
+patch. Distribution candidates remain ``0.2.1.dev0``; a new stable version,
+matching final source/artifact receipts and explicit publication approval are
+still required before changing the ordinary PyPI installation result.

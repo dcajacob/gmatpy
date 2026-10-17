@@ -1,9 +1,14 @@
 # Native portability qualification (experimental)
 
 `qualify.py` builds one full headless wheel, with SPICE and all 17 packaged data
-files, from a single frozen sdist
-using standard-ABI CPython 3.14. Exact patch versions are recorded per target;
-the pinned x86_64 image uses 3.14.7 and the pinned ARM64 image uses 3.14.8. Run with `requirements.txt` in a fresh tools virtualenv.
+files, from a single frozen sdist using the exact standard-ABI CPython
+interpreter pinned in `interpreters.json`. The expansion pins 3.12.15, 3.13.16
+and 3.14.8 for the twelve core ABI/target cells, followed by four 3.15.0
+assessment cells. `prepare_interpreter.py` verifies each standalone interpreter
+archive's hash, version and GIL mode; do not substitute the older interpreters
+preinstalled in the Linux images. Run with `requirements.txt` in a fresh tools
+virtualenv created by the selected interpreter. The required driver option
+`--python-minor` identifies its matching manifest entry.
 It leaves native build trees, wheels, pytest logs, source/data/license checks,
 installed-byte comparisons and numerical regression evidence under a fresh output
 folder. It does not publish or upload anything. SOURCE_DATE_EPOCH=1790812800 fixes
@@ -52,11 +57,34 @@ scope are retained in `python/gmatpy/licenses/EXPORT_DETERMINATION.md` and
 `EXPORT_DETERMINATION.json`. Qualification checks the final artifact and manifest;
 it does not replace that recorded determination or extend it to different inputs.
 
-Prepared GitHub runs use only public standard runner compute, read-only workflow
-tokens, no secrets, cache, artifact upload or release. Artifact storage allowance
-is unverified, so upload is disabled rather than assumed free. Public source sharing for the dedicated repository is owner approved, recorded
-in PUBLIC_SOURCE_DECISION.md. The adopted product determination is recorded separately.
-The workflow freezes clean immutable Git inputs; it does not publish packages.
+GitHub qualification uses only public standard runner compute and read-only
+contents/actions tokens, with at most two native runners concurrently. It has
+no publishing secrets, OIDC, persistent build cache or package-release step.
+Explicit budget confirmation enables at most one source and sixteen candidate
+artifacts, with one-day retention and bounded payloads under the approved $0.02
+aggregate storage cap. No free account storage allowance is assumed. Verified
+copies and receipts are preserved locally before hosted copies are deleted;
+the shared source stays available until all consumers finish. Public source
+sharing is recorded in `PUBLIC_SOURCE_DECISION.md`; the scoped adopted product
+determination and new PyPI publication approval remain separate.
+
+The 0.2.1.dev0 candidate from source
+`f8d8e4ce997ca7400afbe035b7ec55bd66c02575` passed all sixteen cells, with 209
+tests plus three subtests per wheel and the numerical/artifact checks below.
+The two Linux 3.13 cells are in initial run 38998592411; bounded recovery
+38999648051 reused that exact source and verified both successes before
+qualifying the remaining fourteen wheels. A standalone macOS CA-path failure
+was repaired in workflow-only revision 54378760 without disabling TLS checks.
+The current workflow propagates the existing bootstrap Python verified CA file
+through `SSL_CERT_FILE`; it does not install or alter system trust.
+
+An independent offline Linux x86 CPython 3.13.16 rebuild using the same
+`/output/interpreter` header prefix reproduced the entire hosted wheel:
+SHA256 `d7c6ee2d40158adaa47a75250df6a6f9a04e77d5a8424120c54bddbb99a3987e`,
+all 60 members identical, with fresh installed/numerical checks passing.
+This is a scoped reproduction result, not a claim across different compilers
+or every target. Documentation-only successor commits do not relabel the
+frozen candidate's source receipt. No new PyPI publication is implied.
 
 Each native qualification also compiles a small harness against its installed GmatUtil
 library and compares 320 spline cases / 9920 values with fixed independent SciPy
