@@ -1,0 +1,121 @@
+name: GMAT Py bounded qualification recovery
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_candidate_storage:
+        description: Approve at most 17 one-day candidate artifacts, capped at $0.02 aggregate storage
+        type: boolean
+        required: true
+        default: false
+      assess_python315:
+        description: Assess standard CPython 3.15 after all twelve core cells pass
+        type: boolean
+        default: true
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: gmatpy-qualification-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  # Recover the original f8 candidate without uploading a second source or
+  # rebuilding the two Linux 3.13 wheels whose exact receipts already passed.
+  source:
+    if: >-
+      inputs.confirm_candidate_storage && github.repository == 'dcajacob/gmatpy' &&
+      toJSON(github.event.repository.private) == 'false' && github.run_attempt == '1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: f8d8e4ce997ca7400afbe035b7ec55bd66c02575
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: qualification-source-f8d8e4ce997ca7400afbe035b7ec55bd66c02575
+          run-id: 38998592411
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/source
+      - name: Verify the original frozen source and both previously completed cells
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 python/ci/check_frozen_input.py "$RUNNER_TEMP/source" f8d8e4ce997ca7400afbe035b7ec55bd66c02575
+          python3 - <<'PYCODE'
+          import json,os,pathlib,subprocess
+          def api(path):return json.loads(subprocess.check_output(['gh','api','repos/dcajacob/gmatpy/'+path]))
+          old=api('actions/runs/38998592411')
+          assert old['head_sha']=='f8d8e4ce997ca7400afbe035b7ec55bd66c02575' and old['status']=='completed' and old['run_attempt']==1
+          jobs=api('actions/runs/38998592411/jobs?per_page=100')['jobs']
+          successes={j['name'] for j in jobs if j['conclusion']=='success'}
+          assert successes=={'source','core (3.13, linux-x86_64) / qualify','core (3.13, linux-arm64) / qualify'},successes
+          artifact=api('actions/artifacts/12087992067')
+          assert artifact['digest']=='sha256:4c8d5597807cd77a032f68a81f2e394f78dbcd03412c683266b25750c64ef108'
+          receipt=json.loads((pathlib.Path(os.environ['RUNNER_TEMP'])/'source/SOURCE_RECEIPT.json').read_text())
+          assert receipt['source_archive_sha256']=='0ca599b84caa3c463c22c0595bcbda7394a3835020d332e69762f8298e3f3351'
+          print('REUSED_SOURCE_AND_TWO_PRIOR_NATIVE_CELLS_VERIFIED',receipt)
+          PYCODE
+  core:
+    needs: source
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        python_minor: ['3.13', '3.12', '3.14']
+        target: [linux-x86_64, linux-arm64, macos-arm64, macos-x86_64]
+        exclude:
+          - python_minor: '3.13'
+            target: linux-x86_64
+          - python_minor: '3.13'
+            target: linux-arm64
+        include:
+          - target: linux-x86_64
+            runner: ubuntu-24.04
+            image: quay.io/pypa/manylinux_2_28_x86_64@sha256:c2261579b9c2e5d45aa93312f73e2a302182e3e977b558581a1838d6fed3d8e6
+          - target: linux-arm64
+            runner: ubuntu-24.04-arm
+            image: quay.io/pypa/manylinux_2_28_aarch64@sha256:abd1230aa9e4058a74b89d27cd14ba18c0db036d7bfe6e6f219a29ea63c24eb6
+          - target: macos-arm64
+            runner: macos-15
+            image: unused
+          - target: macos-x86_64
+            runner: macos-15-intel
+            image: unused
+    uses: ./.github/workflows/native-cell.yml
+    with:
+      target: ${{ matrix.target }}
+      runner: ${{ matrix.runner }}
+      image: ${{ matrix.image }}
+      python_minor: ${{ matrix.python_minor }}
+      source_revision: f8d8e4ce997ca7400afbe035b7ec55bd66c02575
+      source_run_id: '38998592411'
+  assess315:
+    needs: [source, core]
+    if: inputs.assess_python315 && needs.core.result == 'success'
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - target: linux-x86_64
+            runner: ubuntu-24.04
+            image: quay.io/pypa/manylinux_2_28_x86_64@sha256:c2261579b9c2e5d45aa93312f73e2a302182e3e977b558581a1838d6fed3d8e6
+          - target: linux-arm64
+            runner: ubuntu-24.04-arm
+            image: quay.io/pypa/manylinux_2_28_aarch64@sha256:abd1230aa9e4058a74b89d27cd14ba18c0db036d7bfe6e6f219a29ea63c24eb6
+          - target: macos-arm64
+            runner: macos-15
+            image: unused
+          - target: macos-x86_64
+            runner: macos-15-intel
+            image: unused
+    uses: ./.github/workflows/native-cell.yml
+    with:
+      target: ${{ matrix.target }}
+      runner: ${{ matrix.runner }}
+      image: ${{ matrix.image }}
+      python_minor: '3.15'
+      source_revision: f8d8e4ce997ca7400afbe035b7ec55bd66c02575
+      source_run_id: '38998592411'
+# Candidate retention only. No publishing, cache, secrets or persistent grant.

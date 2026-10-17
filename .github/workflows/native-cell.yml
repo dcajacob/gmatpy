@@ -14,8 +14,17 @@ on:
       python_minor:
         required: true
         type: string
+      source_revision:
+        required: false
+        type: string
+        default: ''
+      source_run_id:
+        required: false
+        type: string
+        default: ''
 permissions:
   contents: read
+  actions: read
 jobs:
   qualify:
     if: >-
@@ -26,18 +35,22 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ inputs.source_revision || github.sha }}
           persist-credentials: false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
-          name: qualification-source-${{ github.sha }}
+          name: qualification-source-${{ inputs.source_revision || github.sha }}
+          run-id: ${{ inputs.source_run_id || github.run_id }}
+          github-token: ${{ github.token }}
           path: ${{ runner.temp }}/source
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         if: startsWith(inputs.target, 'macos-')
         with:
           python-version: '3.14.8'
       - name: Verify shared source archive before any native work
-        run: python3 python/ci/check_frozen_input.py "$RUNNER_TEMP/source" "$GITHUB_SHA"
+        env:
+          SOURCE_REVISION: ${{ inputs.source_revision || github.sha }}
+        run: python3 python/ci/check_frozen_input.py "$RUNNER_TEMP/source" "$SOURCE_REVISION"
       - name: Native Linux wheel, clean install and scientific regressions
         if: startsWith(inputs.target, 'linux-')
         env:
@@ -61,17 +74,20 @@ jobs:
           PIP_NO_CACHE_DIR: '1'
         shell: bash
         run: |
+          # The standalone interpreter does not inherit the framework Python CA path.
+          # Reuse its verified CA bundle without disabling TLS verification.
+          export SSL_CERT_FILE="$(python -c 'import pathlib,ssl; p=ssl.get_default_verify_paths().cafile; assert p and pathlib.Path(p).is_file(); print(p)')"
           python python/ci/prepare_interpreter.py --minor "$MINOR" --target "$TARGET" --output "$RUNNER_TEMP/gmatpy-output/interpreter"
           "$RUNNER_TEMP/gmatpy-output/interpreter/python/bin/python3" -m venv "$RUNNER_TEMP/gmatpy-output/tools"
           "$RUNNER_TEMP/gmatpy-output/tools/bin/python" -m pip install -r python/ci/requirements.txt
           "$RUNNER_TEMP/gmatpy-output/tools/bin/python" python/ci/qualify.py --target "$TARGET" --python-minor "$MINOR" --sdist "$RUNNER_TEMP/source/artifacts/"*.tar.gz --output "$RUNNER_TEMP/gmatpy-output/qualified"
       - name: Select only verified wheel and immutable evidence under the storage cap
         env:
-          SOURCE_REVISION: ${{ github.sha }}
+          SOURCE_REVISION: ${{ inputs.source_revision || github.sha }}
         run: python3 python/ci/collect_candidate.py --root "$RUNNER_TEMP/gmatpy-output" --source "$RUNNER_TEMP/source" --revision "$SOURCE_REVISION" --output "$RUNNER_TEMP/payload"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
-          name: candidate-${{ inputs.python_minor }}-${{ inputs.target }}-${{ github.sha }}
+          name: candidate-${{ inputs.python_minor }}-${{ inputs.target }}-${{ inputs.source_revision || github.sha }}
           path: ${{ runner.temp }}/payload/*
           retention-days: 1
           compression-level: 0
