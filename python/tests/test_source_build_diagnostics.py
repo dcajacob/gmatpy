@@ -1,5 +1,6 @@
 """Exercise source-build dependency failures without building the native engine."""
 import os
+import platform
 from pathlib import Path
 import shutil
 import subprocess
@@ -96,7 +97,8 @@ class SourceDependencies(unittest.TestCase):
         self.assert_missing([f"CSPICE_DIR={self.tree()}", f"F2C_DIR={self.root / 'invalid'}"])
 
     def test_existing_default_checkout_path(self):
-        self.tree("depends/cspice/linux/cspice64")
+        platform_dir = "macosx" if platform.system() == "Darwin" else "linux"
+        self.tree(f"depends/cspice/{platform_dir}/cspice64")
         code, output = self.configure()
         self.assertEqual(code, 0, output)
 
