@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "project": "gmatpy",
+  "version": "0.2.0",
+  "base_allowlist_sha256": "e337947850811068988f4bbdfa361dce439a6bc330796d10f741c5f5ca101316",
+  "testpypi_trial_receipt_sha256": "d9e19209efc343646f43edd160f5645661c5a67abe603f73ddcc7a47ca3dd451",
+  "upload_endpoint": "https://upload.pypi.org/legacy/",
+  "public_testpypi_downloads": {
+    "linux-x86_64": "https://test-files.pythonhosted.org/packages/4d/8e/c774339bf9f46fe50a5a6accbfdfd0869a9ff1e9a910bac3f32627edb10c/gmatpy-0.2.0-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+    "linux-arm64": "https://test-files.pythonhosted.org/packages/22/d8/4a9e4ed574d08940158c894187aaced93bba1bd0901fdc3988adcc962832/gmatpy-0.2.0-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
+    "macos-arm64": "https://test-files.pythonhosted.org/packages/2f/31/f7ee0034e568132ea95c699c247afc3340293fb6246a28fe0cd3cbb921ae/gmatpy-0.2.0-cp314-cp314-macosx_11_0_arm64.whl",
+    "macos-x86_64": "https://test-files.pythonhosted.org/packages/a5/fe/2ae37da15e50da46383ea78eb4d6b8b945f3012ac06a078fef028490557b/gmatpy-0.2.0-cp314-cp314-macosx_11_0_x86_64.whl",
+    "sdist": "https://test-files.pythonhosted.org/packages/c6/3f/509c0b31aea75f3c01fc9b3c2cfbb9d03c32db2904a2df14fa97470f48c4/gmatpy-0.2.0.tar.gz"
+  }
+}

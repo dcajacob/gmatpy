@@ -1,0 +1,53 @@
+name: Promote exact GMAT Py 0.2.0 files to PyPI
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_production_upload:
+        description: Separate production authorization for all five fixed trial files received
+        type: boolean
+        required: true
+        default: false
+permissions: {}
+concurrency:
+  group: gmatpy-pypi-0.2.0
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: >-
+      inputs.confirm_production_upload && github.event_name == 'workflow_dispatch' &&
+      github.repository == 'dcajacob/gmatpy' && github.ref == 'refs/heads/main' &&
+      toJSON(github.event.repository.private) == 'false' && github.run_attempt == '1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: pypi
+      url: https://pypi.org/p/gmatpy
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout reviewed controls only
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: .github
+      - name: Set up byte-verification interpreter
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14.7'
+      - name: Retrieve all five fixed public files and verify provenance
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python .github/scripts/prepare-pypi-0.2.0.py
+      - name: Publish the verified unchanged files to production PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
+        with:
+          repository-url: https://upload.pypi.org/legacy/
+          packages-dir: dist/
+          verify-metadata: 'true'
+          skip-existing: 'false'
+          attestations: 'false'
+          print-hash: 'true'
+# Local proposal only. No build, cache, Actions artifact, draft release,
+# repository write permission or long-lived credential is required.
