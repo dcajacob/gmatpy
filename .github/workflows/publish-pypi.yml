@@ -96,13 +96,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           QUALIFICATION_RUN_ID: ${{ inputs.qualification_run_id }}
           PYTHONDONTWRITEBYTECODE: '1'
-        run: python .github/scripts/release_021.py prepare --run-id "$QUALIFICATION_RUN_ID" --temporary "$RUNNER_TEMP/release-verified" --output "$RUNNER_TEMP/publish-dist"
+        run: python .github/scripts/release_021.py prepare --run-id "$QUALIFICATION_RUN_ID" --temporary "$RUNNER_TEMP/release-verified" --output publish-dist
       - name: Publish only missing exact allowlisted 0.2.1 files
         if: steps.ready.outputs.has_files == 'true'
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
         with:
           repository-url: https://upload.pypi.org/legacy/
-          packages-dir: ${{ runner.temp }}/publish-dist/
+          packages-dir: publish-dist/
           verify-metadata: 'true'
           skip-existing: 'false'
           attestations: 'false'

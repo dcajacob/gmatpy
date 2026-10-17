@@ -139,3 +139,10 @@ def test_reject_wrong_dispatch_context(field):
     guard.context(env, 'publish-pypi.yml')
     env[field] = 'wrong'
     with pytest.raises(ValueError): guard.context(env, 'publish-pypi.yml')
+
+
+def test_publisher_output_is_visible_inside_docker_action():
+    workflow = (ROOT / '.github/workflows/publish-pypi.yml').read_text()
+    assert '--output publish-dist' in workflow
+    assert 'packages-dir: publish-dist/' in workflow
+    assert 'packages-dir: ${{ runner.temp }}' not in workflow
