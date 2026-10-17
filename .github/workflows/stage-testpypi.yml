@@ -1,0 +1,68 @@
+name: Stage approved GMAT Py draft asset
+on:
+  workflow_dispatch:
+    inputs:
+      selection:
+        description: Exact unchanged candidate file
+        type: choice
+        required: true
+        options: [linux-x86_64, linux-arm64, macos-arm64, macos-x86_64, sdist]
+      release_id:
+        description: Task-created unpublished testpypi-staging-09eafabe draft ID
+        type: string
+        required: true
+      asset_id:
+        description: Its single exact allowlisted asset ID
+        type: string
+        required: true
+      confirm_staging:
+        description: Approved GitHub-only TestPyPI trial and temporary storage
+        type: boolean
+        required: true
+        default: false
+permissions: {}
+concurrency:
+  group: gmatpy-testpypi-staging
+  cancel-in-progress: false
+jobs:
+  stage:
+    if: >-
+      inputs.confirm_staging && github.event_name == 'workflow_dispatch' &&
+      github.repository == 'dcajacob/gmatpy' && github.ref == 'refs/heads/main' &&
+      toJSON(github.event.repository.private) == 'false' && github.run_attempt == '1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: testpypi
+    permissions:
+      # Only this reviewed, protected job gets write access for draft visibility.
+      # Its script makes GET requests only. No OIDC or persistent credential.
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: .github
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14.7'
+      - name: Retrieve and verify the exact draft asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAYLOAD_SELECTION: ${{ inputs.selection }}
+          DRAFT_RELEASE_ID: ${{ inputs.release_id }}
+          DRAFT_ASSET_ID: ${{ inputs.asset_id }}
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python .github/scripts/stage-testpypi.py
+      - name: Store one root-level file for the existing publisher
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: gmatpy-testpypi-09eafabe-${{ inputs.selection }}
+          path: stage/*
+          if-no-files-found: error
+          archive: true
+          compression-level: 0
+          retention-days: 1
+          overwrite: false
+# Operator must verify/delete this exact artifact and draft asset sequentially.
+# No compilation, Cloudflare, package publication, caches or credential changes.

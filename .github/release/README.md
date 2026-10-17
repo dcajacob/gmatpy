@@ -49,3 +49,29 @@ workflow. After explicit approval, use its manual confirmation and environment
 review gate, then independently verify TestPyPI's downloaded file hash and
 installation. All files of a release are not uploaded atomically by this
 single-file smoke-test workflow. Existing uploaded filenames cannot be replaced.
+
+## GitHub-only staging
+
+The separate manual `stage-testpypi.yml` job reads exactly one uploaded asset
+from the unpublished draft `testpypi-staging-09eafabe`, targeting the exact
+09eafabe packaging revision and owned by `dcajacob`. It checks the draft ID,
+asset ID, single-file inventory, service digest, actual bytes and source/native
+provenance before creating the artifact consumed by the existing publisher.
+Both workflows require the protected `testpypi` environment and `main`.
+
+Only the staging job has `contents:write` for authenticated draft visibility.
+Its retrieval script uses GET requests only, and checkout does not retain
+credentials. The job has no OIDC permission, no permanent token or secret,
+and no build or package-publication step. The existing publishing job's
+permissions and fixed TestPyPI endpoint remain unchanged.
+
+Operate sequentially: upload one unchanged local candidate to the draft,
+approve and verify its staging run, delete the exact draft asset, then approve
+the publisher and verify its public download and installation before deleting
+the exact Actions artifact. The trial's simultaneous temporary-storage cap is
+171,000,000 bytes; a draft asset plus the 90,000,000-byte artifact cap fits
+within it. Actions retention is one day. Draft assets do not expire
+automatically: remove them on failure as well as success, and remove the empty
+task-created draft and any task-created staging tag at completion. Preserve
+receipts and the original local distributions. No Cloudflare or local service
+is used. Separate upload approval remains required for each authorized trial.
