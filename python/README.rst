@@ -10,9 +10,14 @@ This is an experimental, independently packaged GMAT module. Public
 This source checkout prepares stable 0.2.1 with expanded Python compatibility;
 it does not publish a new release.
 
-Install a published wheel with a matching standard CPython 3.14 interpreter::
+Install this version with a matching standard CPython 3.12 through 3.15 interpreter
+once its release has been published::
 
-    python -m pip install --only-binary=:all: gmatpy==0.2.0
+    python -m pip install --only-binary=:all: gmatpy==0.2.1
+
+During release preparation, install the matching local wheel directly instead.
+Publication remains a separately approved operation; an installation command
+does not imply that an unreleased version is available.
 
 Platform support
 ------------------
