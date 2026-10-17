@@ -34,6 +34,9 @@ def qualify(args):
     environment['PATH']=str(Path(sys.executable).parent)+os.pathsep+environment['PATH']
     environment.pop('PYTHONPATH',None);environment.pop('LD_LIBRARY_PATH',None);environment.pop('DYLD_LIBRARY_PATH',None)
     environment.pop('GMAT_PY_PROFILE',None)
+    # Standalone CPython was built with clang; Linux qualification uses the
+    # compiler supplied by the pinned manylinux image, not that build default.
+    if system=='linux':environment.update(CC='gcc',CXX='g++')
     if system=='macos':environment.update(MACOSX_DEPLOYMENT_TARGET='11.0',ARCHFLAGS=f'-arch {arch}')
     source_root=output/'source';source_root.mkdir()
     with tarfile.open(source_archive) as archive:archive.extractall(source_root,filter='data')
