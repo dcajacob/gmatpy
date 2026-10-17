@@ -1,0 +1,65 @@
+name: Verify published GMAT Py 0.2.1 installations
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: gmatpy-public-verify-0.2.1
+  cancel-in-progress: false
+jobs:
+  installed:
+    name: pypi (${{ matrix.target }})
+    if: >-
+      github.event_name == 'workflow_dispatch' && github.repository == 'dcajacob/gmatpy' &&
+      github.ref == 'refs/heads/main' && toJSON(github.event.repository.private) == 'false' &&
+      github.run_attempt == '1'
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - target: linux-x86_64
+            runner: ubuntu-24.04
+          - target: linux-arm64
+            runner: ubuntu-24.04-arm
+          - target: macos-arm64
+            runner: macos-15
+          - target: macos-x86_64
+            runner: macos-15-intel
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: |
+            .github
+            python/ci
+            python/tools
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14.8'
+      - name: Download only hash-matched production files for this target
+        env:
+          TARGET: ${{ matrix.target }}
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python .github/scripts/download_release_021.py --target "$TARGET" --output "$RUNNER_TEMP/public-dist"
+      - name: Fresh native installations from verified PyPI downloads, without compilation
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+          PYTHONDONTWRITEBYTECODE: '1'
+          PIP_NO_CACHE_DIR: '1'
+        run: |
+          set -euo pipefail
+          export SSL_CERT_FILE="$(python -c 'import pathlib,ssl; p=ssl.get_default_verify_paths().cafile; assert p and pathlib.Path(p).is_file(); print(p)')"
+          for minor in 3.12 3.13 3.14 3.15; do
+            interpreter_dir="$RUNNER_TEMP/interpreter-$minor"
+            python python/ci/prepare_interpreter.py --minor "$minor" --target "$TARGET" --output "$interpreter_dir"
+            "$interpreter_dir/python/bin/python3" python/ci/test_installed_release.py \
+              --bundle "$RUNNER_TEMP/public-dist" --manifest .github/release/pypi-0.2.1.json \
+              --target "$TARGET" --minor "$minor" --output "$RUNNER_TEMP/public-installed-$minor"
+          done
+# Read-only standard public runners only, max2. No Actions artifact, cache,
+# package upload, OIDC, native compilation or repair. Receipts stay in job logs.

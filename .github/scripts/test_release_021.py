@@ -146,3 +146,18 @@ def test_publisher_output_is_visible_inside_docker_action():
     assert '--output publish-dist' in workflow
     assert 'packages-dir: publish-dist/' in workflow
     assert 'packages-dir: ${{ runner.temp }}' not in workflow
+
+
+@pytest.mark.parametrize('url', ['http://files.pythonhosted.org/x/a.whl','https://evil.example/a.whl','https://files.pythonhosted.org/x/a.whl?bad=1','https://files.pythonhosted.org/x/b.whl'])
+def test_public_download_rejects_unapproved_url(url):
+    import download_release_021 as public_download
+    with pytest.raises(ValueError): public_download.check_url(url, 'a.whl')
+
+
+def test_public_download_requires_complete_fixed_release():
+    import download_release_021 as public_download
+    value,public=manifest(),public_state()
+    public['info']={'version':'0.2.1'}
+    with pytest.raises(ValueError): public_download.check_listing(value,public)
+    public['releases']['0.2.1']=[{'filename':r['file'],'size':r['bytes'],'digests':{'sha256':r['sha256']}} for r in value['files']]
+    assert len(public_download.check_listing(value,public))==17
