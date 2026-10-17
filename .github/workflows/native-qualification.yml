@@ -1,17 +1,86 @@
-name: GMAT Py native qualification
+name: GMAT Py multi-Python qualification
 on:
   workflow_dispatch:
+    inputs:
+      confirm_candidate_storage:
+        description: Approve at most 17 one-day candidate artifacts, capped at $0.02 aggregate storage
+        type: boolean
+        required: true
+        default: false
+      assess_python315:
+        description: Assess standard CPython 3.15 after all twelve core cells pass
+        type: boolean
+        default: true
 permissions:
   contents: read
 concurrency:
-  group: gmatpy-portability-${{ github.ref }}
+  group: gmatpy-qualification-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  native:
-    # Refuse runner allocation if repository identity/visibility changes.
+  source:
     if: >-
-      github.repository == 'dcajacob/gmatpy' &&
-      toJSON(github.event.repository.private) == 'false'
+      inputs.confirm_candidate_storage && github.repository == 'dcajacob/gmatpy' &&
+      toJSON(github.event.repository.private) == 'false' && github.run_attempt == '1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14.8'
+      - name: Freeze one source identity for every ABI and architecture
+        env:
+          SOURCE_REVISION: ${{ github.sha }}
+          PIP_NO_CACHE_DIR: '1'
+        run: |
+          python -m pip install -r python/ci/requirements.txt
+          python python/ci/freeze_clean_checkout.py --repo "$GITHUB_WORKSPACE" --revision "$SOURCE_REVISION" --output "$RUNNER_TEMP/frozen"
+          python -c 'import os,pathlib; p=pathlib.Path(os.environ["RUNNER_TEMP"])/"frozen"; files=[*p.glob("artifacts/*.tar.gz"),p/"WORKING_TREE.json",p/"SOURCE_RECEIPT.json"]; assert len(files)==3 and sum(f.stat().st_size for f in files)<=90000000; print((p/"SOURCE_RECEIPT.json").read_text())'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: qualification-source-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/frozen/artifacts/*.tar.gz
+            ${{ runner.temp }}/frozen/WORKING_TREE.json
+            ${{ runner.temp }}/frozen/SOURCE_RECEIPT.json
+          retention-days: 1
+          compression-level: 0
+          archive: true
+          overwrite: false
+          if-no-files-found: error
+  core:
+    needs: source
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        python_minor: ['3.13', '3.12', '3.14']
+        target: [linux-x86_64, linux-arm64, macos-arm64, macos-x86_64]
+        include:
+          - target: linux-x86_64
+            runner: ubuntu-24.04
+            image: quay.io/pypa/manylinux_2_28_x86_64@sha256:c2261579b9c2e5d45aa93312f73e2a302182e3e977b558581a1838d6fed3d8e6
+          - target: linux-arm64
+            runner: ubuntu-24.04-arm
+            image: quay.io/pypa/manylinux_2_28_aarch64@sha256:abd1230aa9e4058a74b89d27cd14ba18c0db036d7bfe6e6f219a29ea63c24eb6
+          - target: macos-arm64
+            runner: macos-15
+            image: unused
+          - target: macos-x86_64
+            runner: macos-15-intel
+            image: unused
+    uses: ./.github/workflows/native-cell.yml
+    with:
+      target: ${{ matrix.target }}
+      runner: ${{ matrix.runner }}
+      image: ${{ matrix.image }}
+      python_minor: ${{ matrix.python_minor }}
+  assess315:
+    needs: [source, core]
+    if: inputs.assess_python315 && needs.core.result == 'success'
     strategy:
       fail-fast: false
       max-parallel: 2
@@ -25,72 +94,14 @@ jobs:
             image: quay.io/pypa/manylinux_2_28_aarch64@sha256:abd1230aa9e4058a74b89d27cd14ba18c0db036d7bfe6e6f219a29ea63c24eb6
           - target: macos-arm64
             runner: macos-15
-            python_arch: arm64
+            image: unused
           - target: macos-x86_64
             runner: macos-15-intel
-            python_arch: x64
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 90
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        if: startsWith(matrix.target, 'macos-')
-        with:
-          python-version: '3.14.7'
-          architecture: ${{ matrix.python_arch }}
-      - name: Native Linux manylinux build and clean installed tests
-        if: startsWith(matrix.target, 'linux-')
-        env:
-          IMAGE: ${{ matrix.image }}
-          TARGET: ${{ matrix.target }}
-        shell: bash
-        run: |
-          mkdir -p "$RUNNER_TEMP/gmatpy-output"
-          docker run --rm --cpus 2 --memory 6g --user "$(id -u):$(id -g)" \
-            -v "$GITHUB_WORKSPACE:/checkout:ro" \
-            -v "$RUNNER_TEMP/gmatpy-output:/output" \
-            -e TARGET="$TARGET" -e SOURCE_REVISION="$GITHUB_SHA" -e PIP_NO_CACHE_DIR=1 "$IMAGE" bash -euc '
-              /opt/python/cp314-cp314/bin/python -m venv /output/tools
-              /output/tools/bin/python -m pip install -r /checkout/python/ci/requirements.txt
-              /output/tools/bin/python /checkout/python/ci/freeze_clean_checkout.py \
-                --repo /checkout --revision "$SOURCE_REVISION" --output /output/frozen
-              /output/tools/bin/python /checkout/python/ci/qualify.py \
-                --target "$TARGET" --sdist /output/frozen/artifacts/*.tar.gz --output /output/qualified
-            '
-      - name: Native macOS build and clean installed tests
-        if: startsWith(matrix.target, 'macos-')
-        env:
-          TARGET: ${{ matrix.target }}
-          PIP_NO_CACHE_DIR: '1'
-        shell: bash
-        run: |
-          python -m venv "$RUNNER_TEMP/gmatpy-tools"
-          "$RUNNER_TEMP/gmatpy-tools/bin/python" -m pip install -r "$GITHUB_WORKSPACE/python/ci/requirements.txt"
-          "$RUNNER_TEMP/gmatpy-tools/bin/python" "$GITHUB_WORKSPACE/python/ci/freeze_clean_checkout.py" \
-            --repo "$GITHUB_WORKSPACE" --revision "$GITHUB_SHA" --output "$RUNNER_TEMP/gmatpy-output/frozen"
-          "$RUNNER_TEMP/gmatpy-tools/bin/python" "$GITHUB_WORKSPACE/python/ci/qualify.py" \
-            --target "$TARGET" --sdist "$RUNNER_TEMP/gmatpy-output/frozen/artifacts/"*.tar.gz \
-            --output "$RUNNER_TEMP/gmatpy-output/qualified"
-      - name: Record evidence in job log (no charged artifact/cache storage)
-        if: always()
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          import pathlib,os
-          output=pathlib.Path(os.environ['RUNNER_TEMP'])/'gmatpy-output'
-          receipt=output/'frozen/SOURCE_RECEIPT.json'
-          if receipt.exists():print(receipt.read_text())
-          root=output/'qualified'
-          for name in ['RESULTS.json','EVIDENCE_SHA256.json']:
-              p=root/name
-              if p.exists():print(name+'\n'+p.read_text())
-          # 'extended' is the historical evidence key for the one full wheel.
-          for profile in ['extended']:
-              for name in ['pytest.log','binary-contents-check.log','auditwheel-after.log','state-comparison.json','release-preflight.log']:
-                  p=root/profile/name
-                  if p.exists():print(str(p.relative_to(root))+'\n'+p.read_text()[-16000:])
-          PY
-# No cache/upload-artifact/publishing step. Public logs retain hashes/results;
-# wheel retention requires separately verified free storage or spending approval.
+            image: unused
+    uses: ./.github/workflows/native-cell.yml
+    with:
+      target: ${{ matrix.target }}
+      runner: ${{ matrix.runner }}
+      image: ${{ matrix.image }}
+      python_minor: '3.15'
+# Candidate retention only. No publishing, cache, secrets or persistent grant.

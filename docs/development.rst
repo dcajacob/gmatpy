@@ -208,8 +208,12 @@ configured to build one standard wheel from an immutable source archive on
 Linux x86_64/ARM64 and native macOS x86_64/ARM64. Configuration is not evidence
 that changed source has passed on every target. It pins Linux container digests and
 macOS runner architecture. ``python/ci/requirements.txt`` pins the Python build,
-repair and test tools. The driver requires standard-ABI CPython 3.14 and records
-its exact patch version rather than assuming identical interpreters everywhere.
+repair and test tools. The driver requires the exact standard-ABI interpreter from
+``python/ci/interpreters.json`` and records its archive hash and runtime patch.
+Twelve core cells cover 3.12/3.13/3.14 across all four targets; a separate
+four-cell 3.15 assessment follows core success. One-day source/wheel retention
+requires explicit storage-budget confirmation. This workflow does not publish
+packages, cache builds or add persistent access.
 
 ``freeze_clean_checkout.py`` rejects a dirty checkout, checks committed file
 bytes, and creates a verified source archive outside the checkout. It writes a
@@ -221,7 +225,7 @@ paths:
 
    python python/ci/freeze_clean_checkout.py --repo /absolute/path/to/gmatpy \
      --revision <full-commit> --output /absolute/path/to/new-frozen-output
-   python python/ci/qualify.py --target linux-x86_64 \
+   python python/ci/qualify.py --target linux-x86_64 --python-minor 3.13 \
      --sdist /absolute/path/to/new-frozen-output/artifacts/gmatpy-0.2.0.tar.gz \
      --output /absolute/path/to/new-qualification-output
 

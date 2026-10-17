@@ -1,8 +1,7 @@
-"""Draft dedicated-repository CI freezer: immutable Git commit to verified sdist.
+"""Freeze an immutable clean Git checkout to a provenance-bound source archive.
 
-Install under python/ci after the clean migration. Outputs must be outside the
-checkout. This intentionally rejects dirty checkouts and stale provenance. It
-has not been used to qualify a migrated repository (none exists yet).
+Outputs stay outside the checkout. Dirty checkouts and stale generated source
+provenance are rejected; packaging inputs are checked against committed bytes.
 """
 import argparse,hashlib,json,os,subprocess,sys,tarfile
 from pathlib import Path

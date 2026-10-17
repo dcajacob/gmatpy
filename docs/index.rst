@@ -24,9 +24,9 @@ with a NASA GMAT release.
 
 .. important::
 
-   The distribution is ``gmatpy`` version |release|, imported as ``gmatpy``.
-   It is **not yet on PyPI**. Install a matching candidate wheel or build from
-   source. The single headless package includes SPICE and all supported mission
+   Public ``gmatpy`` 0.2.0 is on PyPI with CPython 3.14 Linux/macOS wheels.
+   These pages describe the unreleased |release| compatibility candidate.
+   Public files and candidate artifacts have separate source/build receipts. The single headless package includes SPICE and all supported mission
    workflows; no feature profile or extra is needed. See :doc:`installation`.
 
 Find your starting point
@@ -57,12 +57,11 @@ equivalence. Their scope is described in :doc:`development`; passing them does
 not validate operational mission use. Scientific inputs are fixed snapshots,
 with coverage and freshness limits in :doc:`conventions`.
 
-These pages describe the single-package cleanup based on
-``bff0ed4687964cd1f36a3ebaeb278b451bac271d``. That base revision passed all eight
-native matrix cells across Linux x86_64/ARM64 and macOS Intel/ARM64 on the first
-attempt. Those historical profile builds do not establish a fresh native build
-of the packaging cleanup. See :ref:`platform-support` for exact source and
-artifact boundaries and :doc:`development` for the checks.
+Public 0.2.0 wheels use packaging source ``09eafabe`` and original native
+binaries from ``b52941e``, which passed 194 tests per target. The public Linux
+wheel also passed a fresh 194-test installed check. Expansion qualification
+targets 3.12 through 3.14, then assesses 3.15. Configuration is not evidence
+that every cell passed; see :ref:`platform-support` for exact limits.
 
 .. toctree::
    :maxdepth: 2

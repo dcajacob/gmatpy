@@ -31,9 +31,11 @@ Space-Track credentials, or live scientific-data downloads.
 
 Install a matching GMAT Py wheel explicitly using the installation guide,
 then install the adapter-bearing TLE Tailor checkout in the same isolated
-environment. GMAT Py 0.2.0 is not currently published on PyPI. The
-``gmat`` extra declares its dependency but does not supply a missing wheel;
-the local TLE Tailor project uses a ``wheels/`` find-links directory with uv.
+environment. Public GMAT Py 0.2.0 has CPython 3.14 Linux/macOS wheels on PyPI.
+A 3.13 interpreter instead attempts a native source build. The ``gmat`` extra
+declares its dependency but cannot supply an absent ABI wheel. A local TLE Tailor
+checkout can also use its ``wheels/`` find-links directory with uv for an
+identified candidate.
 Use the actual matching wheel filename; the standard package has no feature
 profile build tag. TLE Tailor has additional Python dependencies including
 NumPy, pandas, Astropy, and its fitting libraries.

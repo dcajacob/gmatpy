@@ -4,7 +4,7 @@
   "reviewed_at": "2026-10-16",
   "package": {
     "name": "gmatpy",
-    "version": "0.2.0",
+    "version": "0.2.1.dev0",
     "display_name": "GMAT Py"
   },
   "scope": {
@@ -303,7 +303,7 @@
       "status": "resolved",
       "notes": "Dan CaJacob personally adopted the documented publication-based not-subject-to-EAR determination on 2026-10-16 for the exact reviewed GMAT Py 0.2.0 scientific payload and approved packaging successors. Owner confirmed no nonpublic employer/client code or other restricted inputs. Separate ITAR analysis, scope fingerprint, publication conditions and limitations are in the included record. This is an owner determination, not government clearance or PyPI upload approval.",
       "determination_file": "EXPORT_DETERMINATION.json",
-      "determination_sha256": "d66cc3cd84f3f0bf53d895fc3c8b03945006162a92e4daa6e59188d045c4959c"
+      "determination_sha256": "a7b690438c42a83026391c7b94e61aabb70da1fc619b37596c32be137e9e3a60"
     },
     {
       "id": "inherited-event-location-provenance",

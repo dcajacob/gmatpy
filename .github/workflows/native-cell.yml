@@ -1,0 +1,90 @@
+name: GMAT Py native candidate cell
+on:
+  workflow_call:
+    inputs:
+      target:
+        required: true
+        type: string
+      runner:
+        required: true
+        type: string
+      image:
+        required: true
+        type: string
+      python_minor:
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'dcajacob/gmatpy' &&
+      toJSON(github.event.repository.private) == 'false' && github.run_attempt == '1'
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: qualification-source-${{ github.sha }}
+          path: ${{ runner.temp }}/source
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        if: startsWith(inputs.target, 'macos-')
+        with:
+          python-version: '3.14.8'
+      - name: Verify shared source archive before any native work
+        run: python3 python/ci/check_frozen_input.py "$RUNNER_TEMP/source" "$GITHUB_SHA"
+      - name: Native Linux wheel, clean install and scientific regressions
+        if: startsWith(inputs.target, 'linux-')
+        env:
+          TARGET: ${{ inputs.target }}
+          MINOR: ${{ inputs.python_minor }}
+          IMAGE: ${{ inputs.image }}
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/gmatpy-output"
+          docker run --rm --cpus 2 --memory 6g --user "$(id -u):$(id -g)"             -v "$GITHUB_WORKSPACE:/checkout:ro" -v "$RUNNER_TEMP/source:/input:ro"             -v "$RUNNER_TEMP/gmatpy-output:/output" -e TARGET -e MINOR -e PIP_NO_CACHE_DIR=1 "$IMAGE" bash -euc '
+              /opt/python/cp314-cp314/bin/python /checkout/python/ci/prepare_interpreter.py --minor "$MINOR" --target "$TARGET" --output /output/interpreter
+              /output/interpreter/python/bin/python3 -m venv /output/tools
+              /output/tools/bin/python -m pip install -r /checkout/python/ci/requirements.txt
+              /output/tools/bin/python /checkout/python/ci/qualify.py --target "$TARGET" --python-minor "$MINOR" --sdist /input/artifacts/*.tar.gz --output /output/qualified
+            '
+      - name: Native macOS wheel, clean install and scientific regressions
+        if: startsWith(inputs.target, 'macos-')
+        env:
+          TARGET: ${{ inputs.target }}
+          MINOR: ${{ inputs.python_minor }}
+          PIP_NO_CACHE_DIR: '1'
+        shell: bash
+        run: |
+          python python/ci/prepare_interpreter.py --minor "$MINOR" --target "$TARGET" --output "$RUNNER_TEMP/gmatpy-output/interpreter"
+          "$RUNNER_TEMP/gmatpy-output/interpreter/python/bin/python3" -m venv "$RUNNER_TEMP/gmatpy-output/tools"
+          "$RUNNER_TEMP/gmatpy-output/tools/bin/python" -m pip install -r python/ci/requirements.txt
+          "$RUNNER_TEMP/gmatpy-output/tools/bin/python" python/ci/qualify.py --target "$TARGET" --python-minor "$MINOR" --sdist "$RUNNER_TEMP/source/artifacts/"*.tar.gz --output "$RUNNER_TEMP/gmatpy-output/qualified"
+      - name: Select only verified wheel and immutable evidence under the storage cap
+        env:
+          SOURCE_REVISION: ${{ github.sha }}
+        run: python3 python/ci/collect_candidate.py --root "$RUNNER_TEMP/gmatpy-output" --source "$RUNNER_TEMP/source" --revision "$SOURCE_REVISION" --output "$RUNNER_TEMP/payload"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: candidate-${{ inputs.python_minor }}-${{ inputs.target }}-${{ github.sha }}
+          path: ${{ runner.temp }}/payload/*
+          retention-days: 1
+          compression-level: 0
+          archive: true
+          overwrite: false
+          if-no-files-found: error
+      - name: Keep failure and qualification summaries in public job logs
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'gmatpy-output/qualified'
+          for name in ['RESULTS.json','EVIDENCE_SHA256.json','extended/pytest.log','extended/release-preflight.log','extended/state-comparison.json']:
+              f=p/name
+              if f.exists():print(name+'\n'+f.read_text()[-16000:])
+          PY

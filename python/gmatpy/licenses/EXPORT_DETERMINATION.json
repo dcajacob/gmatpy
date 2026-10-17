@@ -4,7 +4,7 @@
   "adopted_on": "2026-10-16",
   "package": {
     "name": "gmatpy",
-    "version": "0.2.0",
+    "version": "0.2.1.dev0",
     "display_name": "GMAT Py"
   },
   "producer": {
@@ -57,13 +57,42 @@
   },
   "scope": {
     "selection": "gmatpy-scientific-payload-v1",
-    "sha256": "8dcbbfb6614b288efa0f990a1e37a66998c903b538f1984f9515cf0d5fb26741",
+    "sha256": "5a2a058d92daf77394194854ef550bfe4897aefb0c252e4cc0abc2f31551d195",
     "file_count": 1176,
     "basis_revision": "e224907b67e9532e8eb2e2f5955ac96a29a12a36",
     "basis_source_archive_sha256": "59c2f93c4ede0ddea9a9d419bb9564cbe3fd67d053360c94c0a24ed04b6103ef",
     "definition": "Sorted source-provenance records selected by export_scope_files in python/tools/check_distribution.py; covers native/runtime/scientific data and native build inputs. Scope includes exact path, mode, size and SHA256. License/manifests and final complete source identity are separately checked.",
     "successor_limit": "Applies to the approved packaging/export-record/qualification documentation changes only while the reviewed scientific payload remains identical. Newly added substantive functionality, dependencies, private mission content or restricted inputs require reassessment.",
-    "final_revision_and_artifacts": "Each final sdist/wheel embeds BUILD_PROVENANCE.json; final artifact/build/dependency hashes and qualification evidence must identify actual release files. A retained test-only fixture is not a release wheel."
+    "final_revision_and_artifacts": "Each final sdist/wheel embeds BUILD_PROVENANCE.json; final artifact/build/dependency hashes and qualification evidence must identify actual release files. A retained test-only fixture is not a release wheel.",
+    "packaging_successor": {
+      "previous_scope": {
+        "sha256": "8dcbbfb6614b288efa0f990a1e37a66998c903b538f1984f9515cf0d5fb26741",
+        "file_count": 1176,
+        "basis_revision": "e224907b67e9532e8eb2e2f5955ac96a29a12a36",
+        "basis_source_archive_sha256": "59c2f93c4ede0ddea9a9d419bb9564cbe3fd67d053360c94c0a24ed04b6103ef"
+      },
+      "authorization": "Owner instruction Sentinel_7fefaa9965308191870bf1cc476ec336, 2026-10-17T03:00:58Z: implement/qualify expanded Python support, source-dependency diagnostics and metadata/documentation cleanup; no new PyPI release approval.",
+      "review": "1173 scoped native/runtime/scientific records match the adopted source; only pyproject metadata, Python CMake dependency preflight inclusion and __version__ differ. All substantive algorithms, sources, dependencies and17data inputs remain unchanged.",
+      "changed_files": [
+        {
+          "path": "pyproject.toml",
+          "previous_sha256": "555bb79a8a2b6ce1c75622afd46127c8dc733a7f176b1ed3cc0b2fd650939b2c",
+          "sha256": "328eb0725069f7806bae030c81952914e9c32e88db6630731e9bd176771940cc"
+        },
+        {
+          "path": "python/CMakeLists.txt",
+          "previous_sha256": "391664fafbdfc345f807ab41643fc2f8bb3ab307f2df398ec97482deac50ad6a",
+          "sha256": "16831e1291d61870a153ffd53d0830fdeecf2c7337f9de7a09e8809a30d42605"
+        },
+        {
+          "path": "python/gmatpy/__init__.py",
+          "previous_sha256": "b2a740b5fd2997a51c117fa6f4aa29b0489d1b64e6c7c1de8f2e8a8ad9661d18",
+          "sha256": "eb3d6147db7918db97cb107aab9292e7df44cc133c21ec05b3c0c2c59f4af8e7"
+        }
+      ],
+      "candidate_version": "0.2.1.dev0",
+      "publication_approved": false
+    }
   },
   "technical_findings": {
     "source": "General numerical orbital propagation, coordinate/time conversion, maneuvers and semi-major-axis goal solving; trusted script/native core remains broad",

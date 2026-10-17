@@ -105,3 +105,11 @@ government endorsement or a worldwide legal guarantee.
 Primary sources were checked 2026-10-16. eCFR displayed Title 15 current through
 October 14 and Title 22 through October 13 or 14 by page. Final publication remains
 a separate authorized action after successful release/content checks.
+
+## Unreleased Python compatibility successor
+
+The 0.2.1.dev0 candidate preserves the adopted scientific findings and all
+substantive native algorithms and data. The JSON record identifies the
+owner-authorized packaging-only scope successor and previous fingerprint.
+New source/native build receipts and qualification apply to every ABI/target.
+This engineering record does not authorize a new PyPI release.

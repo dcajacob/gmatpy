@@ -2,7 +2,7 @@
   "schema_version": 1,
   "review_date": "2026-10-16",
   "project": "GMAT Py",
-  "package_version": "0.2.0",
+  "package_version": "0.2.1.dev0",
   "scope": "Exact selected wheel/sdist data inventory after restoring NASA baseline ICRF bytes/grid, March Earth PCK and implemented nutation record order; terms and U.S. numerical-data assessments are component-specific, not a blanket license or legal certification. Final built-source identity is recorded separately in BUILD_PROVENANCE.json.",
   "status_definitions": {
     "excluded": "Omitted from wheel and sdist; caller-provided optional inputs follow provider terms.",

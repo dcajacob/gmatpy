@@ -5,12 +5,14 @@ GMAT Py: standalone Python access to GMAT
 and scientific inputs in a Python wheel. Install a matching wheel and import
 it alongside your other Python code. No separate GMAT installation, executable,
 GUI, display server, runtime download or library-path setup is required.
-This is an experimental, independently packaged GMAT module; the working
-package name is ``gmatpy``, version 0.2.0. It is not published to PyPI.
+This is an experimental, independently packaged GMAT module. Public
+``gmatpy`` 0.2.0 is available on PyPI for standard CPython 3.14 Linux/macOS.
+This source checkout prepares the unreleased 0.2.1.dev0 compatibility candidate;
+it does not publish a new release.
 
-Install a built wheel::
+Install a published wheel with a matching standard CPython 3.14 interpreter::
 
-    python -m pip install /path/to/gmatpy-0.2.0-*.whl
+    python -m pip install --only-binary=:all: gmatpy==0.2.0
 
 Platform support
 ------------------
@@ -36,7 +38,15 @@ build attempts beyond the qualified CPython 3.14 scope; other Python versions,
 interpreters and free-threaded Python remain unqualified. Wheels are specific
 to their Python ABI and platform. Runtime needs only the standard library and
 bundled native binaries/data; source-build requirements are separate.
-This qualification does not imply public binary availability.
+Public 0.2.0 files retain packaging source ``09eafabe`` and unchanged native
+binaries from ``b52941e``. They were promoted without rebuilding.
+
+The unreleased expansion targets CPython 3.12.15, 3.13.16 and 3.14.8 on the same
+four targets, followed by a 3.15.0 assessment. Require a retained ABI-specific
+wheel, clean installed tests, scientific regressions and source/license/data
+audits before marking each cell supported. Configuration alone is not a pass.
+Windows and free-threaded Python remain unqualified. Candidate metadata permits
+3.12 through 3.15 for these tests; failing ABIs must be excluded before release.
 
 Documentation
 ---------------

@@ -1,7 +1,8 @@
 """Build/repair and test the full headless wheel from one immutable sdist.
 
-Run using an isolated standard-ABI CPython 3.14 tools venv with requirements.txt
-installed. Exact patch versions are recorded; the pinned native images may differ.
+Run with a pinned standard-ABI CPython interpreter and requirements.txt.
+All matrix cells use the same immutable sdist; exact interpreter patches and
+native dependency/toolchain identities are recorded.
 No publishing, remote upload or cache; all outputs go to a new --output directory.
 """
 import argparse,hashlib,json,os,platform,shutil,subprocess,sys,sysconfig,tarfile,zipfile
@@ -21,7 +22,10 @@ def run(command, *, cwd, env, log, timeout=5400):
 def qualify(args):
     if 'GMAT_PY_PROFILE' in os.environ and os.environ['GMAT_PY_PROFILE'] != 'extended':
         raise ValueError('GMAT_PY_PROFILE is obsolete; qualification builds one full headless package (SPICE included)')
-    assert sys.version_info[:2]==(3,14) and not sysconfig.get_config_var('Py_GIL_DISABLED'),sys.version
+    minor=args.python_minor
+    expected=json.loads(Path(__file__).with_name('interpreters.json').read_text())['interpreters'][minor+'/'+args.target]
+    assert platform.python_implementation()=='CPython' and not sysconfig.get_config_var('Py_GIL_DISABLED'),sys.version
+    assert platform.python_version()==expected['version'],(sys.version,expected['version'])
     target=args.target;system,arch=target.split('-');actual=platform.machine().lower()
     assert actual==({'arm64':'aarch64','x86_64':'x86_64'}[arch] if system=='linux' else arch),(target,actual)
     assert platform.system()==('Linux' if system=='linux' else 'Darwin')
@@ -44,7 +48,7 @@ def qualify(args):
     dependency=json.loads((spice/'BUILD_DEPENDENCY.json').read_text());assert dependency['target']==target
     assert digest(spice/'lib/cspice.a')==dependency['library_sha256']
     shutil.copy2(spice/'BUILD_DEPENDENCY.json',output/'CSPICE_BUILD_DEPENDENCY.json')
-    results={'target':target,'python':sys.version,'platform':platform.platform(),'sdist_sha256':digest(source_archive),'source_tree_sha256':json.loads(manifest.read_text())['source_tree_sha256'],'cspice_library_sha256':dependency['library_sha256'],'profiles':{}}
+    results={'target':target,'python_minor':minor,'interpreter':expected,'python':sys.version,'platform':platform.platform(),'sdist_sha256':digest(source_archive),'source_tree_sha256':json.loads(manifest.read_text())['source_tree_sha256'],'cspice_library_sha256':dependency['library_sha256'],'profiles':{}}
     run([sys.executable,'-m','pip','freeze'],cwd=output,env=environment,log=output/'python-tools.txt')
     # Retain the historical evidence key; only one standard artifact is built.
     profile='extended'
@@ -99,4 +103,4 @@ print('INSTALLED_BYTES_OK',root)
     print('QUALIFIED',json.dumps(results),flush=True)
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--target',required=True,choices=['linux-x86_64','linux-arm64','macos-x86_64','macos-arm64']);p.add_argument('--sdist',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--cspice',type=Path);p.add_argument('--archive',type=Path);p.add_argument('--wheelhouse',type=Path);qualify(p.parse_args())
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--target',required=True,choices=['linux-x86_64','linux-arm64','macos-x86_64','macos-arm64']);p.add_argument('--python-minor',required=True,choices=['3.12','3.13','3.14','3.15']);p.add_argument('--sdist',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--cspice',type=Path);p.add_argument('--archive',type=Path);p.add_argument('--wheelhouse',type=Path);qualify(p.parse_args())

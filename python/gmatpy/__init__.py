@@ -5,7 +5,7 @@ from .utilities import body_state, convert_state, epoch_mjd, native_session, tra
 
 __all__ = ["ForceModel", "Sample", "Spacecraft", "propagate", "body_state", "convert_state",
            "epoch_mjd", "native_session", "transform_state"]
-__version__ = "0.2.0"
+__version__ = "0.2.1.dev0"
 
 from .capabilities import Capabilities, UnsupportedCapabilityError, capabilities
 from .mission import Impulse, TargetResult, propagate_mission, propagate_many, run_script, target_sma

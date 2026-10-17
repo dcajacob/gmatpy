@@ -54,6 +54,9 @@ endforeach()
 set(GMAT_PROPRIETARYPLUGINS_PATH "" CACHE PATH "" FORCE)
 set(GMAT_ADDITIONAL_PLUGINS "" CACHE FILEPATH "" FORCE)
 
+# Check external source-build inputs before GMAT emits secondary link errors.
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckSourceDependencies.cmake")
+gmatpy_check_source_dependencies()
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/.." engine EXCLUDE_FROM_ALL)
 if(NOT TARGET ${GMAT_PY_API_TARGET})
   message(FATAL_ERROR "GMAT did not build bindings for Python ${GMAT_PY_PYTHON_VERSION}")

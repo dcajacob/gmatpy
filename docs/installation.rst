@@ -3,11 +3,11 @@
 Installation
 ============
 
-GMAT Py is distributed as ``gmatpy``, version ``0.2.0``. It is not yet published
-to PyPI. Install a matching candidate wheel obtained from the project owner,
-or build a wheel from the `source repository
-<https://github.com/dcajacob/gmatpy>`_. These instructions do not imply that public
-binary releases are available.
+Public ``gmatpy`` 0.2.0 is available on
+`PyPI <https://pypi.org/project/gmatpy/0.2.0/>`_ with standard-ABI CPython 3.14
+wheels for Linux x86_64/ARM64 and macOS Intel/ARM64, plus a source archive for
+deliberate native builds. This checkout prepares the unreleased |release|
+compatibility candidate. Candidate files must not replace immutable 0.2.0 files.
 
 There is one standard headless package per supported Python ABI and platform.
 It includes the native engine, Python bindings, SPICE support and 17 selected
@@ -31,10 +31,16 @@ environment with the interpreter matching the wheel:
 
    python3.14 -m venv .venv
    . .venv/bin/activate
-   python -m pip install /absolute/path/to/gmatpy-0.2.0-<python>-<abi>-<platform>.whl
+   python -m pip install --only-binary=:all: gmatpy==0.2.0
    python -c "import gmatpy; print(gmatpy.__version__); print(gmatpy.capabilities())"
 
-Replace the entire placeholder filename with the actual wheel path. For example,
+For a verified local candidate, use its actual matching wheel path instead.
+Binary-only installation avoids accidental source fallback. With uv::
+
+   uv python pin 3.14
+   uv add --no-build-package gmatpy gmatpy==0.2.0
+
+For example,
 ``cp314-cp314`` identifies the standard CPython 3.14 ABI; it is not a
 free-threaded or cross-version wheel. The platform tag must also match the
 machine and operating system. Pip rejects an incompatible wheel. See
@@ -97,6 +103,22 @@ Wheel tags and successful installation alone do not establish numerical or
 runtime qualification on an untested platform. The release must retain the
 source and final artifact identities for every platform it offers.
 
+Unreleased expansion candidate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The new matrix pins the latest stable patches when prepared: CPython 3.12.15,
+3.13.16 and 3.14.8 on each of the four targets above. After all twelve core
+cells pass, a four-cell 3.15.0 assessment runs. Each builds an ABI-specific wheel
+from one shared immutable source archive, clean-installs it, then checks
+propagation, saved states, splines/MSISE, native dependencies, notices and all
+17 scientific inputs and exclusions. A configured cell is not a successful or
+published wheel. Final support requires its exact retained file and receipt.
+Windows, free-threaded Python and other interpreters remain unqualified.
+
+Pinned standalone interpreters supply current security patches absent from
+some runner catalogs. Archive hashes, actual runtime patches and standard ABI
+are checked before use. They are build tools, not extra wheel payload.
+
 .. _source-build:
 
 Build a wheel from source
@@ -112,6 +134,12 @@ Provide a target-native CSPICE dependency tree containing ``include/SpiceUsr.h``
 ``include/f2c.h`` and ``lib/cspice.a`` on Linux/macOS. Its objects must be built
 with position-independent code (``-fPIC``). A precompiled archive for another
 architecture cannot be reused.
+
+Source installation does not automatically retrieve or compile CSPICE/f2c.
+The sdist includes the pinned bootstrap helper, not its headers or archive.
+MATLAB is not required. The candidate preflight reports missing native inputs
+before legacy configuration can produce secondary linker errors. ``F2C_DIR``
+is the separate f2c header directory when needed; runtime objects are in CSPICE.
 
 Start from the intended source revision in a fresh checkout. Replace
 ``RELEASE_COMMIT`` with its immutable commit identifier; a task-local candidate
@@ -142,6 +170,14 @@ Linux x86_64, with a new output directory:
 Use ``linux-arm64``, ``macos-x86_64`` or ``macos-arm64`` only on the corresponding
 native target. This is a full native dependency build, not part of a normal
 wheel installation or documentation build.
+
+Pass the prepared native tree to a source build frontend::
+
+   uv pip install . -Ccmake.define.CSPICE_DIR=/absolute/path/to/cspice
+
+The candidate also accepts ``CSPICE_DIR`` in the environment; explicit CMake
+configuration takes precedence. Public 0.2.0 raw builds need the explicit
+configuration above; its Bash helper translates the environment variable.
 
 Linux
 ~~~~~

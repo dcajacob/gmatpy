@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "distribution": "astral-sh/python-build-standalone",
+  "release": "20261013",
+  "interpreters": {
+    "3.12/linux-x86_64": {
+      "python_minor": "3.12",
+      "version": "3.12.15",
+      "target": "linux-x86_64",
+      "filename": "cpython-3.12.15+20261013-x86_64-unknown-linux-gnu-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.12.15%2B20261013-x86_64-unknown-linux-gnu-install_only.tar.gz",
+      "bytes": 66983838,
+      "sha256": "5d546fc004fc2435fa142eb8f42ed8de5eb4725963dc22f7e6671014a80eb560"
+    },
+    "3.12/linux-arm64": {
+      "python_minor": "3.12",
+      "version": "3.12.15",
+      "target": "linux-arm64",
+      "filename": "cpython-3.12.15+20261013-aarch64-unknown-linux-gnu-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.12.15%2B20261013-aarch64-unknown-linux-gnu-install_only.tar.gz",
+      "bytes": 52391962,
+      "sha256": "34a43010cc05982d8b5debbad7d09f7b1200117ebf018f7acfd656895e408205"
+    },
+    "3.12/macos-x86_64": {
+      "python_minor": "3.12",
+      "version": "3.12.15",
+      "target": "macos-x86_64",
+      "filename": "cpython-3.12.15+20261013-x86_64-apple-darwin-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.12.15%2B20261013-x86_64-apple-darwin-install_only.tar.gz",
+      "bytes": 24892063,
+      "sha256": "9686ddd8639b855905447ea4a16eb54a804a9ef12afbe7c9ecb1412d9c1fbc98"
+    },
+    "3.12/macos-arm64": {
+      "python_minor": "3.12",
+      "version": "3.12.15",
+      "target": "macos-arm64",
+      "filename": "cpython-3.12.15+20261013-aarch64-apple-darwin-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.12.15%2B20261013-aarch64-apple-darwin-install_only.tar.gz",
+      "bytes": 25180390,
+      "sha256": "ba32036ad8f4c434d97a1ee7feef8b7edc0fac16777639b97e39c74a108e4440"
+    },
+    "3.13/linux-x86_64": {
+      "python_minor": "3.13",
+      "version": "3.13.16",
+      "target": "linux-x86_64",
+      "filename": "cpython-3.13.16+20261013-x86_64-unknown-linux-gnu-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.13.16%2B20261013-x86_64-unknown-linux-gnu-install_only.tar.gz",
+      "bytes": 75813334,
+      "sha256": "e588e50db882fa6a89f926d9a9ad64e445183af0eda5bda226a2c151b17db8a6"
+    },
+    "3.13/linux-arm64": {
+      "python_minor": "3.13",
+      "version": "3.13.16",
+      "target": "linux-arm64",
+      "filename": "cpython-3.13.16+20261013-aarch64-unknown-linux-gnu-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.13.16%2B20261013-aarch64-unknown-linux-gnu-install_only.tar.gz",
+      "bytes": 58035384,
+      "sha256": "0fce0605da7b6532d5bdaec185336ffaaddd02ec04e27382014952ca4857ed6d"
+    },
+    "3.13/macos-x86_64": {
+      "python_minor": "3.13",
+      "version": "3.13.16",
+      "target": "macos-x86_64",
+      "filename": "cpython-3.13.16+20261013-x86_64-apple-darwin-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.13.16%2B20261013-x86_64-apple-darwin-install_only.tar.gz",
+      "bytes": 25103539,
+      "sha256": "d1f2e7b5f0cfa25fc856fea819890bbe722f47a692e5ce2552636b5240930b38"
+    },
+    "3.13/macos-arm64": {
+      "python_minor": "3.13",
+      "version": "3.13.16",
+      "target": "macos-arm64",
+      "filename": "cpython-3.13.16+20261013-aarch64-apple-darwin-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.13.16%2B20261013-aarch64-apple-darwin-install_only.tar.gz",
+      "bytes": 25393336,
+      "sha256": "ca0e6a70fb75a0984751bd75493e3de77680aef7fbd0fea9b903c299537b3423"
+    },
+    "3.14/linux-x86_64": {
+      "python_minor": "3.14",
+      "version": "3.14.8",
+      "target": "linux-x86_64",
+      "filename": "cpython-3.14.8+20261013-x86_64-unknown-linux-gnu-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-x86_64-unknown-linux-gnu-install_only.tar.gz",
+      "bytes": 75066232,
+      "sha256": "322271a761140ffb3f522431048f701831e412c8f64770103d2b881ee2bbaed0"
+    },
+    "3.14/linux-arm64": {
+      "python_minor": "3.14",
+      "version": "3.14.8",
+      "target": "linux-arm64",
+      "filename": "cpython-3.14.8+20261013-aarch64-unknown-linux-gnu-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-aarch64-unknown-linux-gnu-install_only.tar.gz",
+      "bytes": 57711872,
+      "sha256": "6c3cfb175acca2748d5a9e42208c523bfbc1099ddb928615b5f328ba7c106e83"
+    },
+    "3.14/macos-x86_64": {
+      "python_minor": "3.14",
+      "version": "3.14.8",
+      "target": "macos-x86_64",
+      "filename": "cpython-3.14.8+20261013-x86_64-apple-darwin-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-x86_64-apple-darwin-install_only.tar.gz",
+      "bytes": 27005136,
+      "sha256": "e09bce050cf075e777d1a802c4a11b6d43d54291b5f76911887173b28ad9c9fd"
+    },
+    "3.14/macos-arm64": {
+      "python_minor": "3.14",
+      "version": "3.14.8",
+      "target": "macos-arm64",
+      "filename": "cpython-3.14.8+20261013-aarch64-apple-darwin-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.14.8%2B20261013-aarch64-apple-darwin-install_only.tar.gz",
+      "bytes": 26814582,
+      "sha256": "709f419d175eb015f810b68aa54bdae1d776c9824cb362aa701c93b0a9f2a9e7"
+    },
+    "3.15/linux-x86_64": {
+      "python_minor": "3.15",
+      "version": "3.15.0",
+      "target": "linux-x86_64",
+      "filename": "cpython-3.15.0+20261013-x86_64-unknown-linux-gnu-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.15.0%2B20261013-x86_64-unknown-linux-gnu-install_only.tar.gz",
+      "bytes": 81240680,
+      "sha256": "e02a368dd5dc76ffe0599e5109ad6c1ee84e597910758b0e006bab25372a8921"
+    },
+    "3.15/linux-arm64": {
+      "python_minor": "3.15",
+      "version": "3.15.0",
+      "target": "linux-arm64",
+      "filename": "cpython-3.15.0+20261013-aarch64-unknown-linux-gnu-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.15.0%2B20261013-aarch64-unknown-linux-gnu-install_only.tar.gz",
+      "bytes": 62237929,
+      "sha256": "26a54e8fbde81bcc39ba35ad855a6a573295c023793c20fff1670a560649bcd7"
+    },
+    "3.15/macos-x86_64": {
+      "python_minor": "3.15",
+      "version": "3.15.0",
+      "target": "macos-x86_64",
+      "filename": "cpython-3.15.0+20261013-x86_64-apple-darwin-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.15.0%2B20261013-x86_64-apple-darwin-install_only.tar.gz",
+      "bytes": 27877795,
+      "sha256": "c4adbda246262a55920ec0804f5a6a9a3a1e5948f3423da71926320b2489e50e"
+    },
+    "3.15/macos-arm64": {
+      "python_minor": "3.15",
+      "version": "3.15.0",
+      "target": "macos-arm64",
+      "filename": "cpython-3.15.0+20261013-aarch64-apple-darwin-install_only.tar.gz",
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261013/cpython-3.15.0%2B20261013-aarch64-apple-darwin-install_only.tar.gz",
+      "bytes": 27812135,
+      "sha256": "f5d1d82e2f5660d4decae5d2b7470631850bcd7bd39595d9c3cca3c5ee54eae7"
+    }
+  },
+  "notes": "Pinned standard-ABI default-GIL CPython; runtime must verify exact version/ABI/platform, no free-threaded interpreters. Python3.15 remains assessment until qualification passes."
+}
