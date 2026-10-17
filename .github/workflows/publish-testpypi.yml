@@ -1,0 +1,83 @@
+name: Publish approved GMAT Py file to TestPyPI
+on:
+  workflow_dispatch:
+    inputs:
+      selection:
+        description: Exact qualified file to publish
+        required: true
+        type: choice
+        options:
+          - sdist
+          - linux-x86_64
+          - linux-arm64
+          - macos-arm64
+          - macos-x86_64
+      artifact_id:
+        description: Approved staging artifact ID in this repository (not the deleted qualification artifacts)
+        required: true
+        type: string
+      confirm_upload:
+        description: Publish this exact file after separate authorization and environment approval
+        required: true
+        default: false
+        type: boolean
+permissions: {}
+concurrency:
+  group: gmatpy-testpypi-0.2.0
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: >-
+      inputs.confirm_upload &&
+      github.event_name == 'workflow_dispatch' &&
+      github.repository == 'dcajacob/gmatpy' &&
+      toJSON(github.event.repository.private) == 'false' &&
+      github.ref == 'refs/heads/main' &&
+      github.run_attempt == '1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/gmatpy
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    steps:
+      - name: Checkout reviewed publication controls only
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: .github
+      - name: Set up verification interpreter
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14.7'
+      - name: Retrieve and verify one exact qualified file
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAYLOAD_ARTIFACT_ID: ${{ inputs.artifact_id }}
+          PAYLOAD_SELECTION: ${{ inputs.selection }}
+          PYTHONDONTWRITEBYTECODE: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python .github/scripts/verify-testpypi-payload.py \
+            --manifest .github/release/testpypi-09eafabe.json \
+            --selection "$PAYLOAD_SELECTION" \
+            --artifact-id "$PAYLOAD_ARTIFACT_ID" \
+            --destination dist
+      - name: Publish the verified file to TestPyPI only
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          packages-dir: dist/
+          verify-metadata: 'true'
+          skip-existing: 'false'
+          attestations: 'false'
+          print-hash: 'true'
+# No builds, API-token secrets, production PyPI endpoint,
+# GitHub write permission or artifact upload/deletion occurs in this workflow.
+# First upload requires separate authorization and verified staged payloads.
+# Preserve the 09 packaging / b529 native provenance; see .github/release/README.md.

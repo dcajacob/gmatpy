@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "project": "gmatpy",
+  "version": "0.2.0",
+  "candidate_source_revision": "09eafabe3ff5063f0646d008a80bb70ae1d455c6",
+  "native_build_source_revision": "b52941e9830940c3086839431fd1fb64812076ff",
+  "native_recompiled": false,
+  "source_receipt": {
+    "source_revision": "09eafabe3ff5063f0646d008a80bb70ae1d455c6",
+    "git_tree_sha1": "d1d3bff4d46e4da3e9fab1e87a4c4b6b7421d295",
+    "working_tree_manifest_sha256": "dea770d9480fa60b98247a40c0f8ec514a547502ac86320741f19056ddb08231",
+    "source_tree_sha256": "f8d20ba594bdb25290862f2bbd6a6bfa8d33d7484b42c9d319c24712edba523e",
+    "source_archive_sha256": "0489bf4e4c0c8c696d6ae653511c5a14bf0f4a286d39abeb83049e1d66db15d1",
+    "source_archive": "gmatpy-0.2.0.tar.gz",
+    "source_date_epoch": "1792189224"
+  },
+  "native_qualification_url": "https://github.com/dcajacob/gmatpy/actions/runs/38970516533",
+  "verification_scope": "Original native bytes qualified on four platforms; local repackaging/RECORD/source/binary checks on all four and 194 fresh Linux x86_64 runtime tests. Foreign target installs checked locally; foreign runtime tests not repeated.",
+  "binary_reuse_record_creation_stage": "Retained BINARY_REUSE_PROVENANCE.json truthfully records its original local feasibility operation. Payloads are unchanged; any TestPyPI upload requires separate authorization.",
+  "files": {
+    "linux-x86_64": {
+      "filename": "gmatpy-0.2.0-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl",
+      "bytes": 80278612,
+      "sha256": "fa58d2aad3cc3258b9cd824687a173db1356479b9536de72d1f1fbbfde8b1ecd",
+      "native_members_sha256": {
+        "gmatpy/_native/_gmat_py.so": "d92f103fb12a8f182edbaaada7bf69c5aa4abb7afc9d5f2ad84d9a1a880e89bc",
+        "gmatpy/_native/libGmatBase.so.R2026a": "a87a0d22c34fad8d84bea518a86b08684b83d3ad6c8f8659ed2c4c42f558eb6f",
+        "gmatpy/_native/libGmatUtil.so.R2026a": "a836e934c6590e16c775ed1ba7660573f792c9719335cc5c3f0c4c0c96573ed4"
+      },
+      "original_qualified_wheel_sha256": "f535dde3df54becd6a8ddb3582174876a177c24d4eb0e4d70c961008e32aeeb9"
+    },
+    "macos-arm64": {
+      "filename": "gmatpy-0.2.0-cp314-cp314-macosx_11_0_arm64.whl",
+      "bytes": 78670827,
+      "sha256": "ac19c4258dc677eedf69f189342cab83ed537991dc4b2971c60fe44189357522",
+      "native_members_sha256": {
+        "gmatpy/_native/_gmat_py.so": "17f34d965596ade781d888a3ddff1da2e246be224095985678858a71e55f50ba",
+        "gmatpy/_native/libGmatUtil.dylib": "d4d6327847119562824ada62e3982c9c2b6d81ea6e20702859e342796337b0d2",
+        "gmatpy/_native/libGmatBase.dylib": "9007e773db994bf11ac3b3d7c3bea60a97cadc19e2650bde26d6a8fe8180427d"
+      },
+      "original_qualified_wheel_sha256": "14af9bfac96f7c7c062a6bf588dff9d6e82eeca05b9b66ad59b369e9210238cd"
+    },
+    "linux-arm64": {
+      "filename": "gmatpy-0.2.0-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl",
+      "bytes": 79351209,
+      "sha256": "bc7c936a5de9dd198dc4698e2c8d3ff75334b898feae4fd5c5a385b2643a39dc",
+      "native_members_sha256": {
+        "gmatpy/_native/_gmat_py.so": "d7a38cd76af5212989f29bee95f786a909b57780b0c5d6f518df5955f23a3c81",
+        "gmatpy/_native/libGmatBase.so.R2026a": "bb85c5ae0d9bd20b6ba957762d19083f9f30763decdf97804f3232a054f1a308",
+        "gmatpy/_native/libGmatUtil.so.R2026a": "a8073a6a1305ebf14d13e8ebe5005b389846a24e6f91319624fab74439c0aa4d"
+      },
+      "original_qualified_wheel_sha256": "c60d899d7ac058948477f3800d53b296ca3fdd971c46fae4b2e47a0afa4469f3"
+    },
+    "macos-x86_64": {
+      "filename": "gmatpy-0.2.0-cp314-cp314-macosx_11_0_x86_64.whl",
+      "bytes": 79710127,
+      "sha256": "667d4b34cd60e3b247e2d72aee34206a2d154b241490b93115b7dfc60dcd7177",
+      "native_members_sha256": {
+        "gmatpy/_native/_gmat_py.so": "3b6c38f37ba8d9dc39d68931791da69dc7b79dc02dfe94ab9fec65fda20dc0ca",
+        "gmatpy/_native/libGmatUtil.dylib": "233bd870eae22582192c0b69d8ee374ea8b526735e0df1c5eb758dcd8ffdade5",
+        "gmatpy/_native/libGmatBase.dylib": "8d974a0cb3456d5880f0eda34f2ef47e44b0de242f875ade6ccf969d1b27a7c1"
+      },
+      "original_qualified_wheel_sha256": "1ab31a76290c68d9ad3bc0a9cacd2d5e441e17e0dbbb1099bf44d3a3013c1add"
+    },
+    "sdist": {
+      "filename": "gmatpy-0.2.0.tar.gz",
+      "bytes": 73816898,
+      "sha256": "0489bf4e4c0c8c696d6ae653511c5a14bf0f4a286d39abeb83049e1d66db15d1"
+    }
+  }
+}
