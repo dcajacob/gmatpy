@@ -177,3 +177,19 @@ def test_captured_job_logs_allow_and_strip_ansi_without_terminal_rendering(monke
 
 def test_recovery_pins_successful_qualification_source():
     assert guard.QUALIFICATION_SOURCE_REVISION=='f5fdc6d35250d8466b05da682cb0aefc85ae5e72'
+
+
+def test_production_verifier_uses_immutable_version_endpoints(monkeypatch):
+    import io
+    import download_release_021 as download
+    calls=[]
+    def open_json(request, **kwargs):
+        calls.append(request.full_url)
+        version=request.full_url.split('/')[-2]
+        assert version in ('0.2.0','0.2.1')
+        return io.BytesIO(json.dumps({'info':{'name':'gmatpy','version':version},'urls':[]}).encode())
+    monkeypatch.setattr(download.urllib.request,'urlopen',open_json)
+    snapshot=download.public_snapshot()
+    assert snapshot['info']['version']=='0.2.1'
+    assert set(snapshot['releases'])=={'0.2.0','0.2.1'}
+    assert calls==['https://pypi.org/pypi/gmatpy/0.2.0/json','https://pypi.org/pypi/gmatpy/0.2.1/json']

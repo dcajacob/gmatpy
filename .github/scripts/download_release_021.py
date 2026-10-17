@@ -28,11 +28,27 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         raise ValueError('Unexpected production file redirect')
 
 
+def public_snapshot():
+    # Project-level JSON may remain cached for900seconds during a multi-file
+    # upload. Immutable version endpoints identify the exact release instead.
+    releases = {}
+    info = None
+    for version in ('0.2.0', '0.2.1'):
+        request = urllib.request.Request(f'https://pypi.org/pypi/gmatpy/{version}/json',
+                                         headers={'Cache-Control':'no-cache'})
+        with urllib.request.urlopen(request, timeout=30) as response:
+            result = json.load(response)
+        guard.require(result['info']['name']=='gmatpy' and result['info']['version']==version,
+                      'Wrong production project/version endpoint')
+        releases[version] = result['urls']
+        if version == '0.2.1': info = result['info']
+    return {'info':info,'releases':releases,
+            'verification_api':'Version-specific0.2.0/0.2.1JSON;not a cached project snapshot'}
+
+
 def download(target, destination):
     manifest = guard.load_config()
-    request = urllib.request.Request('https://pypi.org/pypi/gmatpy/json', headers={'Cache-Control':'no-cache'})
-    with urllib.request.urlopen(request, timeout=30) as response:
-        public = json.load(response)
+    public = public_snapshot()
     files = check_listing(manifest, public)
     destination.mkdir(exist_ok=False)
     opener = urllib.request.build_opener(NoRedirect())
