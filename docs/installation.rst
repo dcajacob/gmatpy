@@ -1,21 +1,12 @@
 .. _installation:
 
-
-.. note::
-
-   Stable 0.2.1 is being prepared locally from the qualified f8 native binaries.
-   Packaging provenance and native compilation provenance are recorded
-   separately; final installed-wheel validation and production approval are
-   required before upload. Public 0.2.0 remains the published release.
-
 Installation
 ============
 
-Public ``gmatpy`` 0.2.0 is available on
-`PyPI <https://pypi.org/project/gmatpy/0.2.0/>`_ with standard-ABI CPython 3.14
-wheels for Linux x86_64/ARM64 and macOS Intel/ARM64, plus a source archive for
-deliberate native builds. This checkout prepares the unreleased |release|
-compatibility candidate. Candidate files must not replace immutable 0.2.0 files.
+Public ``gmatpy`` 0.2.1 is available on
+`PyPI <https://pypi.org/project/gmatpy/0.2.1/>`_ with standard-GIL CPython
+3.12 through 3.15 wheels for Linux x86_64/ARM64 and macOS Intel/ARM64,
+plus a matching source archive for deliberate native builds.
 
 There is one standard headless package per supported Python ABI and platform.
 It includes the native engine, Python bindings, SPICE support and 17 selected
@@ -37,16 +28,19 @@ environment with the interpreter matching the wheel:
 
 .. code-block:: console
 
-   python3.14 -m venv .venv
+   python3.13 -m venv .venv
    . .venv/bin/activate
-   python -m pip install --only-binary=:all: gmatpy==0.2.0
+   python -m pip install --only-binary=:all: gmatpy==0.2.1
    python -c "import gmatpy; print(gmatpy.__version__); print(gmatpy.capabilities())"
 
 For a verified local candidate, use its actual matching wheel path instead.
 Binary-only installation avoids accidental source fallback. With uv::
 
-   uv python pin 3.14
-   uv add --no-build-package gmatpy gmatpy==0.2.0
+   uv python pin 3.13
+   uv add --no-build-package gmatpy gmatpy==0.2.1
+
+For uv projects, set ``requires-python`` within the supported range, for
+example ``>=3.13,<3.16``, and pin the interpreter you intend to run.
 
 For example,
 ``cp314-cp314`` identifies the standard CPython 3.14 ABI; it is not a
@@ -63,6 +57,35 @@ Do not install a second distribution that also owns the ``gmatpy`` import tree.
 
 Platform qualification
 ----------------------
+
+Published 0.2.1 release evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Stable ``gmatpy==0.2.1`` provides sixteen wheels: standard-GIL CPython
+3.12.15, 3.13.16, 3.14.8 and 3.15.0 on Linux x86_64/aarch64 and macOS
+Intel/ARM64. Each final wheel passed 209 tests plus three subtests, exact
+installed-byte/version checks and saved-state comparisons both
+`before publication <https://github.com/dcajacob/gmatpy/actions/runs/39008578034>`_ and through fresh native
+`PyPI installation checks <https://github.com/dcajacob/gmatpy/actions/runs/39010062762>`_.
+`Production publication <https://github.com/dcajacob/gmatpy/actions/runs/39009509178>`_ and independent public downloads verified
+all seventeen unchanged files against the
+`fixed release hash allowlist <https://github.com/dcajacob/gmatpy/blob/cbb8554bf52366ca2646343d906dcda14d4363f8/.github/release/pypi-0.2.1.json>`_. Public 0.2.0 files remain unchanged.
+
+Packaging source is ``6b5c286cfbd64500a848277aeed0aee9b2e440fc``; native compilation origin stays
+``f8d8e4ce997ca7400afbe035b7ec55bd66c02575``. All 48 native library instances
+and sixteen SWIG wrappers were reused byte-for-byte, with separate original
+qualification/interpreter/CSPICE receipts and binary-reuse provenance.
+The original native numerical-oracle checks are carried forward for identical
+bytes; the final installed-wheel checks above are new runs. No native rebuild
+or repair was performed for this release.
+
+Windows, free-threaded Python and other interpreters remain unqualified.
+Wheel deployment tags do not prove runtime execution on every older OS or
+historical interpreter patch. Scientific input coverage/freshness limitations
+remain documented in :doc:`conventions`.
+
+Historical 0.2.0 qualification
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Qualification on 2026-10-16 for source
 ``b52941e9830940c3086839431fd1fb64812076ff`` built the single full headless wheel
@@ -111,8 +134,8 @@ Wheel tags and successful installation alone do not establish numerical or
 runtime qualification on an untested platform. The release must retain the
 source and final artifact identities for every platform it offers.
 
-Qualified unreleased expansion candidate
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Original native expansion candidate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The immutable ``0.2.1.dev0`` candidate from source ``f8d8e4ce997ca7400afbe035b7ec55bd66c02575``
 passed all twelve core ABI/target cells below, followed by all four

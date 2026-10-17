@@ -1,14 +1,6 @@
 GMAT Py
 =======
 
-.. note::
-
-   Stable 0.2.1 is being prepared locally from the qualified f8 native binaries.
-   Packaging provenance and native compilation provenance are recorded
-   separately; final installed-wheel validation and production approval are
-   required before upload. Public 0.2.0 remains the published release.
-
-
 Orbit propagation and astrodynamics in Python, backed by a bundled native
 GMAT R2026a engine. Start with ordinary Python values, then use the scoped
 native interface when you need lower-level control.
@@ -32,10 +24,12 @@ with a NASA GMAT release.
 
 .. important::
 
-   Public ``gmatpy`` 0.2.0 is on PyPI with CPython 3.14 Linux/macOS wheels.
-   These pages describe the unreleased |release| compatibility candidate.
-   Public files and candidate artifacts have separate source/build receipts. The single headless package includes SPICE and all supported mission
-   workflows; no feature profile or extra is needed. See :doc:`installation`.
+   Public ``gmatpy`` 0.2.1 is on PyPI with standard-GIL CPython 3.12 through
+   3.15 wheels for Linux x86_64/ARM64 and macOS Intel/ARM64. Every final wheel
+   passed native installed tests before and after publication. The single
+   headless package includes SPICE and all supported mission workflows;
+   no feature profile or extra is needed. See :doc:`installation`.
+
 
 Find your starting point
 ------------------------
@@ -65,14 +59,12 @@ equivalence. Their scope is described in :doc:`development`; passing them does
 not validate operational mission use. Scientific inputs are fixed snapshots,
 with coverage and freshness limits in :doc:`conventions`.
 
-Public 0.2.0 wheels use packaging source ``09eafabe`` and original native
-binaries from ``b52941e``, which passed 194 tests per target. The public Linux
-wheel also passed a fresh 194-test installed check. The separate unreleased
-``f8d8e4ce`` candidate passed all four native targets on CPython 3.12.15,
-3.13.16 and 3.14.8, followed by the four 3.15.0 assessment cells, with 209 tests
-plus three subtests per wheel. These are candidate qualification results;
-they do not add files to public 0.2.0. See :ref:`platform-support` for exact
-source/build receipts, runtime hosts and remaining platform limits.
+Public 0.2.1 uses packaging source ``6b5c286c`` and byte-identical native
+binaries from ``f8d8e4ce``. All sixteen final wheels passed 209 tests plus
+three subtests before publication and again through fresh native PyPI
+installation checks. Public 0.2.0 retains its original ``09eafabe`` packaging
+and ``b52941e`` native provenance. See :ref:`platform-support` for exact
+receipts, tested patches/hosts and remaining platform limits.
 
 .. toctree::
    :maxdepth: 2

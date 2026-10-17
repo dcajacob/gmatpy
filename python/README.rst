@@ -6,18 +6,16 @@ and scientific inputs in a Python wheel. Install a matching wheel and import
 it alongside your other Python code. No separate GMAT installation, executable,
 GUI, display server, runtime download or library-path setup is required.
 This is an experimental, independently packaged GMAT module. Public
-``gmatpy`` 0.2.0 is available on PyPI for standard CPython 3.14 Linux/macOS.
-This source checkout prepares stable 0.2.1 with expanded Python compatibility;
-it does not publish a new release.
+``gmatpy`` 0.2.1 is available on PyPI for standard-GIL CPython 3.12 through
+3.15 on Linux x86_64/aarch64 and macOS Intel/ARM64. Packaging source is
+6b5c286c; unchanged native compilation origin remains f8d8e4ce.
 
-Install this version with a matching standard CPython 3.12 through 3.15 interpreter
-once its release has been published::
+Install this version with a matching standard CPython 3.12 through 3.15 interpreter::
 
     python -m pip install --only-binary=:all: gmatpy==0.2.1
 
-During release preparation, install the matching local wheel directly instead.
-Publication remains a separately approved operation; an installation command
-does not imply that an unreleased version is available.
+For an unpublished development candidate, install its matching local wheel
+directly; future package publications require separate release approval.
 
 Platform support
 ------------------
@@ -35,13 +33,16 @@ source/data/notices/installed-byte and state/spline/MSISE checks.
 The first two Linux cells are in run 38998592411; the remaining fourteen
 passed run 38999648051, which explicitly reused that immutable source.
 
-The 0.2.1 preparation reuses these exact native libraries and SWIG wrappers.
+The published 0.2.1 wheels reuse these exact native libraries and SWIG wrappers.
 Each wheel records its new packaging source separately from native source f8,
 including the original archive and native member hashes, dependency/interpreter
 receipts and carried-forward qualification. It does not claim recompilation
-from the packaging revision. Final repackaged-wheel installed tests remain a
-separate release gate. The existing 0.2.0 files and their native source b529
-are historical evidence and remain unchanged.
+from the packaging revision. All sixteen final wheels passed 209 tests plus
+three subtests before publication and again through fresh PyPI installations.
+Release receipts:
+https://github.com/dcajacob/gmatpy/actions/runs/39008578034 and
+https://github.com/dcajacob/gmatpy/actions/runs/39010062762. The existing 0.2.0
+files and their native source b529 are historical evidence and remain unchanged.
 
 Windows, alternative interpreters and free-threaded Python are unqualified.
 Metadata allows standard CPython 3.12 through 3.15. The exact tested patches
@@ -191,8 +192,8 @@ recorded in ``gmatpy/licenses/EXPORT_DETERMINATION.json``. Its applicability
 remains limited to the recorded scope; package publication requires separate
 approval. Check an artifact::
 
-    python python/tools/check_distribution.py dist/gmatpy-0.2.0.tar.gz
-    python python/tools/check_distribution.py /path/to/gmatpy-0.2.0-*.whl --release
+    python python/tools/check_distribution.py dist/gmatpy-0.2.1.tar.gz
+    python python/tools/check_distribution.py /path/to/gmatpy-0.2.1-*.whl --release
 
 The first command verifies contents, notices and exclusions. ``--release`` also
 fails on unresolved manifest review items, instead of presenting an unverified
@@ -290,7 +291,7 @@ candidate identity and authorization to publish.
 
 Install the repaired wheel in a fresh environment and run::
 
-    python -m pip install /path/to/gmatpy-0.2.0-*.whl pytest
+    python -m pip install /path/to/gmatpy-0.2.1-*.whl pytest
     python -m pytest /path/to/checkout/python/tests
 
 ``python/tools/check_wheel.py`` checks runtime dependency resolution, relocatable

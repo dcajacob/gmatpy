@@ -1,15 +1,33 @@
 .. _development:
 
-
-.. note::
-
-   Stable 0.2.1 is being prepared locally from the qualified f8 native binaries.
-   Packaging provenance and native compilation provenance are recorded
-   separately; final installed-wheel validation and production approval are
-   required before upload. Public 0.2.0 remains the published release.
-
 Development and validation
 ==========================
+
+Published 0.2.1 release evidence
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Stable ``gmatpy==0.2.1`` provides sixteen wheels: standard-GIL CPython
+3.12.15, 3.13.16, 3.14.8 and 3.15.0 on Linux x86_64/aarch64 and macOS
+Intel/ARM64. Each final wheel passed 209 tests plus three subtests, exact
+installed-byte/version checks and saved-state comparisons both
+`before publication <https://github.com/dcajacob/gmatpy/actions/runs/39008578034>`_ and through fresh native
+`PyPI installation checks <https://github.com/dcajacob/gmatpy/actions/runs/39010062762>`_.
+`Production publication <https://github.com/dcajacob/gmatpy/actions/runs/39009509178>`_ and independent public downloads verified
+all seventeen unchanged files against the
+`fixed release hash allowlist <https://github.com/dcajacob/gmatpy/blob/cbb8554bf52366ca2646343d906dcda14d4363f8/.github/release/pypi-0.2.1.json>`_. Public 0.2.0 files remain unchanged.
+
+Packaging source is ``6b5c286cfbd64500a848277aeed0aee9b2e440fc``; native compilation origin stays
+``f8d8e4ce997ca7400afbe035b7ec55bd66c02575``. All 48 native library instances
+and sixteen SWIG wrappers were reused byte-for-byte, with separate original
+qualification/interpreter/CSPICE receipts and binary-reuse provenance.
+The original native numerical-oracle checks are carried forward for identical
+bytes; the final installed-wheel checks above are new runs. No native rebuild
+or repair was performed for this release.
+
+Windows, free-threaded Python and other interpreters remain unqualified.
+Wheel deployment tags do not prove runtime execution on every older OS or
+historical interpreter patch. Scientific input coverage/freshness limitations
+remain documented in :doc:`conventions`.
 
 The Python package is built around GMAT R2026a's native C++ engine and SWIG
 bindings. The convenient Python interface is in ``python/gmatpy/``; its package
@@ -60,7 +78,7 @@ wheel installed:
 
 .. code-block:: console
 
-   python -m pip install /absolute/path/to/gmatpy-0.2.0-<python>-<abi>-<platform>.whl
+   python -m pip install /absolute/path/to/gmatpy-0.2.1-<python>-<abi>-<platform>.whl
    python docs/run_examples.py
 
 Use the actual wheel filename and its matching interpreter. The example runner
@@ -107,7 +125,7 @@ associated calculation ran. The full qualification driver additionally
 verifies every installed package byte against the wheel, including native
 libraries, so a source-path overlay cannot be mistaken for an installed test.
 
-The unreleased candidate from ``f8d8e4ce997ca7400afbe035b7ec55bd66c02575`` passed all
+The original native candidate from ``f8d8e4ce997ca7400afbe035b7ec55bd66c02575`` passed all
 twelve core ABI/target cells (CPython 3.12.15, 3.13.16 and 3.14.8 on Linux
 x86_64/ARM64 and macOS Intel/ARM64), followed by all four 3.15.0 assessment
 cells. Each exact wheel passed 209 tests plus three subtests and the checks
@@ -186,7 +204,7 @@ environment:
 
 .. code-block:: console
 
-   python python/tools/check_distribution.py /absolute/path/to/gmatpy-0.2.0.tar.gz
+   python python/tools/check_distribution.py /absolute/path/to/gmatpy-0.2.1.tar.gz
    python python/tools/check_wheel.py /absolute/path/to/linux-wheel.whl
    python python/tools/check_macos_wheel.py /absolute/path/to/macos-wheel.whl --arch arm64
 
@@ -241,7 +259,7 @@ paths:
    python python/ci/freeze_clean_checkout.py --repo /absolute/path/to/gmatpy \
      --revision <full-commit> --output /absolute/path/to/new-frozen-output
    python python/ci/qualify.py --target linux-x86_64 --python-minor 3.13 \
-     --sdist /absolute/path/to/new-frozen-output/artifacts/gmatpy-0.2.1.dev0.tar.gz \
+     --sdist /absolute/path/to/new-frozen-output/artifacts/gmatpy-0.2.1.tar.gz \
      --output /absolute/path/to/new-qualification-output
 
 Run the driver on the corresponding native host/container. Its output directory
@@ -261,8 +279,8 @@ locally with their receipts before the hosted copies are deleted. See
 ``python/ci/README.md`` for the retained comparison definitions and current
 qualification mechanics.
 
-Exact expansion candidate identities
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Historical native candidate identities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Source revision: ``f8d8e4ce997ca7400afbe035b7ec55bd66c02575``.
 Source archive SHA256:
@@ -286,6 +304,29 @@ The exact hosted cp313 Linux wheel additionally installed with uv 0.8.23 on
 CPython 3.13.7, with source builds disabled; all 46 installed package files
 matched and sampled propagation states passed. This is an install/regression
 check on that older patch, separate from qualification on the pinned latest
-patch. Distribution candidates remain ``0.2.1.dev0``; a new stable version,
-matching final source/artifact receipts and explicit publication approval are
-still required before changing the ordinary PyPI installation result.
+patch. That original development archive remains historical evidence;
+public 0.2.1 now provides the sixteen final wheels described above.
+
+Exact published 0.2.1 identities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Packaging source: ``6b5c286cfbd64500a848277aeed0aee9b2e440fc``.
+Published source archive SHA256:
+``39e7aa19820ccad1cbb1d70573ad3456c778e4f5e96f5f5a7d9bc2a5a132039e``.
+Working-tree manifest SHA256:
+``9abea43c50c1b48b5398b76bde0fd3779963d3d968cbee12710f55e896c828d9``.
+Packaged-source tree SHA256:
+``37cbdabbc8e859cd85805817f79fff76ac240ca21e04eb797d48a24f49a27e6e``.
+The version/metadata-only source successor retains 1,174 of 1,176 scientific
+scope records exactly, changing only the two version fields. All native
+library and SWIG-wrapper bytes remain from the original f8 qualification.
+
+The final Linux cp313 wheel also reproduced byte-for-byte in a second local
+repack invocation, without native recompilation:
+``c334ed4c556569669de69665b3d2132fc361f12aafedc7d729e1c98d431fbb57``.
+Its normal PyPI ``uv add gmatpy`` install on existing CPython 3.13.7 used a
+project range ``>=3.13.7,<3.16`` with source builds disabled. All 46 installed
+package files matched and sampled states had zero differences. This is an
+additional installed smoke check, separate from the full pinned-patch matrix.
+Future publication requires its own fixed files and approval; current source
+or documentation successors do not relabel the immutable released artifacts.
