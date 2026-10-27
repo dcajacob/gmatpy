@@ -104,3 +104,20 @@ the small embedded reference is the durable CI regression subset.
 ## Published 0.2.1 binary reuse
 
 Packaging source `6b5c286cfbd64500a848277aeed0aee9b2e440fc` reuses all sixteen qualified f8 native builds without recompilation or repair. All 17 published files match the fixed allowlist; every final wheel passed 209 tests plus 3 subtests before publication (https://github.com/dcajacob/gmatpy/actions/runs/39008578034) and after fresh native PyPI installation (https://github.com/dcajacob/gmatpy/actions/runs/39010062762). Publication receipt: https://github.com/dcajacob/gmatpy/actions/runs/39009509178. Original native/source/dependency/interpreter receipts remain separate from new packaging provenance. The protected staging job receives temporary contents:write only for draft GET access; installed verification is read-only and publication uses contents/actions read plus OIDC. The post-PyPI matrix uses contents:read only and retains no artifacts. Windows/free-threaded and older-host execution limits are unchanged.
+
+## Windows x64 0.2.1 addition
+
+Source `ae25a632d778172ab9570fd5c284968c2eba08bc` freshly rebuilt GMAT and all
+2229 official Windows CSPICE N0067 sources on Windows Server 2022 x64. Standard
+CPython 3.12.10/3.13.16/3.14.8/3.15.0 each passed 203 tests + 3 subtests with 6 expected
+platform skips, installed-byte/PE/source/data checks and numerical/spline
+regressions in https://github.com/dcajacob/gmatpy/actions/runs/40465394325.
+Separate public TLE Tailor main integration on 3.14 passed 46 adapter tests and the
+mandatory CPU JAX fit in https://github.com/dcajacob/gmatpy/actions/runs/40467329927.
+Exact allowlists and source compatibility are in `.github/release/`; the Windows
+native origin is distinct from Linux/macOS f8 reuse. All 1176 scientific/runtime/
+build records match the published 0.2.1 sdist; existing PyPI files remain immutable.
+The existing `publish-pypi.yml` / protected `pypi` environment publishes only
+missing exact Windows files; `verify-windows-pypi-021.yml` tests public index
+installs. Direct MSISE spline/ARM64/free-threaded/other Windows hosts remain outside
+this Windows evidence. See `docs/windows.rst` for scoped claims and receipts.

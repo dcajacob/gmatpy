@@ -1,0 +1,39 @@
+name: Verify published Windows GMAT Py 0.2.1
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  installed:
+    if: github.ref == 'refs/heads/main' && github.repository == 'dcajacob/gmatpy'
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        python: ['3.14.8', '3.12.10', '3.13.16', '3.15.0']
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: x64
+      - name: Verify ordinary public index installation and real numerical propagation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PYTHONDONTWRITEBYTECODE: '1'
+          PYTHONUTF8: '1'
+          PIP_NO_CACHE_DIR: '1'
+        run: python .github/scripts/verify_windows_pypi.py --output "$env:RUNNER_TEMP/public-verify"
+      - name: Retain small public-install receipts
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: windows-public-${{ matrix.python }}-${{ github.sha }}
+          path: ${{ runner.temp }}/public-verify/evidence/*
+          retention-days: 1
+          if-no-files-found: warn

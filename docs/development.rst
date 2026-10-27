@@ -6,7 +6,7 @@ Development and validation
 Published 0.2.1 release evidence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Stable ``gmatpy==0.2.1`` provides sixteen wheels: standard-GIL CPython
+The original Linux/macOS ``gmatpy==0.2.1`` release provides sixteen wheels: standard-GIL CPython
 3.12.15, 3.13.16, 3.14.8 and 3.15.0 on Linux x86_64/aarch64 and macOS
 Intel/ARM64. Each final wheel passed 209 tests plus three subtests, exact
 installed-byte/version checks and saved-state comparisons both
@@ -22,9 +22,11 @@ and sixteen SWIG wrappers were reused byte-for-byte, with separate original
 qualification/interpreter/CSPICE receipts and binary-reuse provenance.
 The original native numerical-oracle checks are carried forward for identical
 bytes; the final installed-wheel checks above are new runs. No native rebuild
-or repair was performed for this release.
+or repair was performed for those sixteen Linux/macOS files. The Windows
+addition uses a separate fresh native build; see :doc:`windows`.
 
-Windows, free-threaded Python and other interpreters remain unqualified.
+Windows x64 is separately qualified in :doc:`windows`. Windows ARM64,
+free-threaded Python and other interpreters remain unqualified.
 Wheel deployment tags do not prove runtime execution on every older OS or
 historical interpreter patch. Scientific input coverage/freshness limitations
 remain documented in :doc:`conventions`.
@@ -218,8 +220,8 @@ target is not a test run on that operating-system version.
 ``check_windows_wheel.py`` is a separate experimental x64 PE checker requiring
 an existing MSVC ``dumpbin`` environment. The CMake Windows path additionally
 requires ``GMAT_PY_EXPERIMENTAL_WINDOWS=ON``, x64 MSVC and target-native
-``lib/cspice.lib``. Historical Windows checks are not qualification of the
-current candidate; see :ref:`platform-support`.
+``lib/cspice.lib``. The fresh Windows builds and source compatibility receipt
+are recorded in :doc:`windows`; historical Windows 0.2.0 checks remain separate.
 
 Artifact checking verifies inventories, notices, data hashes and exclusions.
 The optional ``--source-manifest`` argument binds copied package inputs to a

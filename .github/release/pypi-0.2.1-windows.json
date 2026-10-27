@@ -1,0 +1,191 @@
+{
+  "files": [
+    {
+      "artifact": {
+        "digest": "sha256:9c200605fbf6add0a2592f899c6a3332bfcc0d060b08c97515701f78bc60e1d0",
+        "id": 12717376522,
+        "name": "windows-3.12.10-ae25a632d778172ab9570fd5c284968c2eba08bc",
+        "size_in_bytes": 79164197
+      },
+      "bytes": 78701883,
+      "native_members": {
+        "gmatpy/_native/_gmat_py.pyd": "0bd75d1d3b1b8be0608a0c7ab52a2e17c96fe1d0552a4e4b76a3181ddcdc56d9",
+        "gmatpy/_native/libGmatBase.dll": "19cd653616c6d6d46397d547053f48abc2dd21addbf60497ea45b16c50337302",
+        "gmatpy/_native/libGmatUtil.dll": "204431ede61cb16220b242c1dbc675cf640cbf08866e86baa501956c1f3fd53f"
+      },
+      "python": "3.12.10",
+      "sha256": "266141a10221cbdb162cbc694ccbd1635625b65f0144a6c8e3a147e24f100102",
+      "wheel": "gmatpy-0.2.1-cp312-cp312-win_amd64.whl"
+    },
+    {
+      "artifact": {
+        "digest": "sha256:c28d6ec23113c9554e19ee687e21a3ecbc730bf32204e2ebbd56eb38d6465c80",
+        "id": 12717267039,
+        "name": "windows-3.13.16-ae25a632d778172ab9570fd5c284968c2eba08bc",
+        "size_in_bytes": 79164426
+      },
+      "bytes": 78702208,
+      "native_members": {
+        "gmatpy/_native/_gmat_py.pyd": "5cf8aa2f06787ad1639086cd3f3bfee81ac410adf68ebd7619d6717de65ba081",
+        "gmatpy/_native/libGmatBase.dll": "cc1a3cd82b77521ef7c8ba66bcfc3d18529bc87660c8477215a50eeb0c79633d",
+        "gmatpy/_native/libGmatUtil.dll": "e7f0e89618199fbac0dcba95b20a7eefbce1fd53a2fe523d52f6971349ddb129"
+      },
+      "python": "3.13.16",
+      "sha256": "672424db0ae4177127f8e3ae282331483d05bec0378e91c1fc80565954b4ef08",
+      "wheel": "gmatpy-0.2.1-cp313-cp313-win_amd64.whl"
+    },
+    {
+      "artifact": {
+        "digest": "sha256:b3e8c1c85d49d653556b2c97ffd947d7a5bc9ba0df8f393acb87004419ee9368",
+        "id": 12716049562,
+        "name": "windows-3.14.8-ae25a632d778172ab9570fd5c284968c2eba08bc",
+        "size_in_bytes": 79587713
+      },
+      "bytes": 79125507,
+      "native_members": {
+        "gmatpy/_native/_gmat_py.pyd": "e67df8c0c0be4db320f45e476cea7692858b256cc6fafd398bdf47796cdfcb49",
+        "gmatpy/_native/libGmatBase.dll": "5ff5cf11b05913d0de83936c9926b389c12116528b4f9de92918e327f46dade8",
+        "gmatpy/_native/libGmatUtil.dll": "fd14553662eace3e0d1e7e43f9c1c60a30673b9a144b71b9bf701352ad64fd0c"
+      },
+      "python": "3.14.8",
+      "sha256": "3118f7c7db4f56260ccc39cf048ba4e375de3efad822f7db29aa5f739fb26afd",
+      "wheel": "gmatpy-0.2.1-cp314-cp314-win_amd64.whl"
+    },
+    {
+      "artifact": {
+        "digest": "sha256:c8f6772d193f1391e27f7821eaa25ed9723b6faafcabad1371e03599ecd1da94",
+        "id": 12717498291,
+        "name": "windows-3.15.0-ae25a632d778172ab9570fd5c284968c2eba08bc",
+        "size_in_bytes": 79587735
+      },
+      "bytes": 79125529,
+      "native_members": {
+        "gmatpy/_native/_gmat_py.pyd": "92e7f36003bdceb97d5e3018acef576c964075f1b02fecb4cfbcc841d20aa53d",
+        "gmatpy/_native/libGmatBase.dll": "da6e9ce5b8058ea5bdee471dcd0992327b5b3c839770d0a9c624355f2053b6ac",
+        "gmatpy/_native/libGmatUtil.dll": "7b172721a1266e7a8e127d14063816437fa1fa6351222ece4d6e3ac1aa7de62c"
+      },
+      "python": "3.15.0",
+      "sha256": "dd2dcfe80682ffe1ba92925b3bc794c8e93b830550d9d23556f8ffd50247c58d",
+      "wheel": "gmatpy-0.2.1-cp315-cp315-win_amd64.whl"
+    }
+  ],
+  "owner_publication_authorized": "2026-10-27: publish the qualified Windows compatibility update; existing files remain immutable",
+  "preserve": {
+    "0.2.0": {
+      "gmatpy-0.2.0-cp314-cp314-macosx_11_0_arm64.whl": {
+        "bytes": 78670827,
+        "sha256": "ac19c4258dc677eedf69f189342cab83ed537991dc4b2971c60fe44189357522"
+      },
+      "gmatpy-0.2.0-cp314-cp314-macosx_11_0_x86_64.whl": {
+        "bytes": 79710127,
+        "sha256": "667d4b34cd60e3b247e2d72aee34206a2d154b241490b93115b7dfc60dcd7177"
+      },
+      "gmatpy-0.2.0-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl": {
+        "bytes": 79351209,
+        "sha256": "bc7c936a5de9dd198dc4698e2c8d3ff75334b898feae4fd5c5a385b2643a39dc"
+      },
+      "gmatpy-0.2.0-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl": {
+        "bytes": 80278612,
+        "sha256": "fa58d2aad3cc3258b9cd824687a173db1356479b9536de72d1f1fbbfde8b1ecd"
+      },
+      "gmatpy-0.2.0.tar.gz": {
+        "bytes": 73816898,
+        "sha256": "0489bf4e4c0c8c696d6ae653511c5a14bf0f4a286d39abeb83049e1d66db15d1"
+      }
+    },
+    "0.2.1": {
+      "gmatpy-0.2.1-cp312-cp312-macosx_11_0_arm64.whl": {
+        "bytes": 78848508,
+        "sha256": "af9a74191c5eae00974a9ea4e4d8bbd2fb94d985d8895cbeaa20c3afba3314c5"
+      },
+      "gmatpy-0.2.1-cp312-cp312-macosx_11_0_x86_64.whl": {
+        "bytes": 79887144,
+        "sha256": "8378f292f2ffb788fbcd08f148cf7042e9119908c032477652e0b053c450932c"
+      },
+      "gmatpy-0.2.1-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl": {
+        "bytes": 79527181,
+        "sha256": "60243d1100ceff9d09268a113c1933ed477b7fe1a4198b87ef341d7f2e2fdf45"
+      },
+      "gmatpy-0.2.1-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl": {
+        "bytes": 80462536,
+        "sha256": "0ac2c460ecd5cb2d16bb13849ba4caa9e40ec917c5d7e110348e1375105d86b8"
+      },
+      "gmatpy-0.2.1-cp313-cp313-macosx_11_0_arm64.whl": {
+        "bytes": 78848459,
+        "sha256": "1bf7ad8de12896e473efc4856c7817767759dd291a2ad1f2cdff9d73819924a1"
+      },
+      "gmatpy-0.2.1-cp313-cp313-macosx_11_0_x86_64.whl": {
+        "bytes": 79886923,
+        "sha256": "1723fe21f73fbf6cbb85c4c5291b087e1674019fe292308d608de3fc101801af"
+      },
+      "gmatpy-0.2.1-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl": {
+        "bytes": 79526747,
+        "sha256": "4c7b9534469b8123d60232e69cad8f42cf38a104e53908900f7b6c76b74bcb61"
+      },
+      "gmatpy-0.2.1-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl": {
+        "bytes": 80462516,
+        "sha256": "c334ed4c556569669de69665b3d2132fc361f12aafedc7d729e1c98d431fbb57"
+      },
+      "gmatpy-0.2.1-cp314-cp314-macosx_11_0_arm64.whl": {
+        "bytes": 78851429,
+        "sha256": "b52a80f3a68cc8fbb7c3dc4f2dca5ecc50a3e8646ab6b593ef6779728df7b6ab"
+      },
+      "gmatpy-0.2.1-cp314-cp314-macosx_11_0_x86_64.whl": {
+        "bytes": 79890730,
+        "sha256": "fd2ed0f06da3afc84b638d6b78a81f23adf4c8aa1a6c4558b3cdd967935b50a9"
+      },
+      "gmatpy-0.2.1-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl": {
+        "bytes": 79529631,
+        "sha256": "5c7dabc7ae53072ac8779f746003065f648aa196698828f881c83c826c772b16"
+      },
+      "gmatpy-0.2.1-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl": {
+        "bytes": 80456920,
+        "sha256": "ca37fbf275de196fb29ba621810dc5f7e5987c564bc31184650592e5d6f17288"
+      },
+      "gmatpy-0.2.1-cp315-cp315-macosx_11_0_arm64.whl": {
+        "bytes": 78851346,
+        "sha256": "87e29e0112f224550c3ee5df4e5892da9420d8314af0945c174612d6468e5a0c"
+      },
+      "gmatpy-0.2.1-cp315-cp315-macosx_11_0_x86_64.whl": {
+        "bytes": 79890667,
+        "sha256": "0a61d8801cad3ba00d964eaf248ae7f74d08b834ab6b182568b5f058cabf3494"
+      },
+      "gmatpy-0.2.1-cp315-cp315-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl": {
+        "bytes": 79529610,
+        "sha256": "d2e596a894e194953bfbdbdd9ab03cba271b228f055fb0e124e98b2ef3ee4d2b"
+      },
+      "gmatpy-0.2.1-cp315-cp315-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl": {
+        "bytes": 80456825,
+        "sha256": "ead8d8b81f6cc7527c7eeb5697f3375a30a09c3ae160c761ca078b266c7b3b2b"
+      },
+      "gmatpy-0.2.1.tar.gz": {
+        "bytes": 73841523,
+        "sha256": "39e7aa19820ccad1cbb1d70573ad3456c778e4f5e96f5f5a7d9bc2a5a132039e"
+      }
+    }
+  },
+  "project": "gmatpy",
+  "qualification_branch": "codex/windows-x64-qualification-20261027",
+  "qualification_run": 40465394325,
+  "qualification_source": "ae25a632d778172ab9570fd5c284968c2eba08bc",
+  "qualification_workflow": ".github/workflows/windows-qualification.yml",
+  "schema_version": 1,
+  "selection": "windows-x86_64-addition",
+  "source_artifact": {
+    "digest": "sha256:6fc1c8556c08d8388fa43934a7ebc59e6be02114442f3c810b7e271044962606",
+    "id": 12715772810,
+    "name": "windows-source-ae25a632d778172ab9570fd5c284968c2eba08bc",
+    "size_in_bytes": 78359432
+  },
+  "source_compatibility_sha256": "9399fdc7e4d0c1165920a4cb61de5ea243af804621997ffbaf0a3bb90016cae2",
+  "source_receipt": {
+    "git_tree_sha1": "89ab2e2028dba39848d856dae074b49f9fe40e59",
+    "source_archive": "gmatpy-0.2.1.tar.gz",
+    "source_archive_sha256": "ee29b4c2ecc7e67a525709c8bc3c29c0197d1a739509eb2a3b89cbc1d060f414",
+    "source_date_epoch": "1793084945",
+    "source_revision": "ae25a632d778172ab9570fd5c284968c2eba08bc",
+    "source_tree_sha256": "631e0730bea6d1a3ba0651137ef5e44b475e53922aa8205336b0b7478aff1403",
+    "working_tree_manifest_sha256": "ac3d7077597900f9ce340a0f71ade847a84c40b253f723a96db4c971f5d2a807"
+  },
+  "version": "0.2.1"
+}

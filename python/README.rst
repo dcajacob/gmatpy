@@ -33,7 +33,7 @@ source/data/notices/installed-byte and state/spline/MSISE checks.
 The first two Linux cells are in run 38998592411; the remaining fourteen
 passed run 38999648051, which explicitly reused that immutable source.
 
-The published 0.2.1 wheels reuse these exact native libraries and SWIG wrappers.
+The published Linux/macOS 0.2.1 wheels reuse these exact native libraries and SWIG wrappers.
 Each wheel records its new packaging source separately from native source f8,
 including the original archive and native member hashes, dependency/interpreter
 receipts and carried-forward qualification. It does not claim recompilation
@@ -44,7 +44,14 @@ https://github.com/dcajacob/gmatpy/actions/runs/39008578034 and
 https://github.com/dcajacob/gmatpy/actions/runs/39010062762. The existing 0.2.0
 files and their native source b529 are historical evidence and remain unchanged.
 
-Windows, alternative interpreters and free-threaded Python are unqualified.
+Windows x64 was freshly qualified on 2026-10-27 for standard CPython 3.12.10,
+3.13.16, 3.14.8 and 3.15.0 from source ``ae25a632``: 203 tests plus three
+subtests per wheel, six expected platform-specific skips and numerical checks.
+Its native provenance is separate from the Linux/macOS f8 binary reuse. The
+four unchanged files are approved for addition to 0.2.1; current publication
+status and exact hashes are in the
+`Windows documentation <https://gmatpy.readthedocs.io/en/latest/windows.html>`_.
+Windows ARM64, alternative interpreters and free-threaded Python are unqualified.
 Metadata allows standard CPython 3.12 through 3.15. The exact tested patches
 and host versions are recorded in the receipts; deployment tags alone do not
 prove execution on every older OS or historical interpreter patch.
@@ -213,8 +220,8 @@ Building and validation
 -------------------------
 
 Source builds provide Linux and gated native macOS/Windows x64 qualification
-paths. Windows source builds remain experimental and unqualified for this
-candidate. They require a C++17 compiler, CMake,
+paths. The qualified Windows x64 path retains an explicit experimental build
+gate. Source builds require a C++17 compiler, CMake,
 Ninja (or Make), CPython development headers and a PIC CSPICE archive.
 SWIG and scikit-build-core are Python build requirements. Obtain the official
 NAIF CSPICE toolkit and compile its C library with position-independent code,
@@ -239,8 +246,8 @@ legacy updater by default. Wheels omit duplicate unversioned linker aliases.
 Experimental Windows x64 qualification
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Windows build path is explicitly gated while platform qualification is
-recorded. It requires an existing x64 MSVC C++17 toolchain/SDK, CMake/Ninja,
+The Windows build path remains explicitly gated; current native qualification
+is recorded in the Windows documentation. It requires an existing x64 MSVC C++17 toolchain/SDK, CMake/Ninja,
 CPython development files, SWIG and the matching Windows CSPICE toolkit headers
 and ``lib/cspice.lib``. An x86_64 Linux archive or Windows x64 archive cannot be
 substituted for an ARM64 dependency. Use an x64 Developer Command Prompt and an

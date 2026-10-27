@@ -1,5 +1,6 @@
 """Download only exact public 0.2.1 files for post-publication verification."""
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -10,7 +11,19 @@ import release_021 as guard
 
 
 def check_listing(manifest, public):
-    names = guard.check_public_state(manifest, public)
+    baseline = public
+    if any('win_amd64' in f['filename'] for f in public['releases'].get('0.2.1', [])):
+        # Preserve the old sixteen-cell verifier while accepting only the exact
+        # separately qualified Windows additions, never arbitrary extra files.
+        import windows_release_021 as windows
+        windows_manifest = windows.load_config()
+        windows.check_public_state(windows_manifest, {
+            version: {'urls': public['releases'].get(version, [])}
+            for version in ('0.2.0', '0.2.1')})
+        accepted = {f['wheel'] for f in windows_manifest['files']}
+        baseline = copy.deepcopy(public)
+        baseline['releases']['0.2.1'] = [f for f in baseline['releases']['0.2.1'] if f['filename'] not in accepted]
+    names = guard.check_public_state(manifest, baseline)
     expected = {r['file'] for r in manifest['files']}
     guard.require(names == expected and public['info']['version'] == '0.2.1', 'Production release is incomplete')
     return {r['filename']: r for r in public['releases']['0.2.1']}
