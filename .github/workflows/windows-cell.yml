@@ -1,0 +1,72 @@
+name: GMAT Py Windows native candidate cell
+on:
+  workflow_call:
+    inputs:
+      python_version:
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualify:
+    runs-on: windows-2022
+    timeout-minutes: 80
+    env:
+      PIP_NO_CACHE_DIR: '1'
+      PYTHONUTF8: '1'
+    steps:
+      - name: Preserve LF source bytes on Windows
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: windows-source-${{ github.sha }}
+          path: ${{ runner.temp }}/source
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: ${{ inputs.python_version }}
+          architecture: x64
+      - name: Load the existing MSVC x64 toolchain for this job only
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vs = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (!$vs) { throw 'Existing MSVC x64 toolchain missing' }
+          Import-Module "$vs\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+          Enter-VsDevShell -VsInstallPath $vs -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64'
+          # Export only build-tool variables into the ephemeral job environment.
+          foreach ($name in @('PATH','INCLUDE','LIB','LIBPATH','VCToolsInstallDir','WindowsSdkDir','WindowsSDKVersion')) {
+            $value = [Environment]::GetEnvironmentVariable($name)
+            if ($value) { "$name=$value" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append }
+          }
+      - name: Build all native dependencies, install isolated wheel and qualify
+        shell: pwsh
+        run: |
+          python -m pip install -r python/ci/requirements.txt
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          python python/ci/check_frozen_input.py "$env:RUNNER_TEMP/source" "$env:GITHUB_SHA"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $archive = (Get-ChildItem "$env:RUNNER_TEMP/source/artifacts/*.tar.gz").FullName
+          python python/ci/qualify_windows.py --sdist $archive --output "$env:RUNNER_TEMP/qualified" --python-version '${{ inputs.python_version }}'
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - name: Retain wheel and complete bounded receipts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: windows-${{ inputs.python_version }}-${{ github.sha }}
+          path: ${{ runner.temp }}/qualified/payload/*
+          retention-days: 1
+          compression-level: 0
+          archive: true
+          if-no-files-found: error
+      - name: Print bounded qualification or failure evidence
+        if: always()
+        shell: pwsh
+        run: |
+          $root = "$env:RUNNER_TEMP/qualified"
+          foreach ($name in @('RESULTS.json','cspice-build.log','extended/build.log','extended/binary-contents-check.log','extended/release-preflight.log','extended/pytest.log','extended/state-comparison.json','extended/spline.log')) {
+            $file = Join-Path $root $name
+            if (Test-Path $file) { Write-Output $name; Get-Content $file -Tail 100 }
+          }

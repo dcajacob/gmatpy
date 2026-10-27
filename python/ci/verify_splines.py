@@ -10,14 +10,23 @@ import ctypes as C,hashlib,json,math,platform,shutil,subprocess,sys
 from pathlib import Path
 import gmatpy
 base=Path(__file__).resolve().parent;source=Path(sys.argv[1]);output=Path(sys.argv[2]);output.mkdir(exist_ok=False)
-native=Path(gmatpy.__file__).resolve().parent/'_native';mac=platform.system()=='Darwin'
-libraries=list(native.glob('libGmatUtil.dylib' if mac else 'libGmatUtil.so.*'));assert len(libraries)==1
-library=libraries[0];harness=output/('harness.dylib' if mac else 'harness.so');includes=source/'src/gmatutil'
-compiler=shutil.which('clang++' if mac else 'g++');assert compiler
-command=[compiler,'-dynamiclib' if mac else '-shared','-fPIC','-std=c++17','-O2']
-if mac:command+=['-arch',platform.machine(),'-mmacosx-version-min=11.0']
-command += [*[f'-I{includes/p}' for p in ['include','util','util/interpolator']],str(base/'spline_harness.cpp'),str(library),'-Wl,-rpath,'+str(native),'-o',str(harness)]
-subprocess.run(command,check=True)
+native=Path(gmatpy.__file__).resolve().parent/'_native';mac=platform.system()=='Darwin';windows=platform.system()=='Windows'
+libraries=list(native.glob('libGmatUtil.dll' if windows else 'libGmatUtil.dylib' if mac else 'libGmatUtil.so.*'));assert len(libraries)==1
+library=libraries[0];harness=output/('harness.dll' if windows else 'harness.dylib' if mac else 'harness.so');includes=source/'src/gmatutil'
+if windows:
+ import_library=Path(sys.argv[3]).resolve();assert import_library.is_file()
+ compiler=shutil.which('cl');assert compiler
+ command=[compiler,'/nologo','/LD','/MD','/EHsc','/std:c++17','/O2','/D_DYNAMICLINK',
+          *[f'/I{includes/p}' for p in ['include','util','util/interpolator']],str(base/'spline_harness.cpp'),
+          str(import_library),'/Fe'+str(harness),'/link','/EXPORT:evaluate_spline']
+ # Keep a directory handle alive while the harness loads the installed engine.
+ dll_directory=__import__('os').add_dll_directory(str(native))
+else:
+ compiler=shutil.which('clang++' if mac else 'g++');assert compiler
+ command=[compiler,'-dynamiclib' if mac else '-shared','-fPIC','-std=c++17','-O2']
+ if mac:command+=['-arch',platform.machine(),'-mmacosx-version-min=11.0']
+ command += [*[f'-I{includes/p}' for p in ['include','util','util/interpolator']],str(base/'spline_harness.cpp'),str(library),'-Wl,-rpath,'+str(native),'-o',str(harness)]
+subprocess.run(command,cwd=output,check=True)
 h=C.CDLL(str(harness));ptr=C.POINTER(C.c_double);h.evaluate_spline.argtypes=[C.c_int,ptr,ptr,ptr,C.c_int,ptr,C.c_int]
 cases=json.loads((base/'spline_oracle.json').read_text())['cases'];maximum=0.
 for n,r in enumerate(cases):
