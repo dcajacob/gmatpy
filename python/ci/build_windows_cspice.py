@@ -56,8 +56,10 @@ def build(root, archive=None, jobs=2):
     librarian = shutil.which("lib")
     assert compiler and librarian
     # NAIF's Windows recipe uses these defines and disables zzsecprt optimization.
-    # /MD matches GMAT/Python's shared CRT; no compile-time floating-point relaxation.
-    flags = ["/nologo", "/c", "/MD", "/D_COMPLEX_DEFINED", "/DMSDOS", "/DOMIT_BLANK_CC", "/DNON_ANSI_STDIO"]
+    # /MD matches GMAT/Python's shared CRT. Preinclude the UCRT io.h so its
+    # dllimport is established before fio.h repeats the isatty declaration.
+    # No numerical source changes or compile-time floating-point relaxation.
+    flags = ["/nologo", "/c", "/MD", "/D_COMPLEX_DEFINED", "/DMSDOS", "/DOMIT_BLANK_CC", "/DNON_ANSI_STDIO", "/FIio.h"]
     files = sorted(source.glob("*.c"))
     assert len(files) == 2229, len(files)
     def compile_one(path):
