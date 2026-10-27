@@ -2,10 +2,12 @@ Windows x64 wheels
 ==================
 
 The four standard-GIL CPython 3.12.10, 3.13.16, 3.14.8 and 3.15.0 Windows
-x64 wheels passed native qualification and are approved for addition to
-``gmatpy==0.2.1``. They preserve their exact qualified bytes. Publication uses
-the existing protected PyPI workflow; the public release must contain their
-fixed hashes before index installation is considered verified.
+x64 wheels are published as part of ``gmatpy==0.2.1`` and preserve their exact
+qualified bytes. The
+`protected publication <https://github.com/dcajacob/gmatpy/actions/runs/40545816627>`_
+added only these four files. Independent public downloads verified all four
+hashes and confirmed the five 0.2.0 files and original seventeen 0.2.1 files
+were unchanged. There are now twenty wheels and one source archive in 0.2.1.
 
 Use a matching standard x64 Python interpreter and request a wheel::
 
@@ -67,5 +69,6 @@ covers Python 3.14 only, not broader Windows notebook or mission accuracy gates.
 The separate ``verify-windows-pypi-021.yml`` workflow verifies the final public
 hashes and installs ``gmatpy==0.2.1`` through the normal PyPI index in fresh native
 Windows environments, then reruns installed-byte, import, suite and numerical
-checks. Its completed run is the post-publication receipt. Windows desktop and
+checks. The `public index verification run <https://github.com/dcajacob/gmatpy/actions/runs/40546243217>`_
+is the post-publication receipt. Windows desktop and
 other Windows versions have not been newly executed by these Server 2022 tests.

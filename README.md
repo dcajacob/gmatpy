@@ -17,9 +17,9 @@ See the [documentation](https://gmatpy.readthedocs.io/en/latest/),
 [native qualification](python/ci/README.md).
 
 GMAT Py 0.2.1 is published for standard CPython 3.12 through 3.15 on
-Linux x86_64/ARM64 and macOS Intel/ARM64. Four Windows x64 wheels have also
-passed native qualification and are approved for addition to that version;
-see [Windows evidence and publication status](docs/windows.rst).
+Linux x86_64/ARM64, macOS Intel/ARM64 and Windows x64: twenty wheels total.
+The four Windows files preserve their qualified hashes; see
+[Windows evidence and publication receipts](docs/windows.rst).
 Install a published matching wheel with:
 
 ```bash

@@ -7,8 +7,9 @@ it alongside your other Python code. No separate GMAT installation, executable,
 GUI, display server, runtime download or library-path setup is required.
 This is an experimental, independently packaged GMAT module. Public
 ``gmatpy`` 0.2.1 is available on PyPI for standard-GIL CPython 3.12 through
-3.15 on Linux x86_64/aarch64 and macOS Intel/ARM64. Packaging source is
-6b5c286c; unchanged native compilation origin remains f8d8e4ce.
+3.15 on Linux x86_64/aarch64, macOS Intel/ARM64 and Windows x64. The original
+Linux/macOS packaging source is 6b5c286c with native origin f8d8e4ce; Windows
+uses a fresh native build from ae25a632.
 
 Install this version with a matching standard CPython 3.12 through 3.15 interpreter::
 
@@ -48,8 +49,8 @@ Windows x64 was freshly qualified on 2026-10-27 for standard CPython 3.12.10,
 3.13.16, 3.14.8 and 3.15.0 from source ``ae25a632``: 203 tests plus three
 subtests per wheel, six expected platform-specific skips and numerical checks.
 Its native provenance is separate from the Linux/macOS f8 binary reuse. The
-four unchanged files are approved for addition to 0.2.1; current publication
-status and exact hashes are in the
+four unchanged files are published as part of 0.2.1; publication receipts and
+exact hashes are in the
 `Windows documentation <https://gmatpy.readthedocs.io/en/latest/windows.html>`_.
 Windows ARM64, alternative interpreters and free-threaded Python are unqualified.
 Metadata allows standard CPython 3.12 through 3.15. The exact tested patches

@@ -25,11 +25,12 @@ with a NASA GMAT release.
 .. important::
 
    Public ``gmatpy`` 0.2.1 is on PyPI with standard-GIL CPython 3.12 through
-   3.15 wheels for Linux x86_64/ARM64 and macOS Intel/ARM64. Every final wheel
-   passed native installed tests before and after publication. The single
+   3.15 wheels for Linux x86_64/ARM64, macOS Intel/ARM64 and Windows x64. The
+   original sixteen Linux/macOS wheels and four fresh Windows builds retain
+   separate provenance and native verification receipts. The single
    headless package includes SPICE and all supported mission workflows;
-   no feature profile or extra is needed. The separately qualified Windows x64
-   addition is described in :doc:`windows`. See :doc:`installation`.
+   no feature profile or extra is needed. The published Windows x64
+   addition and its index verification are described in :doc:`windows`. See :doc:`installation`.
 
 
 Find your starting point
