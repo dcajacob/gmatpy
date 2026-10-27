@@ -6,7 +6,27 @@ permissions:
   contents: read
   actions: read
 jobs:
+  wait-for-capacity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Keep at most two native Windows jobs active across both runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Once 3.12 and 3.13 finish, only the final 3.15 cell can remain.
+          # The 3.14 wheel was already qualified before this branch was pushed.
+          for attempt in $(seq 1 60); do
+            finished=$(gh api repos/dcajacob/gmatpy/actions/runs/40465394325/jobs --jq '[.jobs[] | select(.name == "assess (3.12.10) / qualify" or .name == "assess (3.13.16) / qualify") | select(.status == "completed")] | length')
+            if [[ "$finished" == 2 ]]; then exit 0; fi
+            sleep 45
+          done
+          echo 'Native qualification capacity was not available in time' >&2
+          exit 1
   integrate:
+    needs: wait-for-capacity
     runs-on: windows-2022
     timeout-minutes: 35
     env:
