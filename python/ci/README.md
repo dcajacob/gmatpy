@@ -101,9 +101,9 @@ explicit SPICE, ICRF gap/endpoints, EarthFixed/ITRF93 and one-day propagation.
 Its detailed local source receipts and failed diagnostic runs are review evidence;
 the small embedded reference is the durable CI regression subset.
 
-## Published 0.2.1 binary reuse
+## Original Linux/macOS 0.2.1 binary reuse
 
-Packaging source `6b5c286cfbd64500a848277aeed0aee9b2e440fc` reuses all sixteen qualified f8 native builds without recompilation or repair. All 17 published files match the fixed allowlist; every final wheel passed 209 tests plus 3 subtests before publication (https://github.com/dcajacob/gmatpy/actions/runs/39008578034) and after fresh native PyPI installation (https://github.com/dcajacob/gmatpy/actions/runs/39010062762). Publication receipt: https://github.com/dcajacob/gmatpy/actions/runs/39009509178. Original native/source/dependency/interpreter receipts remain separate from new packaging provenance. The protected staging job receives temporary contents:write only for draft GET access; installed verification is read-only and publication uses contents/actions read plus OIDC. The post-PyPI matrix uses contents:read only and retains no artifacts. Windows/free-threaded and older-host execution limits are unchanged.
+Packaging source `6b5c286cfbd64500a848277aeed0aee9b2e440fc` reuses all sixteen qualified f8 native builds without recompilation or repair. The original 17 published files match the fixed allowlist; every final wheel passed 209 tests plus 3 subtests before publication (https://github.com/dcajacob/gmatpy/actions/runs/39008578034) and after fresh native PyPI installation (https://github.com/dcajacob/gmatpy/actions/runs/39010062762). Publication receipt: https://github.com/dcajacob/gmatpy/actions/runs/39009509178. Original native/source/dependency/interpreter receipts remain separate from new packaging provenance. The protected staging job receives temporary contents:write only for draft GET access; installed verification is read-only and publication uses contents/actions read plus OIDC. The post-PyPI matrix uses contents:read only and retains no artifacts. Windows/free-threaded and older-host execution limits are unchanged.
 
 ## Windows x64 0.2.1 addition
 
@@ -121,3 +121,9 @@ The existing `publish-pypi.yml` / protected `pypi` environment publishes only
 missing exact Windows files; `verify-windows-pypi-021.yml` tests public index
 installs. Direct MSISE spline/ARM64/free-threaded/other Windows hosts remain outside
 this Windows evidence. See `docs/windows.rst` for scoped claims and receipts.
+
+The four unchanged Windows wheels were published into 0.2.1 by
+https://github.com/dcajacob/gmatpy/actions/runs/40545816627; public file hashes and
+all existing production files were independently rechecked. Fresh native public
+index installation receipts are in
+https://github.com/dcajacob/gmatpy/actions/runs/40546243217.

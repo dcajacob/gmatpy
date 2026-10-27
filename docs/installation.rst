@@ -5,7 +5,7 @@ Installation
 
 Public ``gmatpy`` 0.2.1 is available on
 `PyPI <https://pypi.org/project/gmatpy/0.2.1/>`_ with standard-GIL CPython
-3.12 through 3.15 wheels for Linux x86_64/ARM64 and macOS Intel/ARM64,
+3.12 through 3.15 wheels for Linux x86_64/ARM64, macOS Intel/ARM64 and Windows x64,
 plus a matching source archive for deliberate native builds.
 
 There is one standard headless package per supported Python ABI and platform.
