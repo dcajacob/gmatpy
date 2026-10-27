@@ -61,7 +61,7 @@ Platform qualification
 Published 0.2.1 release evidence
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Stable ``gmatpy==0.2.1`` provides sixteen wheels: standard-GIL CPython
+The original Linux/macOS ``gmatpy==0.2.1`` release provides sixteen wheels: standard-GIL CPython
 3.12.15, 3.13.16, 3.14.8 and 3.15.0 on Linux x86_64/aarch64 and macOS
 Intel/ARM64. Each final wheel passed 209 tests plus three subtests, exact
 installed-byte/version checks and saved-state comparisons both
@@ -77,9 +77,11 @@ and sixteen SWIG wrappers were reused byte-for-byte, with separate original
 qualification/interpreter/CSPICE receipts and binary-reuse provenance.
 The original native numerical-oracle checks are carried forward for identical
 bytes; the final installed-wheel checks above are new runs. No native rebuild
-or repair was performed for this release.
+or repair was performed for those sixteen Linux/macOS files. The Windows
+addition uses a separate fresh native build; see :doc:`windows`.
 
-Windows, free-threaded Python and other interpreters remain unqualified.
+Windows x64 is separately qualified in :doc:`windows`. Windows ARM64,
+free-threaded Python and other interpreters remain unqualified.
 Wheel deployment tags do not prove runtime execution on every older OS or
 historical interpreter patch. Scientific input coverage/freshness limitations
 remain documented in :doc:`conventions`.
@@ -186,7 +188,8 @@ Pinned standalone interpreters supply the exact patches above. Interpreter
 archive hashes, runtime versions and standard ABI are checked before use;
 the interpreters are build tools, not extra wheel payload. Linux tests ran on
 glibc 2.28 and macOS tests on native macOS 15 runners. Older minimum-OS wheel
-tags do not establish execution on every older host. Windows, free-threaded
+tags do not establish execution on every older host. Windows was outside that
+f8 candidate; its later qualification is in :doc:`windows`. Free-threaded
 Python and other interpreters remain unqualified.
 
 The source archive and an independently rebuilt Linux x86 CPython 3.13 wheel

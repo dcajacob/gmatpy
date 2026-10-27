@@ -238,6 +238,7 @@ def test_wheel_requires_current_complete_17_file_data_manifest(tmp_path):
         check(artifact)
 
 
+@pytest.mark.skipif(os.name == "nt", reason="Unix build_wheel.sh helper; Windows uses the native qualification driver")
 @pytest.mark.parametrize("profile", ["minimal", "unknown", ""])
 def test_build_helper_rejects_obsolete_profile_before_build(tmp_path, profile):
     environment = dict(os.environ, GMAT_PY_PROFILE=profile,
@@ -251,6 +252,7 @@ def test_build_helper_rejects_obsolete_profile_before_build(tmp_path, profile):
     assert not (tmp_path / "uncreated").exists()
 
 
+@pytest.mark.skipif(os.name == "nt", reason="Unix build_wheel.sh helper; Windows uses the native qualification driver")
 @pytest.mark.parametrize("profile", [None, "extended"])
 def test_build_helper_accepts_unset_or_full_profile_before_dependency_check(tmp_path, profile):
     environment = dict(os.environ, GMAT_PY_PYTHON="must-not-run-a-build",

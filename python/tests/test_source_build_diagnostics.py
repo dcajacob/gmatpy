@@ -8,6 +8,8 @@ import tempfile
 import unittest
 
 
+LIBRARY = "lib/cspice.lib" if os.name == "nt" else "lib/cspice.a"
+
 MODULE = Path(__file__).resolve().parents[1] / "cmake/CheckSourceDependencies.cmake"
 
 
@@ -29,7 +31,7 @@ class SourceDependencies(unittest.TestCase):
 
     def tree(self, relative="external cspice", omit=()):
         root = self.root / relative
-        for name in ("include/SpiceUsr.h", "include/f2c.h", "lib/cspice.a"):
+        for name in ("include/SpiceUsr.h", "include/f2c.h", LIBRARY):
             if name not in omit:
                 path = root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -59,7 +61,7 @@ class SourceDependencies(unittest.TestCase):
         self.assert_missing()
 
     def test_each_missing_component_stops(self):
-        for name in ("include/SpiceUsr.h", "include/f2c.h", "lib/cspice.a"):
+        for name in ("include/SpiceUsr.h", "include/f2c.h", LIBRARY):
             with self.subTest(missing=name):
                 tree = self.tree(name.replace("/", "-"), omit=(name,))
                 self.assert_missing([f"CSPICE_DIR={tree}"])
@@ -97,7 +99,7 @@ class SourceDependencies(unittest.TestCase):
         self.assert_missing([f"CSPICE_DIR={self.tree()}", f"F2C_DIR={self.root / 'invalid'}"])
 
     def test_existing_default_checkout_path(self):
-        platform_dir = "macosx" if platform.system() == "Darwin" else "linux"
+        platform_dir = "windows" if os.name == "nt" else "macosx" if platform.system() == "Darwin" else "linux"
         self.tree(f"depends/cspice/{platform_dir}/cspice64")
         code, output = self.configure()
         self.assertEqual(code, 0, output)

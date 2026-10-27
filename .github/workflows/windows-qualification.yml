@@ -1,0 +1,54 @@
+name: GMAT Py Windows x64 qualification
+on:
+  push:
+    branches: [codex/windows-x64-qualification-20261027]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: gmatpy-windows-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  source:
+    if: github.repository == 'dcajacob/gmatpy' && !github.event.repository.private
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14.8'
+      - name: Freeze current committed source with existing provenance checks
+        env:
+          PIP_NO_CACHE_DIR: '1'
+        run: |
+          python -m pip install -r python/ci/requirements.txt
+          python python/ci/freeze_clean_checkout.py --repo "$GITHUB_WORKSPACE" --revision "$GITHUB_SHA" --output "$RUNNER_TEMP/frozen"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: windows-source-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/frozen/artifacts/*.tar.gz
+            ${{ runner.temp }}/frozen/WORKING_TREE.json
+            ${{ runner.temp }}/frozen/SOURCE_RECEIPT.json
+          retention-days: 1
+          compression-level: 0
+          archive: true
+          if-no-files-found: error
+  primary314:
+    needs: source
+    uses: ./.github/workflows/windows-cell.yml
+    with:
+      python_version: '3.14.8'
+  assess:
+    needs: primary314
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        version: ['3.12.10', '3.13.16', '3.15.0']
+    uses: ./.github/workflows/windows-cell.yml
+    with:
+      python_version: ${{ matrix.version }}

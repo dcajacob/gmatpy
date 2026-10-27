@@ -16,10 +16,18 @@ See the [documentation](https://gmatpy.readthedocs.io/en/latest/),
 [capability details](python/PROFILES.rst), and
 [native qualification](python/ci/README.md).
 
-GMAT Py 0.2.0 is not yet published on PyPI. Install a matching candidate wheel
-with `python -m pip install /path/to/gmatpy-0.2.0-<python>-<abi>-<platform>.whl`.
-There is one standard wheel per supported Python ABI and platform; no feature
-profile, build tag, or extra is needed.
+GMAT Py 0.2.1 is published for standard CPython 3.12 through 3.15 on
+Linux x86_64/ARM64 and macOS Intel/ARM64. Four Windows x64 wheels have also
+passed native qualification and are approved for addition to that version;
+see [Windows evidence and publication status](docs/windows.rst).
+Install a published matching wheel with:
+
+```bash
+python -m pip install --only-binary=:all: gmatpy==0.2.1
+```
+
+There is one standard wheel per Python ABI and platform; no feature profile,
+build tag, or extra is needed.
 
 This repository preserves NASA ancestry and maintains an explicit upstream update
 path described in [UPSTREAM.md](UPSTREAM.md). Custom Qt GUI, debugger and viewer

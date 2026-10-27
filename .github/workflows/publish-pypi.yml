@@ -7,7 +7,7 @@ on:
         type: choice
         required: true
         default: '0.2.1'
-        options: ['0.2.1', '0.2.0']
+        options: ['0.2.1', '0.2.0', '0.2.1-windows']
       qualification_run_id:
         description: Successful exact-file 0.2.1 qualification run on this control commit
         type: string
@@ -109,3 +109,47 @@ jobs:
           print-hash: 'true'
 # Explicit combined activation approval is still required. Native bytes retain
 # f8 compilation origin; this workflow cannot build, repair or repackage files.
+
+  publish021windows:
+    if: >-
+      inputs.release_version == '0.2.1-windows' && inputs.confirm_production_upload &&
+      github.event_name == 'workflow_dispatch' && github.repository == 'dcajacob/gmatpy' &&
+      github.ref == 'refs/heads/main' && toJSON(github.event.repository.private) == 'false' &&
+      github.run_attempt == '1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: pypi
+      url: https://pypi.org/p/gmatpy
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: |
+            .github
+            python/ci
+            python/tools
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.14.8'
+      - name: Verify four qualified Windows files, published source compatibility and unchanged production files
+        id: ready
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python .github/scripts/windows_release_021.py prepare --temporary "$RUNNER_TEMP/windows-publish" --output publish-windows
+      - name: Publish only missing unchanged Windows 0.2.1 wheels
+        if: steps.ready.outputs.has_files == 'true'
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
+        with:
+          repository-url: https://upload.pypi.org/legacy/
+          packages-dir: publish-windows/
+          verify-metadata: 'true'
+          skip-existing: 'false'
+          attestations: 'false'
+          print-hash: 'true'

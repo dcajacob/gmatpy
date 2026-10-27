@@ -28,7 +28,8 @@ with a NASA GMAT release.
    3.15 wheels for Linux x86_64/ARM64 and macOS Intel/ARM64. Every final wheel
    passed native installed tests before and after publication. The single
    headless package includes SPICE and all supported mission workflows;
-   no feature profile or extra is needed. See :doc:`installation`.
+   no feature profile or extra is needed. The separately qualified Windows x64
+   addition is described in :doc:`windows`. See :doc:`installation`.
 
 
 Find your starting point
@@ -59,7 +60,7 @@ equivalence. Their scope is described in :doc:`development`; passing them does
 not validate operational mission use. Scientific inputs are fixed snapshots,
 with coverage and freshness limits in :doc:`conventions`.
 
-Public 0.2.1 uses packaging source ``6b5c286c`` and byte-identical native
+The original Linux/macOS 0.2.1 wheels use packaging source ``6b5c286c`` and byte-identical native
 binaries from ``f8d8e4ce``. All sixteen final wheels passed 209 tests plus
 three subtests before publication and again through fresh native PyPI
 installation checks. Public 0.2.0 retains its original ``09eafabe`` packaging
@@ -72,6 +73,7 @@ receipts, tested patches/hosts and remaining platform limits.
    :hidden:
 
    installation
+   windows
    quickstart
    workflows
    tle-tailor

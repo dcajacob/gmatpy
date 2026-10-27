@@ -1,0 +1,154 @@
+{
+  "published_sdist": {
+    "sha256": "39e7aa19820ccad1cbb1d70573ad3456c778e4f5e96f5f5a7d9bc2a5a132039e",
+    "provenance": {
+      "schema_version": 1,
+      "source_revision": "6b5c286cfbd64500a848277aeed0aee9b2e440fc",
+      "source_tree_sha256": "37cbdabbc8e859cd85805817f79fff76ac240ca21e04eb797d48a24f49a27e6e",
+      "working_tree_manifest_sha256": "9abea43c50c1b48b5398b76bde0fd3779963d3d968cbee12710f55e896c828d9"
+    }
+  },
+  "windows_sdist": {
+    "sha256": "ee29b4c2ecc7e67a525709c8bc3c29c0197d1a739509eb2a3b89cbc1d060f414",
+    "provenance": {
+      "schema_version": 1,
+      "source_revision": "ae25a632d778172ab9570fd5c284968c2eba08bc",
+      "source_tree_sha256": "631e0730bea6d1a3ba0651137ef5e44b475e53922aa8205336b0b7478aff1403",
+      "working_tree_manifest_sha256": "ac3d7077597900f9ce340a0f71ade847a84c40b253f723a96db4c971f5d2a807"
+    }
+  },
+  "scientific_payload_equal": true,
+  "scientific_scope_sha256": "abd4d6096f24c6c1561e24a1bda72c46b9ca6fd95f8dad6a28d260fab9d335ae",
+  "scientific_file_count": 1176,
+  "changed_source_records": [
+    {
+      "path": "python/README.rst",
+      "old": {
+        "path": "python/README.rst",
+        "sha256": "d2c02b40f3cb467a483b3e453e9049197b9825820512cb7a8da1e67b12d8e902",
+        "size": 18135,
+        "mode": 420
+      },
+      "new": {
+        "path": "python/README.rst",
+        "sha256": "3a90e6fecefaa3ed439c319dd749031b6596a43c5525b77a8031d050101bd742",
+        "size": 18257,
+        "mode": 420
+      }
+    },
+    {
+      "path": "python/ci/README.md",
+      "old": {
+        "path": "python/ci/README.md",
+        "sha256": "90f3a62b6c2c8b0aa4236ce9006d4f81ad4830fae12fb23abe3119c8926fa05c",
+        "size": 6947,
+        "mode": 420
+      },
+      "new": {
+        "path": "python/ci/README.md",
+        "sha256": "85d8ec201404ea4569abbe6c3cad2d02cb95d178db40f420445c001e79c70b2c",
+        "size": 7907,
+        "mode": 420
+      }
+    },
+    {
+      "path": "python/ci/build_windows_cspice.py",
+      "old": null,
+      "new": {
+        "path": "python/ci/build_windows_cspice.py",
+        "sha256": "baea1a87ed3e2b3f58090203dd3db8b4ad3e32834d5191f6239156a2573bcf36",
+        "size": 6112,
+        "mode": 420
+      }
+    },
+    {
+      "path": "python/ci/qualify_windows.py",
+      "old": null,
+      "new": {
+        "path": "python/ci/qualify_windows.py",
+        "sha256": "212d6490684327192e9f41861f9aa777428e4abebf60b8d2ceb517aea46aac2f",
+        "size": 8005,
+        "mode": 420
+      }
+    },
+    {
+      "path": "python/ci/verify_splines.py",
+      "old": {
+        "path": "python/ci/verify_splines.py",
+        "sha256": "ff3f2a875a9a038a5f68125078365f30bf8519fb84ea8dd77284b8169fd84d14",
+        "size": 7585,
+        "mode": 420
+      },
+      "new": {
+        "path": "python/ci/verify_splines.py",
+        "sha256": "e3674f03ce87efef15822ae289cc09f3f83deca665c6eaaf41e1645ca4c85937",
+        "size": 8263,
+        "mode": 420
+      }
+    },
+    {
+      "path": "python/tests/test_artifact_tools.py",
+      "old": {
+        "path": "python/tests/test_artifact_tools.py",
+        "sha256": "2aa1cf60f67a75196ef802c275b1469f04d98726011f1eb7a21e4d8c1662100e",
+        "size": 19479,
+        "mode": 420
+      },
+      "new": {
+        "path": "python/tests/test_artifact_tools.py",
+        "sha256": "4c1f3ff57df1a8a24be103b804a234d3dcbd6c292a63e1b23f561d394c0430d1",
+        "size": 19719,
+        "mode": 420
+      }
+    },
+    {
+      "path": "python/tests/test_source_build_diagnostics.py",
+      "old": {
+        "path": "python/tests/test_source_build_diagnostics.py",
+        "sha256": "165ba662bb8c9000f3bf8322b2309bede2e718951be68871577d66cd37d0b5e5",
+        "size": 4631,
+        "mode": 420
+      },
+      "new": {
+        "path": "python/tests/test_source_build_diagnostics.py",
+        "sha256": "9a6c6c0968905112952ed5c0d9dcbf9ed5b071664986e3d6a5460e066ff3fdc5",
+        "size": 4718,
+        "mode": 420
+      }
+    }
+  ],
+  "decision": "Append the four newly qualified Windows wheels to 0.2.1. Preserve their actual ae25 native/source provenance. Existing PyPI sdist and all old files remain byte-for-byte unchanged. Runtime, native scientific source, data, SWIG and build inputs match exactly; only documentation, CI and qualification tests differ. Metadata identity/dependency headers match; long-description prose records the later completed 0.2.1 verification.",
+  "metadata_headers_semantically_equal": true,
+  "metadata_header_order_only_differences": [
+    {
+      "field": "License-File",
+      "published_sdist": [
+        "application/License.txt",
+        "python/gmatpy/NOTICE.txt",
+        "python/gmatpy/licenses/ERFA.txt",
+        "python/gmatpy/licenses/F2C.txt",
+        "python/gmatpy/licenses/GMAT.txt",
+        "python/gmatpy/licenses/GRAVITY-DATA.txt",
+        "python/gmatpy/licenses/IERS-EOP.txt",
+        "python/gmatpy/licenses/JPL-EPHEMERIS-NUMERIC.txt",
+        "python/gmatpy/licenses/NAIF-CSPICE.txt",
+        "python/gmatpy/licenses/SCIENTIFIC-DATA.txt",
+        "python/gmatpy/licenses/SWIG.txt"
+      ],
+      "windows_wheel": [
+        "application/License.txt",
+        "python/gmatpy/licenses/ERFA.txt",
+        "python/gmatpy/licenses/F2C.txt",
+        "python/gmatpy/licenses/GMAT.txt",
+        "python/gmatpy/licenses/GRAVITY-DATA.txt",
+        "python/gmatpy/licenses/IERS-EOP.txt",
+        "python/gmatpy/licenses/JPL-EPHEMERIS-NUMERIC.txt",
+        "python/gmatpy/licenses/NAIF-CSPICE.txt",
+        "python/gmatpy/licenses/SCIENTIFIC-DATA.txt",
+        "python/gmatpy/licenses/SWIG.txt",
+        "python/gmatpy/NOTICE.txt"
+      ]
+    }
+  ],
+  "documentation_note": "The unchanged wheels preserve their build-time long-description prose. Current repository/docs distinguish the fresh Windows ae25 builds from Linux/macOS f8 native reuse; no new wheel is relabelled as compiled from 6b or f8."
+}
