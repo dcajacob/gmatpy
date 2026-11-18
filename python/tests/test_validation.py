@@ -1,3 +1,4 @@
+import os
 import pytest
 
 from gmatpy import ForceModel, Spacecraft, propagate
@@ -90,3 +91,30 @@ def test_process_exit_removes_runtime_directory_without_open_log_error():
              if line.startswith("RUNTIME_DIR=")]
     assert len(paths) == 1, result.stdout
     assert not Path(paths[0]).exists(), result.stderr
+
+
+@pytest.mark.skipif(not hasattr(os, "fork"), reason="requires POSIX fork")
+def test_normal_child_exit_preserves_parent_runtime(tmp_path):
+    import subprocess
+    import sys
+
+    code = """
+import os
+from pathlib import Path
+import sys
+from gmatpy import native_session
+
+with native_session() as api:
+    directory = Path(api.FileManager.Instance().GetStartupFileDir())
+startup = directory / "startup.txt"
+original = startup.read_bytes()
+pid = os.fork()
+if pid == 0:
+    sys.exit(0)
+_, status = os.waitpid(pid, 0)
+assert os.waitstatus_to_exitcode(status) == 0
+assert startup.read_bytes() == original
+with native_session() as api:
+    assert api.Moderator.Instance().IsInitialized()
+"""
+    subprocess.run([sys.executable, "-I", "-c", code], cwd=tmp_path, check=True, timeout=60)

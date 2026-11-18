@@ -1,5 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
+from decimal import Inexact, localcontext
 import math
 import pytest
 
@@ -17,6 +18,41 @@ def test_state_conversions_round_trip(kind):
     assert isinstance(converted, tuple) and len(converted) == 6
     restored = convert_state(converted, from_type=kind, to_type="Cartesian")
     assert restored == pytest.approx(STATE, rel=0, abs=2e-9)
+
+
+@pytest.mark.parametrize(("to_type", "expected"), [
+    ("Keplerian", (10000, 0.2, 30, 40, 50, 60)),
+    ("ModifiedKeplerian", (8000, 12000, 30, 40, 50, 60)),
+])
+def test_equinoctial_direct_to_keplerian(to_type, expected):
+    cart = convert_state((10000, 0.2, 30, 40, 50, 60), "Keplerian", "Cartesian")
+    equinoctial = convert_state(cart, "Cartesian", "Equinoctial")
+    actual = convert_state(equinoctial, "Equinoctial", to_type)
+    assert actual == pytest.approx(expected, rel=0, abs=2e-9)
+
+
+@pytest.mark.parametrize("angle_deg", [-60, 60])
+@pytest.mark.parametrize(("anomaly", "sma", "ecc"), [("EA", 10000, 0.2), ("HA", -10000, 1.5)])
+def test_keplerian_anomaly_against_planar_conic(anomaly, sma, ecc, angle_deg):
+    mu = 398600.4415
+    angle = math.radians(angle_deg)
+    # Perifocal x and y, differentiated using Kepler's equation for velocity.
+    if anomaly == "EA":
+        c, s = math.cos(angle), math.sin(angle)
+        y_scale = math.sqrt(1 - ecc**2)
+        rate = math.sqrt(mu / sma**3) / (1 - ecc * c)
+        x, y = sma * (c - ecc), sma * y_scale * s
+        vx, vy = -sma * s * rate, sma * y_scale * c * rate
+    else:
+        c, s = math.cosh(angle), math.sinh(angle)
+        y_scale = math.sqrt(ecc**2 - 1)
+        rate = math.sqrt(mu / abs(sma)**3) / (ecc * c - 1)
+        x, y = sma * (c - ecc), -sma * y_scale * s
+        vx, vy = sma * s * rate, -sma * y_scale * c * rate
+    actual = convert_state((sma, ecc, 0, 0, 0, angle_deg), "Keplerian", "Cartesian",
+                           mu=mu, anomaly=anomaly)
+    assert actual[:3] == pytest.approx((x, y, 0), rel=0, abs=2e-9)
+    assert actual[3:] == pytest.approx((vx, vy, 0), rel=0, abs=2e-12)
 
 
 @pytest.mark.parametrize("anomaly", ["TA", "MA", "EA"])
@@ -49,6 +85,18 @@ def test_time_scale_offsets_and_conventional_mjd():
     assert abs(epoch_mjd(EPOCH,"TDB")-epoch_mjd(EPOCH,"TT"))*86400 < 0.003
     assert abs(epoch_mjd(EPOCH,"UT1")-utc)*86400 < 1
     assert abs(epoch_mjd(EPOCH,"A1")-epoch_mjd(EPOCH,"TAI"))*86400 < 0.04
+
+
+@pytest.mark.parametrize("trap_inexact", [False, True])
+def test_epoch_preserves_microseconds_under_caller_decimal_context(trap_inexact):
+    timestamp = "2020-07-20T12:34:56.123456Z"
+    expected = 59050 + (12 * 3600 + 34 * 60 + 56.123456) / 86400
+    with localcontext() as context:
+        context.prec = 8
+        context.traps[Inexact] = trap_inexact
+        context.clear_flags()
+        assert epoch_mjd(timestamp) == pytest.approx(expected, rel=0, abs=math.ulp(expected))
+        assert not context.flags[Inexact]
 
 
 @pytest.mark.parametrize("frame", ["EarthFixed", "EarthMJ2000Ec", "EarthICRF"])

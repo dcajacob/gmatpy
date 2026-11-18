@@ -743,7 +743,7 @@ Rvector6 StateConversionUtil::ConvertFromEquinoctial(const std::string &toType, 
    }
    else if (toType == "Keplerian" || toType == "ModifiedKeplerian")
    {
-      Rvector6 kepl = CartesianToKeplerian(mu, state, anomalyType);
+      Rvector6 kepl = CartesianToKeplerian(mu, cartState, anomalyType);
       
       if (toType == "ModifiedKeplerian")
          outState =  KeplerianToModKeplerian(kepl);
@@ -4915,6 +4915,9 @@ Real StateConversionUtil::MeanToTrueAnomaly(Real maRadians, Real ecc, Real tol)
 //---------------------------------------------------------------------------
 Real StateConversionUtil::EccentricToTrueAnomaly(Real eaRadians, Real ecc, bool modBy2Pi)
 {
+   if (ecc < 0.0 || ecc >= 1.0)
+      throw UtilityException("Eccentric anomaly requires an elliptic orbit.\n");
+
    Real e2            = ecc * ecc;
    Real cosE          = Cos(eaRadians);
    Real oneMinusECosE = 1.0 - ( ecc * cosE);
@@ -4926,11 +4929,8 @@ Real StateConversionUtil::EccentricToTrueAnomaly(Real eaRadians, Real ecc, bool 
    Real sinTA = (Sqrt(1.0 - e2) * Sin(eaRadians)) / oneMinusECosE;
    Real cosTA = (cosE - ecc) / oneMinusECosE;
    Real ta    =  ATan2(sinTA, cosTA);
-   if (modBy2Pi)
-   {
-      while (ta)
-         ta -= TWO_PI;
-   }
+   if (modBy2Pi && ta < 0.0)
+      ta += TWO_PI;
    return ta;
 }
 
@@ -4949,23 +4949,12 @@ Real StateConversionUtil::EccentricToTrueAnomaly(Real eaRadians, Real ecc, bool 
 //---------------------------------------------------------------------------
 Real StateConversionUtil::HyperbolicToTrueAnomaly(Real haRadians, Real ecc, bool modBy2Pi)
 {
-   Real e2             = ecc * ecc;
-   Real coshH          = Cosh(haRadians);
-   Real oneMinusECoshH = 1.0 - (ecc * coshH);
-   if (oneMinusECoshH == 0.0)
-   {
-      throw UtilityException("StateConversionUtil::HyperbolicToTrueAnomaly - error converting - divide by zero.\n");
-   }
+   if (ecc <= 1.0)
+      throw UtilityException("Hyperbolic anomaly requires a hyperbolic orbit.\n");
 
-   Real sinTA = (Sqrt(e2 - 1.0) * Sinh(haRadians)) / oneMinusECoshH;
-   Real cosTA = (coshH - ecc) / oneMinusECoshH;
-   Real ta    = ATan2(sinTA, cosTA);
-
-   if (modBy2Pi)
-   {
-      while (ta)
-         ta -= TWO_PI;
-   }
+   Real ta = 2.0 * ATan(Sqrt((ecc + 1.0) / (ecc - 1.0)) * Tanh(haRadians / 2.0));
+   if (modBy2Pi && ta < 0.0)
+      ta += TWO_PI;
    return ta;
 }
 
@@ -7870,9 +7859,6 @@ Integer StateConversionUtil::ComputeKeplToCart(Real grav, Real elem[6], Real r[3
         per = elem[4]*RAD_PER_DEG,
        anom = elem[5]*RAD_PER_DEG;
 
-   // **************
-   // taken from old code above; necessary to avoid crash, but not in spec
-   // if input keplerian anomaly is MA, convert to TA  <<<< what about HA or EA?????   wcs 2011.11.23 ????
    if (anomalyType == MA)
    {
       Real ta;
@@ -7884,7 +7870,8 @@ Integer StateConversionUtil::ComputeKeplToCart(Real grav, Real elem[6], Real r[3
       else
          anom = ta;
    }
-   // ***************
+   else if (anomalyType == EA || anomalyType == HA)
+      anom = ConvertToTrueAnomaly(anomalyType, anom, ecc);
 
    // radius near infinite
    #ifdef DEBUG_KEPL_TO_CART
