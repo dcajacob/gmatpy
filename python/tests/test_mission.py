@@ -1,6 +1,8 @@
 """Numerical and lifetime checks for the first core mission increment."""
 import math
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 import gmatpy as g
@@ -50,6 +52,29 @@ def test_coincident_burns_duplicate_samples_and_per_spacecraft_isolation():
     assert actual['burned'][0] == actual['burned'][1]
     assert actual['burned'][0].velocity_km_s == pytest.approx(
         tuple(a+b for a,b in zip(baseline[0].velocity_km_s,(0,.01,.02))), abs=1e-12)
+
+
+def test_fractional_burn_boundary_completes_and_samples_post_burn(tmp_path):
+    # A regression can spin while holding the engine lock. Bound the native
+    # call in a child process so the rest of the suite can still run.
+    code = """
+import math
+import gmatpy as g
+
+state = (7000, 0, 0, 0, 7.5, 1)
+epoch = "2020-07-20T12:00:00Z"
+times = [0.03, 0.29, 0.29]
+baseline = g.propagate(state, epoch, times)
+burns = [g.Impulse(0.29, (0.01, 0, 0)), g.Impulse(0.29, (0, 0.02, 0))]
+samples = g.propagate_mission(state, epoch, times, impulses=burns)
+assert samples[0] == baseline[0]
+assert samples[1] == samples[2]
+assert samples[1].time_s == 0.29
+assert math.dist(samples[1].position_km, baseline[1].position_km) < 1e-9
+delta = tuple(a - b for a, b in zip(samples[1].velocity_km_s, baseline[1].velocity_km_s))
+assert math.dist(delta, (0.01, 0.02, 0)) < 1e-12
+"""
+    subprocess.run([sys.executable, "-I", "-c", code], cwd=tmp_path, check=True, timeout=20)
 
 
 def test_vnb_burn_uses_velocity_direction():

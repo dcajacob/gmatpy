@@ -1,5 +1,11 @@
 # Native portability qualification (experimental)
 
+Pull requests targeting `main` and pushes to `main` run the **GMAT Py wheel
+tests** workflow on Linux x86_64 with CPython 3.12. It compiles CSPICE and GMAT,
+installs the wheel, and runs the package and release-control tests, numerical
+reference checks, and documentation examples. The wheel hash and results are
+available in the Actions log.
+
 `qualify.py` builds one full headless wheel, with SPICE and all 17 packaged data
 files, from a single frozen sdist using the exact standard-ABI CPython
 interpreter pinned in `interpreters.json`. The expansion pins 3.12.15, 3.13.16

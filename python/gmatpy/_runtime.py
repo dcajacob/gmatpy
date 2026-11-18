@@ -41,9 +41,9 @@ def engine():
 
     root = Path(__file__).resolve().parent
     data = root / "data"
-    _directory = tempfile.TemporaryDirectory(prefix="gmatpy-")
-    # Register after TemporaryDirectory creates its weakref finalizer: atexit
-    # runs in reverse order, so the native log must close first.
+    # Only the PID-checked callback may remove this directory. A forked child
+    # also inherits TemporaryDirectory's finalizer and may exit normally.
+    _directory = tempfile.TemporaryDirectory(prefix="gmatpy-", delete=False)
     atexit.register(_cleanup_runtime, gmat, _directory, _pid)
     output = Path(_directory.name)
     # FileManager validates even paths unused by headless propagation. Route those

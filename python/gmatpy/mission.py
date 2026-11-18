@@ -12,7 +12,7 @@ from collections.abc import Mapping
 from . import _runtime
 from ._validation import finite, six_vector, epoch_as_gmat_mjd
 from .capabilities import require
-from .propagation import ForceModel, Spacecraft, Sample, _make_setup
+from .propagation import ForceModel, Spacecraft, Sample, _advance_to, _make_setup
 
 
 @dataclass(frozen=True)
@@ -92,21 +92,14 @@ def propagate_many(states: Mapping[str, object], epoch, times, *, forces=None,
             burns.append(burn)
         elapsed, event_index = 0.0, 0
         for target in times:
-            while elapsed < target or (event_index < len(events) and events[event_index][0] <= target):
-                next_time = min(target, events[event_index][0] if event_index < len(events) else target)
-                while elapsed < next_time:
-                    step = min(max_step_s, next_time - elapsed)
-                    if elapsed + step == elapsed:
-                        raise RuntimeError("Mission time exceeds floating-point time resolution")
-                    if not integrator.Step(step):
-                        raise RuntimeError(f"GMAT propagation failed at {elapsed} seconds")
-                    elapsed += step
-                if event_index < len(events) and events[event_index][0] == elapsed:
-                    integrator.UpdateSpaceObject()
-                    if not burns[event_index].Fire():
-                        raise RuntimeError("Native impulsive maneuver failed")
-                    integrator.UpdateFromSpaceObject()
-                    event_index += 1
+            while event_index < len(events) and events[event_index][0] <= target:
+                elapsed = _advance_to(integrator, elapsed, events[event_index][0], max_step_s)
+                integrator.UpdateSpaceObject()
+                if not burns[event_index].Fire():
+                    raise RuntimeError("Native impulsive maneuver failed")
+                integrator.UpdateFromSpaceObject()
+                event_index += 1
+            elapsed = _advance_to(integrator, elapsed, target, max_step_s)
             state = tuple(integrator.GetState())
             if len(state) != 6 * len(states) or not all(math.isfinite(v) for v in state):
                 raise RuntimeError("GMAT returned an invalid multi-spacecraft state")

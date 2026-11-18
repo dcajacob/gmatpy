@@ -1,7 +1,7 @@
 """Shared scalar, vector and UTC epoch validation."""
 
-from datetime import datetime, timezone
-from decimal import Decimal
+from datetime import datetime, timedelta, timezone
+from decimal import Context, ROUND_HALF_EVEN
 import math
 
 def finite(value, name, *, positive=False, nonnegative=False):
@@ -29,8 +29,9 @@ def epoch_as_gmat_mjd(epoch):
     # ModJulian avoids truncating Python's microseconds. GMAT's MJD origin is
     # JD 2430000.0 (1941-01-05 noon), rather than the conventional JD 2400000.5.
     delta = epoch - datetime(1941, 1, 5, 12, tzinfo=timezone.utc)
-    return str(Decimal(delta.days) + Decimal(delta.seconds) / Decimal(86400)
-               + Decimal(delta.microseconds) / Decimal(86400000000))
+    microseconds = delta // timedelta(microseconds=1)
+    context = Context(prec=28, rounding=ROUND_HALF_EVEN, traps=[])
+    return str(context.divide(microseconds, 86_400_000_000))
 
 
 def six_vector(values, name="state"):

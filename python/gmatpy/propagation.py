@@ -190,21 +190,28 @@ def _make_setup(gmat, states, epoch, forces, properties, accuracy, max_step_s):
     return prop, integrator, satellites
 
 
+def _advance_to(integrator, elapsed, target, max_step_s):
+    # Bound each native Step call; its adaptive integrator limits attempts.
+    while elapsed < target:
+        remaining = target - elapsed
+        step = min(max_step_s, remaining)
+        # Adding the final difference back can round past the event time.
+        next_time = target if step == remaining else elapsed + step
+        if next_time == elapsed:
+            raise RuntimeError("Output time exceeds floating-point time resolution")
+        if not integrator.Step(step):
+            raise RuntimeError(f"GMAT propagation failed at {elapsed} seconds")
+        elapsed = next_time
+    return elapsed
+
+
 def _propagate(gmat, state, epoch, times, forces, spacecraft, accuracy, max_step_s):
     prop, integrator, satellites = _make_setup(
         gmat, {"sat": state}, epoch, forces, {"sat": spacecraft}, accuracy, max_step_s)
     samples = []
     elapsed = 0.0
     for target in times:
-        # Bound each API call too: Step(dt) otherwise has a fixed attempt limit
-        # for long output intervals even though the internal integration adapts.
-        while elapsed < target:
-            delta = min(max_step_s, target - elapsed)
-            if elapsed + delta == elapsed:
-                raise RuntimeError("Output time exceeds floating-point time resolution")
-            if not integrator.Step(delta):
-                raise RuntimeError(f"GMAT propagation failed at {elapsed} seconds")
-            elapsed += delta
+        elapsed = _advance_to(integrator, elapsed, target, max_step_s)
         current = tuple(integrator.GetState())
         if len(current) != 6 or not all(math.isfinite(value) for value in current):
             raise RuntimeError("GMAT returned an invalid Cartesian state")
